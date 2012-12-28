@@ -48,7 +48,7 @@ namespace Framework.Database
                 Log.Message(LogType.ERROR, "{0}", ex.Message);
 
                 // Try auto reconnect on error (every 5 seconds)
-                Log.Message(LogType.NORMAL, "Try reconnect in 5 seconds...");
+                Log.Message(LogType.ERROR, "Try reconnect in 5 seconds...");
                 Thread.Sleep(5000);
 
                 Init(host, user, password, database, port);

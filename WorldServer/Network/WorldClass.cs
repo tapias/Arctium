@@ -149,7 +149,7 @@ namespace WorldServer.Network
                     buffer[3] = header[3];
                 }
 
-                clientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+                clientSocket.Send(buffer);
 
                 string clientInfo = ((IPEndPoint)clientSocket.RemoteEndPoint).Address + ":" + ((IPEndPoint)clientSocket.RemoteEndPoint).Port;
                 PacketLog.WritePacket(clientInfo, packet);

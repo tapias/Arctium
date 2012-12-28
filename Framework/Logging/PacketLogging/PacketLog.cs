@@ -40,6 +40,7 @@ namespace Framework.Logging.PacketLogging
                     if (serverPacket != null)
                     {
                         sb.AppendLine(String.Format("Client: {0}", clientInfo));
+                        sb.AppendLine(String.Format("Time: {0}", DateTime.Now.ToString()));
 
                         if (Enum.IsDefined(typeof(LegacyMessage), serverPacket.Opcode))
                         {
@@ -99,12 +100,13 @@ namespace Framework.Logging.PacketLogging
                         }
 
                         sb.AppendLine("");
-                        sb.AppendLine("");
                     }
 
                     if (clientPacket != null)
                     {
                         sb.AppendLine(String.Format("Client: {0}", clientInfo));
+                        sb.AppendLine(String.Format("Time: {0}", DateTime.Now.ToString()));
+
                         sb.AppendLine("Type: ClientMessage");
 
                         if (Enum.IsDefined(typeof(ClientMessage), clientPacket.Opcode))
@@ -148,7 +150,6 @@ namespace Framework.Logging.PacketLogging
                             sb.Append("|----------------------------------------------------------------|");
                         }
 
-                        sb.AppendLine("");
                         sb.AppendLine("");
                     }
 

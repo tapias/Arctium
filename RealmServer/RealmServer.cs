@@ -62,9 +62,6 @@ namespace RealmServer
             }
             Log.Message();
 
-            // Set all accounts offline
-            DB.Realms.Execute("UPDATE accounts SET online = 0");
-
             if (RealmClass.realm.Start(RealmConfig.BindIP, (int)RealmConfig.BindPort))
             {
                 RealmClass.realm.AcceptConnectionThread();
