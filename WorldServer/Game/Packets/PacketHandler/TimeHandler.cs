@@ -52,6 +52,8 @@ namespace WorldServer.Game.PacketHandler
             realmSplitStateResp.WriteCString("01/01/01");
 
             session.Send(ref realmSplitStateResp);
+
+            AddonMgr.WriteAddonData(ref session);
         }
     }
 }

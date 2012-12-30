@@ -21,6 +21,7 @@ namespace WorldServer.Game.Managers
 {
     public class Globals
     {
+        public static AddonManager AddonMgr;
         public static DataManager DataMgr;
         public static ObjectManager ObjectMgr;
         public static SkillManager SkillMgr;
@@ -30,6 +31,7 @@ namespace WorldServer.Game.Managers
 
         public static void InitializeManager()
         {
+            AddonMgr = AddonManager.GetInstance();
             DataMgr = DataManager.GetInstance();
             ObjectMgr = ObjectManager.GetInstance();
             SkillMgr = SkillManager.GetInstance();

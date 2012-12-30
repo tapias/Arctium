@@ -441,7 +441,7 @@ namespace Framework.Constants
         StartCinematic                           = 0x48D,
         #endregion
 
-        SetAddonInfoRequest                      = 0x760,
+        AddonInfo                                = 0x760,
         UpdateClientCacheVersion                 = 0x72D,
         RealmSplitStateResponse                  = 0x5CC,
         ResponseCharacterCreate                  = 0xF25,
