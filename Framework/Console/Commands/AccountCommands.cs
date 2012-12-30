@@ -24,11 +24,13 @@ namespace Framework.Console.Commands
     {
         public static void CreateAccount(string[] args)
         {
-            string name = Read<string>(args, 0).ToUpper();
+            string name = Read<string>(args, 0);
             string password = Read<string>(args, 1);
 
             if (name == null || password == null)
                 return;
+
+            name = name.ToUpper();
 
             //byte[] hash = new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(password));
             //string hashString = BitConverter.ToString(hash).Replace("-", "");
