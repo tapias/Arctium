@@ -1,8 +1,5 @@
-﻿using Framework.Constants;
-using System;
-using System.Collections.Generic;
-/*
- * Copyright (C) 2012 Arctium <http://>
+﻿/*
+ * Copyright (C) 2012-2013 Arctium <http://arctium.org>
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +15,9 @@ using System.Collections.Generic;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.Constants;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using WorldServer.Game.Managers;
 using WorldServer.Network;
