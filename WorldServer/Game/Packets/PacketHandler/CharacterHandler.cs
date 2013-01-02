@@ -271,7 +271,7 @@ namespace WorldServer.Game.PacketHandler
             if (session.Character.LoginCinematic)
                 CinematicHandler.HandleStartCinematic(ref session);
 
-            ObjectHandler.HandleUpdateObject(ref session);
+            ObjectHandler.HandleUpdateObjectCreate(ref session);
         }
     }
 }

@@ -50,6 +50,22 @@ namespace WorldServer.Game.WorldEntities
             Mask = new BitArray(dataLength, false);
         }
 
+        public bool CheckUpdateDistance(WorldObject obj)
+        {
+            if (Map == obj.Map)
+            {
+                float disX = (float)Math.Pow(Position.X - obj.Position.X, 2);
+                float disY = (float)Math.Pow(Position.Y - obj.Position.Y, 2);
+                float disZ = (float)Math.Pow(Position.Z - obj.Position.Z, 2);
+
+                float distance = disX + disY + disZ;
+
+                return distance <= 10000 ? true : false;
+            }
+
+            return false;
+        }
+
         public void SetUpdateField<T>(int index, T value, byte offset = 0)
         {
             switch (value.GetType().Name)
@@ -155,35 +171,43 @@ namespace WorldServer.Game.WorldEntities
             if (Globals.SpawnMgr.CreatureSpawns.Count > 0)
             {
                 var pChar = session.Character;
+                var count = Globals.SpawnMgr.GetCreatureCountByDistance(pChar);
 
-                UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
-
-                PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                updateObject.WriteUInt16((ushort)Map);
-                updateObject.WriteUInt32(Globals.SpawnMgr.FindCreatureCountByMap(Map));
-
-                foreach (var s in Globals.SpawnMgr.CreatureSpawns)
+                if (count > 0)
                 {
-                    WorldObject spawn = s.Key as CreatureSpawn;
-                    spawn.ToCreature().SetCreatureFields();
+                    UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
 
-                    var data = s.Value as Creature;
+                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
-                    if (spawn.Map != pChar.Map)
-                        continue;
+                    updateObject.WriteUInt16((ushort)Map);
+                    updateObject.WriteUInt32(count);
 
-                    updateObject.WriteUInt8(1);
-                    updateObject.WriteGuid(spawn.Guid);
-                    updateObject.WriteUInt8((byte)ObjectType.Unit);
+                    foreach (var s in Globals.SpawnMgr.CreatureSpawns)
+                    {
+                        WorldObject spawn = s.Key as CreatureSpawn;
 
-                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+                        if (pChar.CheckUpdateDistance(spawn))
+                        {
+                            spawn.ToCreature().SetCreatureFields();
 
-                    spawn.WriteUpdateFields(ref updateObject);
-                    spawn.WriteDynamicUpdateFields(ref updateObject);
+                            var data = s.Value as Creature;
+
+                            if (spawn.Map != pChar.Map)
+                                continue;
+
+                            updateObject.WriteUInt8(1);
+                            updateObject.WriteGuid(spawn.Guid);
+                            updateObject.WriteUInt8((byte)ObjectType.Unit);
+
+                            Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+
+                            spawn.WriteUpdateFields(ref updateObject);
+                            spawn.WriteDynamicUpdateFields(ref updateObject);
+                        }
+                    }
+
+                    session.Send(ref updateObject);
                 }
-
-                session.Send(ref updateObject);
             }
         }
 
@@ -192,34 +216,42 @@ namespace WorldServer.Game.WorldEntities
             if (Globals.SpawnMgr.GameObjectSpawns.Count > 0)
             {
                 var pChar = session.Character;
+                var count = Globals.SpawnMgr.GetGameObjectCountByDistance(pChar);
 
-                UpdateFlag updateFlags = UpdateFlag.Rotation | UpdateFlag.StationaryPosition;
-                PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                updateObject.WriteUInt16((ushort)Map);
-                updateObject.WriteUInt32(Globals.SpawnMgr.FindGameObjectCountByMap(Map));
-
-                foreach (var s in Globals.SpawnMgr.GameObjectSpawns)
+                if (count > 0)
                 {
-                    WorldObject spawn = s.Key as GameObjectSpawn;
-                    spawn.ToGameObject().SetGameObjectFields();
+                    UpdateFlag updateFlags = UpdateFlag.Rotation | UpdateFlag.StationaryPosition;
+                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
-                    var data = s.Value as GameObject;
+                    updateObject.WriteUInt16((ushort)Map);
+                    updateObject.WriteUInt32(count);
 
-                    if (spawn.Map != pChar.Map)
-                        continue;
+                    foreach (var s in Globals.SpawnMgr.GameObjectSpawns)
+                    {
+                        WorldObject spawn = s.Key as GameObjectSpawn;
 
-                    updateObject.WriteUInt8(1);
-                    updateObject.WriteGuid(spawn.Guid);
-                    updateObject.WriteUInt8(5);
+                        if (pChar.CheckUpdateDistance(spawn))
+                        {
+                            spawn.ToGameObject().SetGameObjectFields();
 
-                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+                            var data = s.Value as GameObject;
 
-                    spawn.WriteUpdateFields(ref updateObject);
-                    spawn.WriteDynamicUpdateFields(ref updateObject);
+                            if (spawn.Map != pChar.Map)
+                                continue;
+
+                            updateObject.WriteUInt8(1);
+                            updateObject.WriteGuid(spawn.Guid);
+                            updateObject.WriteUInt8(5);
+
+                            Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+
+                            spawn.WriteUpdateFields(ref updateObject);
+                            spawn.WriteDynamicUpdateFields(ref updateObject);
+                        }
+                    }
+
+                    session.Send(ref updateObject);
                 }
-
-                session.Send(ref updateObject);
             }
         }
 

@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
+using System.Timers;
 
 namespace WorldServer.Game.Managers
 {
@@ -37,6 +38,21 @@ namespace WorldServer.Game.Managers
             GameObjectSpawns = new Dictionary<GameObjectSpawn, GameObject>();
 
             Initialize();
+
+            Timer spawnTimer = new Timer(50);
+            spawnTimer.Elapsed += spawnTimer_Elapsed;
+            spawnTimer.Enabled = true;
+        }
+
+        void spawnTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize()
+        {
+            LoadCreatureSpawns();
+            LoadGameObjectSpawns();
         }
 
         public void AddSpawn(CreatureSpawn spawn, ref Creature data)
@@ -59,21 +75,21 @@ namespace WorldServer.Game.Managers
             return null;
         }
 
-        public uint FindCreatureCountByMap(uint map)
+        public uint GetCreatureCountByDistance(WorldObject obj)
         {
             uint count = 0;
             foreach (var c in CreatureSpawns)
-                if (c.Key.Map == map)
+                if (obj.CheckUpdateDistance(c.Key))
                     ++count;
 
             return count;
         }
 
-        public uint FindGameObjectCountByMap(uint map)
+        public uint GetGameObjectCountByDistance(WorldObject obj)
         {
             uint count = 0;
-            foreach (var c in GameObjectSpawns)
-                if (c.Key.Map == map)
+            foreach (var g in GameObjectSpawns)
+                if (obj.CheckUpdateDistance(g.Key))
                     ++count;
 
             return count;
@@ -163,12 +179,6 @@ namespace WorldServer.Game.Managers
             }
 
             Log.Message(LogType.DB, "Loaded {0} gameobject spawns.", GameObjectSpawns.Count);
-        }
-
-        public void Initialize()
-        {
-            LoadCreatureSpawns();
-            LoadGameObjectSpawns();
         }
     }
 }

@@ -78,23 +78,24 @@ namespace WorldServer.Game.Spawns
             foreach (var v in Globals.WorldMgr.Sessions)
             {
                 Character pChar = v.Value.Character;
-                if (pChar.Map != Map)
-                    continue;
 
-                PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+                if (pChar.CheckUpdateDistance(this))
+                {
+                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
-                updateObject.WriteUInt16((ushort)Map);
-                updateObject.WriteUInt32(1);
-                updateObject.WriteUInt8(1);
-                updateObject.WriteGuid(Guid);
-                updateObject.WriteUInt8(5);
+                    updateObject.WriteUInt16((ushort)Map);
+                    updateObject.WriteUInt32(1);
+                    updateObject.WriteUInt8(1);
+                    updateObject.WriteGuid(Guid);
+                    updateObject.WriteUInt8(5);
 
-                Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
+                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
 
-                WriteUpdateFields(ref updateObject);
-                WriteDynamicUpdateFields(ref updateObject);
+                    WriteUpdateFields(ref updateObject);
+                    WriteDynamicUpdateFields(ref updateObject);
 
-                v.Value.Send(ref updateObject);
+                    v.Value.Send(ref updateObject);
+                }
             }
         }
 

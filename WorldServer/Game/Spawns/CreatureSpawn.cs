@@ -33,7 +33,6 @@ namespace WorldServer.Game.Spawns
 
         public CreatureSpawn(int updateLength = (int)UnitFields.End) : base(updateLength) { }
 
-
         public static ulong GetLastGuid()
         {
             SQLResult result = DB.World.Select("SELECT * FROM `creature_spawns` ORDER BY `guid` DESC LIMIT 1");
@@ -79,23 +78,24 @@ namespace WorldServer.Game.Spawns
             foreach (var v in Globals.WorldMgr.Sessions)
             {
                 Character pChar = v.Value.Character;
-                if (pChar.Map != Map)
-                    continue;
 
-                PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+                if (pChar.CheckUpdateDistance(this))
+                {
+                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
-                updateObject.WriteUInt16((ushort)Map);
-                updateObject.WriteUInt32(1);
-                updateObject.WriteUInt8(1);
-                updateObject.WriteGuid(Guid);
-                updateObject.WriteUInt8(3);
+                    updateObject.WriteUInt16((ushort)Map);
+                    updateObject.WriteUInt32(1);
+                    updateObject.WriteUInt8(1);
+                    updateObject.WriteGuid(Guid);
+                    updateObject.WriteUInt8(3);
 
-                Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
+                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
 
-                WriteUpdateFields(ref updateObject);
-                WriteDynamicUpdateFields(ref updateObject);
+                    WriteUpdateFields(ref updateObject);
+                    WriteDynamicUpdateFields(ref updateObject);
 
-                v.Value.Send(ref updateObject);
+                    v.Value.Send(ref updateObject);
+                }
             }
         }
 
