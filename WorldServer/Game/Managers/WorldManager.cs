@@ -21,6 +21,8 @@ using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using Framework.Singleton;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
@@ -34,6 +36,8 @@ namespace WorldServer.Game.Managers
         WorldManager()
         {
             Sessions = new Dictionary<ulong, WorldClass>();
+
+            StartRangeUpdateTimers();
         }
 
         public void AddSession(ulong guid, ref WorldClass session)
@@ -45,7 +49,7 @@ namespace WorldServer.Game.Managers
         }
 
         public void DeleteSession(ulong guid)
-        {
+        { 
             Sessions.Remove(guid);
         }
 
@@ -65,6 +69,223 @@ namespace WorldServer.Game.Managers
                     return s.Value;
 
             return null;
+        }
+
+        public void StartRangeUpdateTimers()
+        {
+            var updateTask = new Thread(UpdateTask);
+            updateTask.IsBackground = true;
+            updateTask.Start();
+        }
+
+        void UpdateTask()
+        {
+            while (true)
+            {
+                Thread.Sleep(50);
+
+                foreach (var c in Sessions.ToList())
+                {
+                    var pChar = c.Value.Character;
+                    var inRangeCSpawns = Globals.SpawnMgr.GetInRangeCreatures(pChar);
+                    var count = inRangeCSpawns.Count();
+
+                    if (count > 0)
+                    {
+                        UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
+
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+
+                        foreach (var s in inRangeCSpawns)
+                        {
+                            WorldObject spawn = s.Key;
+
+                            if (!pChar.InRangeObjects.ContainsKey(s.Key.Guid))
+                            {
+                                spawn.ToCreature().SetCreatureFields();
+
+                                var data = s.Value;
+
+                                updateObject.WriteUInt8(1);
+                                updateObject.WriteGuid(spawn.Guid);
+                                updateObject.WriteUInt8((byte)ObjectType.Unit);
+
+                                Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+
+                                spawn.WriteUpdateFields(ref updateObject);
+                                spawn.WriteDynamicUpdateFields(ref updateObject);
+
+                                pChar.InRangeObjects.Add(spawn.Guid, spawn);
+                            }
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+
+                    var inRangeGSpawns = Globals.SpawnMgr.GetInRangeGameObjects(pChar);
+                    count = inRangeGSpawns.Count();
+
+                    if (count > 0)
+                    {
+                        UpdateFlag updateFlags = UpdateFlag.Rotation | UpdateFlag.StationaryPosition;
+
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+
+                        foreach (var s in inRangeGSpawns)
+                        {
+                            WorldObject spawn = s.Key;
+
+                            if (!pChar.InRangeObjects.ContainsKey(spawn.Guid))
+                            {
+                                spawn.ToGameObject().SetGameObjectFields();
+
+                                var data = s.Value;
+
+                                updateObject.WriteUInt8(1);
+                                updateObject.WriteGuid(spawn.Guid);
+                                updateObject.WriteUInt8((byte)ObjectType.GameObject);
+
+                                Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
+
+                                spawn.WriteUpdateFields(ref updateObject);
+                                spawn.WriteDynamicUpdateFields(ref updateObject);
+
+                                pChar.InRangeObjects.Add(spawn.Guid, spawn);
+                            }
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+
+                    var inRangeChars = GetInRangeCharacter(pChar);
+                    count = inRangeChars.Count();
+
+                    if (count > 0)
+                    {
+                        UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
+
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+
+                        foreach (var ch in inRangeChars)
+                        {
+                            WorldObject iChar = ch.Value.Character;
+
+                            if (!pChar.InRangeObjects.ContainsKey(iChar.Guid))
+                            {
+                                updateObject.WriteUInt8(1);
+                                updateObject.WriteGuid(iChar.Guid);
+                                updateObject.WriteUInt8(4);
+
+                                updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
+                                WriteUpdateObjectMovement(ref updateObject, ref iChar, updateFlags);
+
+                                iChar.WriteUpdateFields(ref updateObject);
+                                iChar.WriteDynamicUpdateFields(ref updateObject);
+
+                                ch.Value.Send(ref updateObject);
+
+                                pChar.InRangeObjects.Add(iChar.Guid, iChar);
+                            }
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+
+                    var outOfRangeCSpawns = Globals.SpawnMgr.GetOutOfRangeCreatures(pChar);
+                    count = outOfRangeCSpawns.Count();
+
+                    if (count > 0)
+                    {
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt8(3);
+                                                    updateObject.WriteUInt32((uint)count);
+
+                        foreach (var s in outOfRangeCSpawns)
+                        {
+                            WorldObject spawn = s.Key;
+
+                            updateObject.WriteGuid(spawn.Guid);
+                            pChar.InRangeObjects.Remove(spawn.Guid);
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+
+                    var outOfRangeGSpawns = Globals.SpawnMgr.GetOutOfRangeGameObjects(pChar);
+                    count = outOfRangeGSpawns.Count();
+
+                    if (count > 0)
+                    {
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt8(3);
+                        updateObject.WriteUInt32((uint)count);
+
+                        foreach (var s in outOfRangeGSpawns)
+                        {
+                            WorldObject spawn = s.Key;
+
+                            updateObject.WriteGuid(spawn.Guid);
+                            pChar.InRangeObjects.Remove(spawn.Guid);
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+
+                    var outOfRangeChars = GetOutOfRangeCharacter(pChar);
+                    count = outOfRangeChars.Count();
+
+                    if (count > 0)
+                    {
+                        PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+                        updateObject.WriteUInt16((ushort)pChar.Map);
+                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt8(3);
+                        updateObject.WriteUInt32((uint)count);
+
+                        foreach (var s in outOfRangeChars)
+                        {
+                            WorldObject oChar = s.Value.Character;
+
+                            updateObject.WriteGuid(oChar.Guid);
+                            pChar.InRangeObjects.Remove(oChar.Guid);
+                        }
+
+                        c.Value.Send(ref updateObject);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<ulong, WorldClass>> GetInRangeCharacter(WorldObject obj)
+        {
+            foreach (var c in Sessions.ToList())
+                if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
+                    if (obj.CheckUpdateDistance(c.Value.Character))
+                        yield return c;
+        }
+
+        public IEnumerable<KeyValuePair<ulong, WorldClass>> GetOutOfRangeCharacter(WorldObject obj)
+        {
+            foreach (var c in Sessions.ToList())
+                if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
+                    if (!obj.CheckUpdateDistance(c.Value.Character))
+                        yield return c;
         }
 
         public void WriteAccountData(AccountDataMasks mask, ref WorldClass session)

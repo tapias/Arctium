@@ -23,7 +23,6 @@ using System;
 using System.Collections.Generic;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
-using System.Timers;
 
 namespace WorldServer.Game.Managers
 {
@@ -38,15 +37,6 @@ namespace WorldServer.Game.Managers
             GameObjectSpawns = new Dictionary<GameObjectSpawn, GameObject>();
 
             Initialize();
-
-            Timer spawnTimer = new Timer(50);
-            spawnTimer.Elapsed += spawnTimer_Elapsed;
-            spawnTimer.Enabled = false;
-        }
-
-        void spawnTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         public void Initialize()
@@ -75,24 +65,36 @@ namespace WorldServer.Game.Managers
             return null;
         }
 
-        public uint GetCreatureCountByDistance(WorldObject obj)
+        public IEnumerable<KeyValuePair<CreatureSpawn, Creature>> GetInRangeCreatures(WorldObject obj)
         {
-            uint count = 0;
             foreach (var c in CreatureSpawns)
-                if (obj.CheckUpdateDistance(c.Key))
-                    ++count;
-
-            return count;
+                if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key.Guid))
+                    if (obj.CheckUpdateDistance(c.Key))
+                        yield return c;
         }
 
-        public uint GetGameObjectCountByDistance(WorldObject obj)
+        public IEnumerable<KeyValuePair<GameObjectSpawn, GameObject>> GetInRangeGameObjects(WorldObject obj)
         {
-            uint count = 0;
             foreach (var g in GameObjectSpawns)
-                if (obj.CheckUpdateDistance(g.Key))
-                    ++count;
+                if (!obj.ToCharacter().InRangeObjects.ContainsKey(g.Key.Guid))
+                    if (obj.CheckUpdateDistance(g.Key))
+                        yield return g;
+        }
 
-            return count;
+        public IEnumerable<KeyValuePair<CreatureSpawn, Creature>> GetOutOfRangeCreatures(WorldObject obj)
+        {
+            foreach (var c in CreatureSpawns)
+                if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key.Guid))
+                    if (!obj.CheckUpdateDistance(c.Key))
+                        yield return c;
+        }
+
+        public IEnumerable<KeyValuePair<GameObjectSpawn, GameObject>> GetOutOfRangeGameObjects(WorldObject obj)
+        {
+            foreach (var g in GameObjectSpawns)
+                if (obj.ToCharacter().InRangeObjects.ContainsKey(g.Key.Guid))
+                    if (!obj.CheckUpdateDistance(g.Key))
+                        yield return g;
         }
 
         public void LoadCreatureSpawns()

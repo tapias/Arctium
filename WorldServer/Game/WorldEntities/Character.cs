@@ -46,6 +46,8 @@ namespace WorldServer.Game.WorldEntities
         public UInt32 CustomizeFlags;
         public Boolean LoginCinematic;
 
+        public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
+
         public List<Skill> Skills = new List<Skill>();
         public List<PlayerSpell> SpellList = new List<PlayerSpell>();
 

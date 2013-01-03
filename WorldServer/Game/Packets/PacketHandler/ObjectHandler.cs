@@ -78,6 +78,8 @@ namespace WorldServer.Game.PacketHandler
 
                     if (character.CheckUpdateDistance(pChar))
                     {
+                        character.ToCharacter().InRangeObjects.Add(pChar.Guid, pChar);
+
                         updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
                         updateObject.WriteUInt16((ushort)pChar.Map);
@@ -96,13 +98,6 @@ namespace WorldServer.Game.PacketHandler
                     }
                 }
             }
-
-            character.AddCreatureSpawnsToWorld(ref session);
-            character.AddGameObjectSpawnsToWorld(ref session);
-        }
-
-        public static void HandleUpdateObjectOutOfRange(ref WorldClass session)
-        {
         }
 
         public static PacketWriter HandleObjectDestroy(ref WorldClass session, ulong guid)
