@@ -41,7 +41,7 @@ namespace WorldServer.Game.Managers
 
             Timer spawnTimer = new Timer(50);
             spawnTimer.Elapsed += spawnTimer_Elapsed;
-            spawnTimer.Enabled = true;
+            spawnTimer.Enabled = false;
         }
 
         void spawnTimer_Elapsed(object sender, ElapsedEventArgs e)

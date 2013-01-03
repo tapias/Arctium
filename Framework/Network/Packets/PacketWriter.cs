@@ -92,7 +92,6 @@ namespace Framework.Network.Packets
             for (int i = 0; i < BaseStream.Length; i++)
                 data[i] = (byte)BaseStream.ReadByte();
 
-
             Size = (uint)data.Length - 2;
             if (!isAuthPacket)
             {
