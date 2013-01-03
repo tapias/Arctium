@@ -53,7 +53,9 @@ namespace WorldServer.Game.PacketHandler
 
             session.Send(ref realmSplitStateResp);
 
-            AddonMgr.WriteAddonData(ref session);
+            // Crash!!!
+            // Wrong data sent...
+            // AddonMgr.WriteAddonData(ref session);
         }
     }
 }
