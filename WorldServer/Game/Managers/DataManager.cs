@@ -64,7 +64,17 @@ namespace WorldServer.Game.Managers
 
         public void LoadCreatureData()
         {
-            SQLResult result = DB.World.Select("SELECT * FROM creature_stats");
+            SQLResult result = DB.World.Select("SELECT cs.Id FROM creature_stats cs LEFT JOIN creature_data cd ON cs.Id = cd.Id WHERE cd.Id IS NULL;");
+
+            if (result.Count != 0)
+            {
+                var missingIds = result.ReadAllValuesFromField("Id");
+                DB.World.ExecuteBigQuery("creature_data", "Id", 1, result.Count, missingIds);
+
+                Log.Message(LogType.DB, "Added {0} default data definition for creatures.", missingIds.Length);
+            }
+
+            result = DB.World.Select("SELECT * FROM creature_stats cs RIGHT JOIN creature_data cd ON cs.Id = cd.Id");
 
             for (int r = 0; r < result.Count; r++)
             {
@@ -106,32 +116,20 @@ namespace WorldServer.Game.Managers
                 Add(creature);
             }
 
-            SQLResult dataResult = DB.World.Select("SELECT Id FROM creature_stats WHERE Id NOT IN (SELECT Id FROM creature_data)");
-
-            if (dataResult.Count != 0)
-            {
-                var missingIds = dataResult.ReadAllValuesFromField("Id");
-                DB.World.ExecuteBigQuery("creature_data", "Id", 1, dataResult.Count, missingIds);
-
-                Log.Message(LogType.DB, "Added {0} default data definition for creatures.", missingIds.Length);
-            }
-
-            dataResult = DB.World.Select("SELECT * FROM creature_data WHERE Id IN (SELECT Id FROM creature_stats)");
-
             for (int i = 0; i < Creatures.Count; i++)
             {
-                int id = dataResult.Read<Int32>(i, "Id");
+                int id = result.Read<Int32>(i, "Id");
 
                 Creatures[id].Data = new CreatureData()
                 {
-                    Health     = dataResult.Read<Int32>(i, "Health"),
-                    Level      = dataResult.Read<Byte>(i, "Level"),
-                    Class      = dataResult.Read<Byte>(i, "Class"),
-                    Faction    = dataResult.Read<Int32>(i, "Faction"),
-                    Scale      = dataResult.Read<Int32>(i, "Scale"),
-                    UnitFlags  = dataResult.Read<Int32>(i, "UnitFlags"),
-                    UnitFlags2 = dataResult.Read<Int32>(i, "UnitFlags2"),
-                    NpcFlags   = dataResult.Read<Int32>(i, "NpcFlags")
+                    Health     = result.Read<Int32>(i, "Health"),
+                    Level      = result.Read<Byte>(i, "Level"),
+                    Class      = result.Read<Byte>(i, "Class"),
+                    Faction    = result.Read<Int32>(i, "Faction"),
+                    Scale      = result.Read<Int32>(i, "Scale"),
+                    UnitFlags  = result.Read<Int32>(i, "UnitFlags"),
+                    UnitFlags2 = result.Read<Int32>(i, "UnitFlags2"),
+                    NpcFlags   = result.Read<Int32>(i, "NpcFlags")
                 };
             }
 
