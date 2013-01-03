@@ -156,10 +156,20 @@ namespace WorldServer.Game.Managers
 
             for (int i = 0; i < result.Count; i++)
             {
+                var guid = result.Read<UInt64>(i, "Guid");
+                var id = result.Read<Int32>(i, "Id");
+
+                GameObject data = Globals.DataMgr.FindGameObject(id);
+                if (data == null)
+                {
+                    Log.Message(LogType.ERROR, "Loading a gameobject spawn (Guid: {0}) with non-existing stats (Id: {1}) skipped.", guid, id);
+                    continue;
+                }
+
                 GameObjectSpawn spawn = new GameObjectSpawn()
                 {
-                    Guid = result.Read<UInt64>(i, "Guid"),
-                    Id = result.Read<Int32>(i, "Id"),
+                    Guid = guid,
+                    Id = id,
 
                     Position = new Vector4()
                     {
@@ -171,8 +181,6 @@ namespace WorldServer.Game.Managers
 
                     Map = result.Read<UInt32>(i, "Map")
                 };
-
-                GameObject data = Globals.DataMgr.FindGameObject(spawn.Id);
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
