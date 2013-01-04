@@ -208,9 +208,9 @@ namespace WorldServer.Game.Managers
                         PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
                         updateObject.WriteUInt16((ushort)pChar.Map);
-                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt32(1);
                         updateObject.WriteUInt8(3);
-                                                    updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt32((uint)count);
 
                         foreach (var s in outOfRangeCSpawns)
                         {
@@ -231,7 +231,7 @@ namespace WorldServer.Game.Managers
                         PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
                         updateObject.WriteUInt16((ushort)pChar.Map);
-                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt32(1);
                         updateObject.WriteUInt8(3);
                         updateObject.WriteUInt32((uint)count);
 
@@ -254,7 +254,7 @@ namespace WorldServer.Game.Managers
                         PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
 
                         updateObject.WriteUInt16((ushort)pChar.Map);
-                        updateObject.WriteUInt32((uint)count);
+                        updateObject.WriteUInt32(1);
                         updateObject.WriteUInt8(3);
                         updateObject.WriteUInt32((uint)count);
 

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2013-01-04 01:21:21
+Date: 2013-01-04 03:35:30
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -108,7 +108,8 @@ CREATE TABLE `gameobject_spawns` (
   `y` float NOT NULL,
   `z` float NOT NULL,
   `o` float NOT NULL,
-  `animProgress` int(11) NOT NULL,
+  `factionTemplate` int(10) unsigned NOT NULL,
+  `animProgress` smallint(6) NOT NULL,
   `activated` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`guid`),
   KEY `creatureId` (`id`)

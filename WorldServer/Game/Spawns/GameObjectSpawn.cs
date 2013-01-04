@@ -29,7 +29,8 @@ namespace WorldServer.Game.Spawns
     public class GameObjectSpawn : WorldObject
     {
         public Int32 Id;
-        public Int32 AnimProgress;
+        public UInt32 FactionTemplate;
+        public Byte AnimProgress;
         public Boolean Activated;
         public GameObject GameObject;
 
@@ -118,13 +119,16 @@ namespace WorldServer.Game.Spawns
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 1, 0);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 2, 0);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 3, 1);
-            SetUpdateField<Int32>((int)GameObjectFields.AnimProgress, AnimProgress);
-            SetUpdateField<Int32>((int)GameObjectFields.FactionTemplate, 0);
+            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, AnimProgress);
+            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 0, 1);
+            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 255, 2);
+            SetUpdateField<Byte>((int)GameObjectFields.AnimProgress, 255, 3);
+            SetUpdateField<UInt32>((int)GameObjectFields.FactionTemplate, FactionTemplate);
             SetUpdateField<Int32>((int)GameObjectFields.Level, 0);
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, Convert.ToByte(Activated));
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, (byte)GameObject.Stats.Type, 1);
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 0, 2);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 100, 3);
+            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 255, 3);
         }
     }
 }

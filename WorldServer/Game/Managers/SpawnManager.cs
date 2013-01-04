@@ -181,8 +181,9 @@ namespace WorldServer.Game.Managers
                         O = result.Read<Single>(i, "O")
                     },
 
-                    AnimProgress = result.Read<Int32>(i, "AnimProgress"),
-                    Activated    = result.Read<bool>(i, "Activated"),
+                    FactionTemplate = result.Read<UInt32>(i, "FactionTemplate"),
+                    AnimProgress    = result.Read<Byte>(i, "AnimProgress"),
+                    Activated       = result.Read<bool>(i, "Activated"),
                 };
 
                 spawn.CreateFullGuid();
