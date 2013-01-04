@@ -24,6 +24,7 @@ namespace WorldServer.Game.ObjectDefines
     {
         public Int32 Id;
         public Int32 Type;
+        public Int32 Flags;
         public Int32 DisplayInfoId;
         public String Name;
         public String IconName;

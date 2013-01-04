@@ -29,6 +29,8 @@ namespace WorldServer.Game.Spawns
     public class GameObjectSpawn : WorldObject
     {
         public Int32 Id;
+        public Int32 AnimProgress;
+        public Boolean Activated;
         public GameObject GameObject;
 
         public GameObjectSpawn(int updateLength = (int)GameObjectFields.End) : base(updateLength) { }
@@ -111,15 +113,15 @@ namespace WorldServer.Game.Spawns
             // GameObjectFields
             SetUpdateField<UInt64>((int)GameObjectFields.CreatedBy, 0);
             SetUpdateField<Int32>((int)GameObjectFields.DisplayID, GameObject.Stats.DisplayInfoId);
-            SetUpdateField<Int32>((int)GameObjectFields.Flags, 0);
+            SetUpdateField<Int32>((int)GameObjectFields.Flags, GameObject.Stats.Flags);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation, 0);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 1, 0);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 2, 0);
             SetUpdateField<Single>((int)GameObjectFields.ParentRotation + 3, 1);
-            SetUpdateField<Int32>((int)GameObjectFields.AnimProgress, 0);
+            SetUpdateField<Int32>((int)GameObjectFields.AnimProgress, AnimProgress);
             SetUpdateField<Int32>((int)GameObjectFields.FactionTemplate, 0);
             SetUpdateField<Int32>((int)GameObjectFields.Level, 0);
-            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 1);
+            SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, Convert.ToByte(Activated));
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, (byte)GameObject.Stats.Type, 1);
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 0, 2);
             SetUpdateField<Byte>((int)GameObjectFields.PercentHealth, 100, 3);

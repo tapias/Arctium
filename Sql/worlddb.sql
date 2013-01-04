@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2012-12-15 04:10:39
+Date: 2013-01-04 01:21:21
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -108,6 +108,8 @@ CREATE TABLE `gameobject_spawns` (
   `y` float NOT NULL,
   `z` float NOT NULL,
   `o` float NOT NULL,
+  `animProgress` int(11) NOT NULL,
+  `activated` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`guid`),
   KEY `creatureId` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -123,6 +125,7 @@ DROP TABLE IF EXISTS `gameobject_stats`;
 CREATE TABLE `gameobject_stats` (
   `Id` int(10) NOT NULL,
   `Type` int(11) NOT NULL DEFAULT '0',
+  `Flags` int(11) NOT NULL,
   `DisplayInfoId` int(11) NOT NULL DEFAULT '0',
   `Name` text,
   `IconName` text,
@@ -173,7 +176,7 @@ CREATE TABLE `gameobject_stats` (
 -- ----------------------------
 -- Records of gameobject_stats
 -- ----------------------------
-INSERT INTO `gameobject_stats` VALUES ('210020', '3', '10721', 'Weapon Rack', null, null, '57', '40864', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '13364', '0', '0', '0', '0', '0', '0', '0', '0', '128680', '0', '0', '0', '0', '0', '1', '73210', '0', '0', '0', '0', '0', '0');
+INSERT INTO `gameobject_stats` VALUES ('210020', '3', '0', '10721', 'Weapon Rack', null, null, '57', '40864', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '13364', '0', '0', '0', '0', '0', '0', '0', '0', '128680', '0', '0', '0', '0', '0', '1', '73210', '0', '0', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `teleport_locations`

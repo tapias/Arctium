@@ -36,6 +36,8 @@ namespace WorldServer.Game.WorldEntities
 
                 Stats.Id             = result.Read<Int32>(0, "Id");
                 Stats.Type           = result.Read<Int32>(0, "Type");
+                Stats.Flags          = result.Read<Int32>(0, "Flags");
+
                 Stats.DisplayInfoId  = result.Read<Int32>(0, "DisplayInfoId");
                 Stats.Name           = result.Read<String>(0, "Name");
                 Stats.IconName       = result.Read<String>(0, "IconName");

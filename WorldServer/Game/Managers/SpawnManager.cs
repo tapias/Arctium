@@ -106,7 +106,9 @@ namespace WorldServer.Game.Managers
                 CreatureSpawn spawn = new CreatureSpawn()
                 {
                     Guid = result.Read<UInt64>(i, "Guid"),
-                    Id    = result.Read<Int32>(i, "Id"),
+                    Id   = result.Read<Int32>(i, "Id"),
+                    
+                    Map = result.Read<UInt32>(i, "Map"),
 
                     Position = new Vector4()
                     {
@@ -115,8 +117,6 @@ namespace WorldServer.Game.Managers
                         Z = result.Read<Single>(i, "Z"),
                         O = result.Read<Single>(i, "O")
                     },
-
-                    Map = result.Read<UInt32>(i, "Map")
                 };
 
                 Creature data = Globals.DataMgr.FindCreature(spawn.Id);
@@ -169,7 +169,9 @@ namespace WorldServer.Game.Managers
                 GameObjectSpawn spawn = new GameObjectSpawn()
                 {
                     Guid = guid,
-                    Id = id,
+                    Id   = id,
+
+                    Map = result.Read<UInt32>(i, "Map"),
 
                     Position = new Vector4()
                     {
@@ -179,7 +181,8 @@ namespace WorldServer.Game.Managers
                         O = result.Read<Single>(i, "O")
                     },
 
-                    Map = result.Read<UInt32>(i, "Map")
+                    AnimProgress = result.Read<Int32>(i, "AnimProgress"),
+                    Activated    = result.Read<bool>(i, "Activated"),
                 };
 
                 spawn.CreateFullGuid();

@@ -64,7 +64,7 @@ namespace WorldServer.Game.Managers
 
         public void LoadCreatureData()
         {
-            SQLResult result = DB.World.Select("SELECT cs.Id FROM creature_stats cs LEFT JOIN creature_data cd ON cs.Id = cd.Id WHERE cd.Id IS NULL;");
+            SQLResult result = DB.World.Select("SELECT cs.Id FROM creature_stats cs LEFT JOIN creature_data cd ON cs.Id = cd.Id WHERE cd.Id IS NULL");
 
             if (result.Count != 0)
             {
