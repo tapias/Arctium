@@ -103,10 +103,20 @@ namespace WorldServer.Game.Managers
 
             for (int i = 0; i < result.Count; i++)
             {
+                var guid = result.Read<UInt64>(i, "Guid");
+                var id = result.Read<Int32>(i, "Id");
+
+                Creature data = Globals.DataMgr.FindCreature(id);
+                if (data == null)
+                {
+                    Log.Message(LogType.ERROR, "Loading a creature spawn (Guid: {0}) with non-existing stats (Id: {1}) skipped.", guid, id);
+                    continue;
+                }
+
                 CreatureSpawn spawn = new CreatureSpawn()
                 {
-                    Guid = result.Read<UInt64>(i, "Guid"),
-                    Id   = result.Read<Int32>(i, "Id"),
+                    Guid = guid,
+                    Id   = id,
                     
                     Map = result.Read<UInt32>(i, "Map"),
 
@@ -118,8 +128,6 @@ namespace WorldServer.Game.Managers
                         O = result.Read<Single>(i, "O")
                     },
                 };
-
-                Creature data = Globals.DataMgr.FindCreature(spawn.Id);
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
