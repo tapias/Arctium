@@ -55,11 +55,9 @@ namespace WorldServer.Game.Managers
 
         public Creature FindCreature(int id)
         {
-            foreach (var c in Creatures)
-                if (c.Key == id)
-                    return c.Value;
-
-            return null;
+            Creature creature = null;
+            Creatures.TryGetValue(id, out creature);
+            return creature;
         }
 
         public void LoadCreatureData()
@@ -151,11 +149,9 @@ namespace WorldServer.Game.Managers
 
         public GameObject FindGameObject(int id)
         {
-            foreach (var c in GameObjects)
-                if (c.Key == id)
-                    return c.Value;
-
-            return null;
+            GameObject gameObject = null;
+            GameObjects.TryGetValue(id, out gameObject);
+            return gameObject;
         }
 
         public void LoadGameObject()
