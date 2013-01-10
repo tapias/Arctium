@@ -49,6 +49,7 @@ namespace Framework.Network.Packets
             if (session.Character != null)
             {
                 ulong charGuid = session.Character.Guid;
+
                 if (WorldMgr.Sessions.ContainsKey(charGuid))
                     WorldMgr.Sessions[charGuid] = session;
                 else

@@ -25,32 +25,33 @@ using System.Linq;
 using System.Threading;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public sealed class WorldManager : SingletonBase<WorldManager>
     {
-        public Dictionary<ulong, WorldClass> Sessions;
+        public ConcurrentDictionary<ulong, WorldClass> Sessions;
         public WorldClass Session { get; set; }
 
         WorldManager()
         {
-            Sessions = new Dictionary<ulong, WorldClass>();
+            Sessions = new ConcurrentDictionary<ulong, WorldClass>();
 
             StartRangeUpdateTimers();
         }
 
-        public void AddSession(ulong guid, ref WorldClass session)
+        public bool AddSession(ulong guid, ref WorldClass session)
         {
-            if (Sessions.ContainsKey(guid))
-                Sessions.Remove(guid);
-
-            Sessions.Add(guid, session);
+            return Sessions.TryAdd(guid, session);
         }
 
-        public void DeleteSession(ulong guid)
-        { 
-            Sessions.Remove(guid);
+        public WorldClass DeleteSession(ulong guid)
+        {
+            WorldClass removedSession;
+            Sessions.TryRemove(guid, out removedSession);
+
+            return removedSession;
         }
 
         public WorldClass GetSession(string name)

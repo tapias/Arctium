@@ -22,41 +22,46 @@ using System;
 using System.Collections.Generic;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public class DataManager : SingletonBase<DataManager>
     {
-        Dictionary<Int32, Creature> Creatures;
-        Dictionary<Int32, GameObject> GameObjects;
+        ConcurrentDictionary<Int32, Creature> Creatures;
+        ConcurrentDictionary<Int32, GameObject> GameObjects;
 
         DataManager()
         {
-            Creatures = new Dictionary<Int32, Creature>();
-            GameObjects = new Dictionary<Int32, GameObject>();
+            Creatures = new ConcurrentDictionary<Int32, Creature>();
+            GameObjects = new ConcurrentDictionary<Int32, GameObject>();
 
             Initialize();
         }
 
-        public void Add(Creature creature)
+        public bool Add(Creature creature)
         {
-            Creatures.Add(creature.Stats.Id, creature);
+            return Creatures.TryAdd(creature.Stats.Id, creature);
         }
 
-        public void Remove(Creature creature)
+        public Creature Remove(Creature creature)
         {
-            Creatures.Remove(creature.Stats.Id);
+            Creature removedCreature;
+            Creatures.TryRemove(creature.Stats.Id, out removedCreature);
+
+            return removedCreature;
         }
 
-        public Dictionary<Int32, Creature> GetCreatures()
+        public ConcurrentDictionary<Int32, Creature> GetCreatures()
         {
             return Creatures;
         }
 
         public Creature FindCreature(int id)
         {
-            Creature creature = null;
+            Creature creature;
             Creatures.TryGetValue(id, out creature);
+
             return creature;
         }
 
@@ -104,53 +109,50 @@ namespace WorldServer.Game.Managers
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                     Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
 
-                Creature creature = new Creature()
+                Add(new Creature
                 {
+                    Data = new CreatureData
+                    {
+                        Health     = result.Read<Int32>(r, "Health"),
+                        Level      = result.Read<Byte>(r, "Level"),
+                        Class      = result.Read<Byte>(r, "Class"),
+                        Faction    = result.Read<Int32>(r, "Faction"),
+                        Scale      = result.Read<Int32>(r, "Scale"),
+                        UnitFlags  = result.Read<Int32>(r, "UnitFlags"),
+                        UnitFlags2 = result.Read<Int32>(r, "UnitFlags2"),
+                        NpcFlags   = result.Read<Int32>(r, "NpcFlags")
+                    },
+
                     Stats = Stats,
-                };
-
-                Add(creature);
-            }
-
-            for (int i = 0; i < Creatures.Count; i++)
-            {
-                int id = result.Read<Int32>(i, "Id");
-
-                Creatures[id].Data = new CreatureData()
-                {
-                    Health     = result.Read<Int32>(i, "Health"),
-                    Level      = result.Read<Byte>(i, "Level"),
-                    Class      = result.Read<Byte>(i, "Class"),
-                    Faction    = result.Read<Int32>(i, "Faction"),
-                    Scale      = result.Read<Int32>(i, "Scale"),
-                    UnitFlags  = result.Read<Int32>(i, "UnitFlags"),
-                    UnitFlags2 = result.Read<Int32>(i, "UnitFlags2"),
-                    NpcFlags   = result.Read<Int32>(i, "NpcFlags")
-                };
+                });
             }
 
             Log.Message(LogType.DB, "Loaded {0} creatures.", Creatures.Count);
         }
 
-        public void Add(GameObject gameobject)
+        public bool Add(GameObject gameobject)
         {
-            GameObjects.Add(gameobject.Stats.Id, gameobject);
+            return GameObjects.TryAdd(gameobject.Stats.Id, gameobject);
         }
 
-        public void Remove(GameObject gameobject)
+        public GameObject Remove(GameObject gameobject)
         {
-            GameObjects.Remove(gameobject.Stats.Id);
+            GameObject removedGameObject;
+            GameObjects.TryRemove(gameobject.Stats.Id, out removedGameObject);
+
+            return removedGameObject;
         }
 
-        public Dictionary<Int32, GameObject> GetGameObjects()
+        public ConcurrentDictionary<Int32, GameObject> GetGameObjects()
         {
             return GameObjects;
         }
 
         public GameObject FindGameObject(int id)
         {
-            GameObject gameObject = null;
+            GameObject gameObject;
             GameObjects.TryGetValue(id, out gameObject);
+
             return gameObject;
         }
 
@@ -160,31 +162,28 @@ namespace WorldServer.Game.Managers
 
             for (int r = 0; r < result.Count; r++)
             {
-                GameObjectStats Stats = new GameObjectStats();
-
-                Stats.Id = result.Read<Int32>(r, "Id");
-                Stats.Type = result.Read<Int32>(r, "Type");
-                Stats.DisplayInfoId = result.Read<Int32>(r, "DisplayInfoId");
-                Stats.Name = result.Read<String>(r, "Name");
-                Stats.IconName = result.Read<String>(r, "IconName");
-                Stats.CastBarCaption = result.Read<String>(r, "CastBarCaption");
+                GameObjectStats Stats = new GameObjectStats
+                {
+                    Id                = result.Read<Int32>(r, "Id"),
+                    Type              = result.Read<Int32>(r, "Type"),
+                    DisplayInfoId     = result.Read<Int32>(r, "DisplayInfoId"),
+                    Name              = result.Read<String>(r, "Name"),
+                    IconName          = result.Read<String>(r, "IconName"),
+                    CastBarCaption    = result.Read<String>(r, "CastBarCaption"),
+                    Size              = result.Read<Single>(r, "Size"),
+                    ExpansionRequired = result.Read<Int32>(r, "ExpansionRequired")
+                };
 
                 for (int i = 0; i < Stats.Data.Capacity; i++)
                     Stats.Data.Add(result.Read<Int32>(r, "Data", i));
 
-                Stats.Size = result.Read<Single>(r, "Size");
-
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
                     Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
 
-                Stats.ExpansionRequired = result.Read<Int32>(r, "ExpansionRequired");
-
-                GameObject gameobject = new GameObject()
+                Add(new GameObject
                 {
-                    Stats = Stats,
-                };
-
-                Add(gameobject);
+                    Stats = Stats
+                });
             }
 
             Log.Message(LogType.DB, "Loaded {0} gameobjects.", GameObjects.Count);

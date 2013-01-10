@@ -23,18 +23,19 @@ using System;
 using System.Collections.Generic;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
+using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public sealed class SpawnManager : SingletonBase<SpawnManager>
     {
-        public Dictionary<CreatureSpawn, Creature> CreatureSpawns;
-        public Dictionary<GameObjectSpawn, GameObject> GameObjectSpawns;
+        public ConcurrentDictionary<CreatureSpawn, Creature> CreatureSpawns;
+        public ConcurrentDictionary<GameObjectSpawn, GameObject> GameObjectSpawns;
 
         SpawnManager()
         {
-            CreatureSpawns = new Dictionary<CreatureSpawn, Creature>();
-            GameObjectSpawns = new Dictionary<GameObjectSpawn, GameObject>();
+            CreatureSpawns = new ConcurrentDictionary<CreatureSpawn, Creature>();
+            GameObjectSpawns = new ConcurrentDictionary<GameObjectSpawn, GameObject>();
 
             Initialize();
         }
@@ -45,14 +46,16 @@ namespace WorldServer.Game.Managers
             LoadGameObjectSpawns();
         }
 
-        public void AddSpawn(CreatureSpawn spawn, ref Creature data)
+        public bool AddSpawn(CreatureSpawn spawn, ref Creature data)
         {
-            CreatureSpawns.Add(spawn, data);
+            return CreatureSpawns.TryAdd(spawn, data);
         }
 
         public void RemoveSpawn(CreatureSpawn spawn)
         {
-            CreatureSpawns.Remove(spawn);
+            Creature removedSpawn;
+            CreatureSpawns.TryRemove(spawn, out removedSpawn);
+
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
         }
 
@@ -104,7 +107,7 @@ namespace WorldServer.Game.Managers
             for (int i = 0; i < result.Count; i++)
             {
                 var guid = result.Read<UInt64>(i, "Guid");
-                var id = result.Read<Int32>(i, "Id");
+                var id   = result.Read<Int32>(i, "Id");
 
                 Creature data = Globals.DataMgr.FindCreature(id);
                 if (data == null)
@@ -113,12 +116,11 @@ namespace WorldServer.Game.Managers
                     continue;
                 }
 
-                CreatureSpawn spawn = new CreatureSpawn()
+                CreatureSpawn spawn = new CreatureSpawn
                 {
                     Guid = guid,
-                    Id   = id,
-                    
-                    Map = result.Read<UInt32>(i, "Map"),
+                    Id   = id,    
+                    Map  = result.Read<UInt32>(i, "Map"),
 
                     Position = new Vector4()
                     {
@@ -126,7 +128,7 @@ namespace WorldServer.Game.Managers
                         Y = result.Read<Single>(i, "Y"),
                         Z = result.Read<Single>(i, "Z"),
                         O = result.Read<Single>(i, "O")
-                    },
+                    }
                 };
 
                 spawn.CreateFullGuid();
@@ -138,14 +140,16 @@ namespace WorldServer.Game.Managers
             Log.Message(LogType.DB, "Loaded {0} creature spawns.", CreatureSpawns.Count);
         }
 
-        public void AddSpawn(GameObjectSpawn spawn, ref GameObject data)
+        public bool AddSpawn(GameObjectSpawn spawn, ref GameObject data)
         {
-            GameObjectSpawns.Add(spawn, data);
+            return GameObjectSpawns.TryAdd(spawn, data);
         }
 
         public void RemoveSpawn(GameObjectSpawn spawn)
         {
-            GameObjectSpawns.Remove(spawn);
+            GameObject removedGameObject;
+            GameObjectSpawns.TryRemove(spawn, out removedGameObject);
+
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
         }
 
@@ -178,8 +182,7 @@ namespace WorldServer.Game.Managers
                 {
                     Guid = guid,
                     Id   = id,
-
-                    Map = result.Read<UInt32>(i, "Map"),
+                    Map  = result.Read<UInt32>(i, "Map"),
 
                     Position = new Vector4()
                     {

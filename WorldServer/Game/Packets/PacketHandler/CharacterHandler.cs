@@ -262,7 +262,12 @@ namespace WorldServer.Game.PacketHandler
 
             session.Character = new Character(guid);
 
-            WorldMgr.AddSession(guid, ref session);
+            if (!WorldMgr.AddSession(guid, ref session))
+            {
+                Log.Message(LogType.ERROR, "A Character with Guid: {0} is already logged in", guid);
+                return;
+            }
+
             WorldMgr.WriteAccountData(AccountDataMasks.CharacterCacheMask, ref session);
 
             MiscHandler.HandleMessageOfTheDay(ref session);
