@@ -66,8 +66,10 @@
     <Compile Include="Constants\Guids\HighGuidType.cs" />
     <Compile Include="Constants\MessageTypes.cs" />
     <Compile Include="Constants\ObjectSettings\MovementSpeeds.cs" />
-    <Compile Include="Constants\SplineMovement\MovementFlags.cs" />
+    <Compile Include="Constants\Movement\MovementFlagMasks.cs" />
+    <Compile Include="Constants\Movement\MovementFlags.cs" />
     <Compile Include="Constants\ObjectType.cs" />
+    <Compile Include="Constants\Movement\MovementFlags2.cs" />
     <Compile Include="Constants\UpdateFields\UpdateFieldFlags.cs" />
     <Compile Include="Constants\UpdateFields\UpdateFields.cs" />
     <Compile Include="Constants\UpdateFlags.cs" />

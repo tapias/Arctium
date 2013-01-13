@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.Movement;
 
 namespace Framework.ObjectDefines
 {
