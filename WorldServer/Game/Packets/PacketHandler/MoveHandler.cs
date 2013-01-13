@@ -875,6 +875,8 @@ namespace WorldServer.Game.Packets.PacketHandler
                 moveUpdate.WriteFloat(0);
             }
 
+            BitPack.WriteGuidBytes(2);
+
             if (movementValues.IsAlive)
                 moveUpdate.WriteUInt32(movementValues.Time);
 
@@ -882,7 +884,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             moveUpdate.WriteFloat(vector.Z);
 
-            BitPack.WriteGuidBytes(4, 3, 2, 6, 0);
+            BitPack.WriteGuidBytes(4, 3, 1, 6, 0);
 
             moveUpdate.WriteFloat(vector.X);
 
