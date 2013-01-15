@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.Movement;
 using Framework.Network.Packets;
 using WorldServer.Network;
 using System.Windows;
