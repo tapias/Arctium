@@ -18,14 +18,11 @@
 using Framework.Constants;
 using Framework.Constants.Movement;
 using Framework.Network.Packets;
-using WorldServer.Network;
-using System.Windows;
 using Framework.ObjectDefines;
-using WorldServer.Game.PacketHandler;
-using WorldServer.Game.Managers;
 using System;
+using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
-using Framework.Constants.Movement;
+using WorldServer.Network;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
