@@ -15,15 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using System.Collections;
-using System.Linq;
 using WorldServer.Game.Managers;
 using WorldServer.Game.Spawns;
-using WorldServer.Network;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -66,6 +63,8 @@ namespace WorldServer.Game.WorldEntities
 
             return false;
         }
+
+        public virtual void SetUpdateFields() { }
 
         public void SetUpdateField<T>(int index, T value, byte offset = 0)
         {
@@ -165,83 +164,6 @@ namespace WorldServer.Game.WorldEntities
         public void WriteDynamicUpdateFields(ref PacketWriter packet)
         {
             packet.WriteUInt8(0);
-        }
-
-        public void AddCreatureSpawnsToWorld(ref WorldClass session)
-        {
-                var pChar = session.Character;
-                var spawns = SpawnMgr.GetInRangeCreatures(pChar);
-                var count = spawns.Count();
-
-                if (count > 0)
-                {
-                    UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
-
-                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                    updateObject.WriteUInt16((ushort)Map);
-                    updateObject.WriteUInt32((uint)count);
-
-                    foreach (var s in spawns)
-                    {
-                        WorldObject spawn = s.Key;
-
-                            spawn.ToCreature().SetCreatureFields();
-
-                            var data = s.Value;
-
-                            updateObject.WriteUInt8(1);
-                            updateObject.WriteGuid(spawn.Guid);
-                            updateObject.WriteUInt8((byte)ObjectType.Unit);
-
-                            WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
-
-                            spawn.WriteUpdateFields(ref updateObject);
-                            spawn.WriteDynamicUpdateFields(ref updateObject);
-
-                            pChar.InRangeObjects.Add(spawn.Guid, spawn);
-                    }
-
-                    session.Send(ref updateObject);
-                }
-        }
-
-        public void AddGameObjectSpawnsToWorld(ref WorldClass session)
-        {
-                var pChar = session.Character;
-                var spawns = SpawnMgr.GetInRangeGameObjects(pChar);
-                var count = spawns.Count();
-
-                if (count > 0)
-                {
-                    UpdateFlag updateFlags = UpdateFlag.Rotation | UpdateFlag.StationaryPosition;
-                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                    updateObject.WriteUInt16((ushort)Map);
-                    updateObject.WriteUInt32((uint)count);
-
-                    foreach (var s in spawns)
-                    {
-                        WorldObject spawn = s.Key;
-
-                            spawn.ToGameObject().SetGameObjectFields();
-
-                            var data = s.Value;
-
-                            updateObject.WriteUInt8(1);
-                            updateObject.WriteGuid(spawn.Guid);
-                            updateObject.WriteUInt8(5);
-
-                            WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref spawn, updateFlags);
-
-                            spawn.WriteUpdateFields(ref updateObject);
-                            spawn.WriteDynamicUpdateFields(ref updateObject);
-
-                            pChar.InRangeObjects.Add(spawn.Guid, spawn);
-                    }
-
-                    session.Send(ref updateObject);
-                }
         }
 
         public void RemoveFromWorld()

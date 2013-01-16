@@ -67,10 +67,9 @@ namespace WorldServer.Game.Spawns
         {
             CreateFullGuid();
             CreateData(Creature);
+            SetUpdateFields();
 
-            Globals.SpawnMgr.AddSpawn(this, ref Creature);
-
-            SetCreatureFields();
+            Globals.SpawnMgr.AddSpawn(this);
 
             WorldObject obj = this;
             UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
@@ -85,21 +84,15 @@ namespace WorldServer.Game.Spawns
 
                     updateObject.WriteUInt16((ushort)Map);
                     updateObject.WriteUInt32(1);
-                    updateObject.WriteUInt8(1);
-                    updateObject.WriteGuid(Guid);
-                    updateObject.WriteUInt8(3);
 
-                    Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
-
-                    WriteUpdateFields(ref updateObject);
-                    WriteDynamicUpdateFields(ref updateObject);
+                    WorldMgr.WriteCreateObject(ref updateObject, obj, updateFlags, ObjectType.Unit);
 
                     v.Value.Send(ref updateObject);
                 }
             }
         }
 
-        public void SetCreatureFields()
+        public override void SetUpdateFields()
         {
             // ObjectFields
             SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);

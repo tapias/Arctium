@@ -84,10 +84,10 @@ namespace WorldServer.Game.WorldEntities
             Globals.SpellMgr.LoadSpells(this);
             Globals.SkillMgr.LoadSkills(this);
 
-            SetCharacterFields();
+            SetUpdateFields();
         }
 
-        public void SetCharacterFields()
+        public override void SetUpdateFields()
         {
             // ObjectFields
             SetUpdateField<UInt64>((int)ObjectFields.Guid, Guid);

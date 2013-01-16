@@ -25,6 +25,7 @@ using WorldServer.Game.PacketHandler;
 using WorldServer.Game.Managers;
 using System;
 using WorldServer.Game.WorldEntities;
+using Framework.Constants.Movement;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -897,10 +898,10 @@ namespace WorldServer.Game.Packets.PacketHandler
             var session = WorldMgr.GetSession(guid);
             if (session != null)
             {
-                Character pChar = WorldMgr.GetSession(guid).Character;
-                ObjectMgr.SetPosition(ref pChar, vector, false);
+                Character pChar = session.Character;
 
-                WorldMgr.SendToAllOtherInZone(guid, moveUpdate);
+                ObjectMgr.SetPosition(ref pChar, vector, false);
+                WorldMgr.SendToInRangeCharacter(pChar, moveUpdate);
             }
         }
 

@@ -20,22 +20,22 @@ using Framework.Logging;
 using Framework.ObjectDefines;
 using Framework.Singleton;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
-using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
     public sealed class SpawnManager : SingletonBase<SpawnManager>
     {
-        public ConcurrentDictionary<CreatureSpawn, Creature> CreatureSpawns;
-        public ConcurrentDictionary<GameObjectSpawn, GameObject> GameObjectSpawns;
+        public ConcurrentDictionary<ulong, CreatureSpawn> CreatureSpawns;
+        public ConcurrentDictionary<ulong, GameObjectSpawn> GameObjectSpawns;
 
         SpawnManager()
         {
-            CreatureSpawns = new ConcurrentDictionary<CreatureSpawn, Creature>();
-            GameObjectSpawns = new ConcurrentDictionary<GameObjectSpawn, GameObject>();
+            CreatureSpawns = new ConcurrentDictionary<ulong, CreatureSpawn>();
+            GameObjectSpawns = new ConcurrentDictionary<ulong, GameObjectSpawn>();
 
             Initialize();
         }
@@ -46,58 +46,57 @@ namespace WorldServer.Game.Managers
             LoadGameObjectSpawns();
         }
 
-        public bool AddSpawn(CreatureSpawn spawn, ref Creature data)
+        public bool AddSpawn(CreatureSpawn spawn)
         {
-            return CreatureSpawns.TryAdd(spawn, data);
+            return CreatureSpawns.TryAdd(spawn.Guid, spawn);
         }
 
         public void RemoveSpawn(CreatureSpawn spawn)
         {
-            Creature removedSpawn;
-            CreatureSpawns.TryRemove(spawn, out removedSpawn);
+            CreatureSpawn removedSpawn;
+            CreatureSpawns.TryRemove(spawn.Guid, out removedSpawn);
 
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
         }
 
         public CreatureSpawn FindSpawn(ulong guid)
         {
-            foreach (var c in CreatureSpawns)
-                if (c.Key.Guid == guid)
-                    return c.Key;
+            CreatureSpawn spawn;
+            CreatureSpawns.TryGetValue(guid, out spawn);
 
-            return null;
+            return spawn;
         }
 
-        public IEnumerable<KeyValuePair<CreatureSpawn, Creature>> GetInRangeCreatures(WorldObject obj)
+        public IEnumerable<CreatureSpawn> GetInRangeCreatures(WorldObject obj)
         {
             foreach (var c in CreatureSpawns)
-                if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key.Guid))
-                    if (obj.CheckUpdateDistance(c.Key))
-                        yield return c;
+                if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
+                    if (obj.CheckUpdateDistance(c.Value))
+                        yield return c.Value;
         }
 
-        public IEnumerable<KeyValuePair<GameObjectSpawn, GameObject>> GetInRangeGameObjects(WorldObject obj)
+        public IEnumerable<GameObjectSpawn> GetInRangeGameObjects(WorldObject obj)
         {
             foreach (var g in GameObjectSpawns)
-                if (!obj.ToCharacter().InRangeObjects.ContainsKey(g.Key.Guid))
-                    if (obj.CheckUpdateDistance(g.Key))
-                        yield return g;
+                if (!obj.ToCharacter().InRangeObjects.ContainsKey(g.Key))
+                    if (obj.CheckUpdateDistance(g.Value))
+                        yield return g.Value;
         }
 
-        public IEnumerable<KeyValuePair<CreatureSpawn, Creature>> GetOutOfRangeCreatures(WorldObject obj)
+        public IEnumerable<CreatureSpawn> GetOutOfRangeCreatures(WorldObject obj)
         {
             foreach (var c in CreatureSpawns)
-                if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key.Guid))
-                    if (!obj.CheckUpdateDistance(c.Key))
-                        yield return c;
+                if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
+                    if (!obj.CheckUpdateDistance(c.Value))
+                        yield return c.Value;
         }
 
-        public IEnumerable<KeyValuePair<GameObjectSpawn, GameObject>> GetOutOfRangeGameObjects(WorldObject obj)
+        public IEnumerable<GameObjectSpawn> GetOutOfRangeGameObjects(WorldObject obj)
         {
             foreach (var g in GameObjectSpawns)
-                if (obj.ToCharacter().InRangeObjects.ContainsKey(g.Key.Guid))
-                    if (!obj.CheckUpdateDistance(g.Key))
-                        yield return g;
+                if (obj.ToCharacter().InRangeObjects.ContainsKey(g.Key))
+                    if (!obj.CheckUpdateDistance(g.Value))
+                        yield return g.Value;
         }
 
         public void LoadCreatureSpawns()
@@ -133,8 +132,9 @@ namespace WorldServer.Game.Managers
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
+                spawn.SetUpdateFields();
 
-                AddSpawn(spawn, ref data);
+                AddSpawn(spawn);
             }
 
             Log.Message(LogType.DB, "Loaded {0} creature spawns.", CreatureSpawns.Count);
@@ -142,24 +142,15 @@ namespace WorldServer.Game.Managers
 
         public bool AddSpawn(GameObjectSpawn spawn, ref GameObject data)
         {
-            return GameObjectSpawns.TryAdd(spawn, data);
+            return GameObjectSpawns.TryAdd(spawn.Guid, spawn);
         }
 
         public void RemoveSpawn(GameObjectSpawn spawn)
         {
-            GameObject removedGameObject;
-            GameObjectSpawns.TryRemove(spawn, out removedGameObject);
+            GameObjectSpawn removedGameObject;
+            GameObjectSpawns.TryRemove(spawn.Guid, out removedGameObject);
 
             DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
-        }
-
-        public GameObjectSpawn FindSpawn(GameObjectSpawn spawn)
-        {
-            foreach (var c in GameObjectSpawns)
-                if (c.Key.Guid == spawn.Guid)
-                    return c.Key;
-
-            return null;
         }
 
         public void LoadGameObjectSpawns()
@@ -199,6 +190,7 @@ namespace WorldServer.Game.Managers
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
+                spawn.SetUpdateFields();
 
                 AddSpawn(spawn, ref data);
             }
