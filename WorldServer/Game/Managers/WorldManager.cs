@@ -139,7 +139,8 @@ namespace WorldServer.Game.Managers
                     {
                         WriteCreateObject(ref updateObject, obj, updateFlags, type);
 
-                        pChar.InRangeObjects.Add(obj.Guid, obj);
+                        if (pChar.Guid != o.Guid)
+                            pChar.InRangeObjects.Add(obj.Guid, obj);
                     }
                 }
 
@@ -207,8 +208,12 @@ namespace WorldServer.Game.Managers
 
         public void SendToInRangeCharacter(Character pChar, PacketWriter packet)
         {
-            foreach (var s in GetInRangeCharacter(pChar))
-                GetSession(pChar.Guid).Send(ref packet);
+            foreach (var c in Sessions.ToList())
+            {
+                WorldObject iChar;
+                if (pChar.InRangeObjects.TryGetValue(c.Value.Character.Guid, out iChar))
+                    c.Value.Send(ref packet);
+            }
         }
 
         public void WriteUpdateObjectMovement(ref PacketWriter packet, ref WorldObject wObject, UpdateFlag updateFlags)
