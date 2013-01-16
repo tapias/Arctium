@@ -52,8 +52,6 @@ namespace Framework.Network.Packets
 
                 if (WorldMgr.Sessions.ContainsKey(charGuid))
                     WorldMgr.Sessions[charGuid] = session;
-                else
-                    WorldMgr.AddSession(charGuid, ref session);
             }
 
             if (OpcodeHandlers.ContainsKey(opcode))
