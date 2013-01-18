@@ -19,11 +19,10 @@ using Framework.Constants;
 using Framework.Logging;
 using Framework.Network.Packets;
 using System.Collections.Generic;
-using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
-namespace WorldServer.Game.PacketHandler
+namespace WorldServer.Game.Packets.PacketHandler
 {
     public class ObjectHandler : Globals
     {
@@ -34,15 +33,16 @@ namespace WorldServer.Game.PacketHandler
 
             updateObject.WriteUInt16((ushort)character.Map);
             updateObject.WriteUInt32(1);
-            updateObject.WriteUInt8(1);
+            updateObject.WriteUInt8((byte)UpdateType.CreateObject);
             updateObject.WriteGuid(character.Guid);
-            updateObject.WriteUInt8(4);
+            updateObject.WriteUInt8((byte)ObjectType.Player);
 
             UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation | UpdateFlag.Self;
             WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref character, updateFlags);
 
             character.WriteUpdateFields(ref updateObject);
             character.WriteDynamicUpdateFields(ref updateObject);
+
             session.Send(ref updateObject);
 
             var tempSessions = new Dictionary<ulong, WorldClass>(WorldMgr.Sessions);
@@ -58,9 +58,9 @@ namespace WorldServer.Game.PacketHandler
 
                         updateObject.WriteUInt16((ushort)character.Map);
                         updateObject.WriteUInt32(1);
-                        updateObject.WriteUInt8(1);
+                        updateObject.WriteUInt8((byte)UpdateType.CreateObject);
                         updateObject.WriteGuid(character.Guid);
-                        updateObject.WriteUInt8(4);
+                        updateObject.WriteUInt8((byte)ObjectType.Player);
 
                         updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
                         WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref character, updateFlags);
@@ -84,9 +84,9 @@ namespace WorldServer.Game.PacketHandler
 
                         updateObject.WriteUInt16((ushort)pChar.Map);
                         updateObject.WriteUInt32(1);
-                        updateObject.WriteUInt8(1);
+                        updateObject.WriteUInt8((byte)UpdateType.CreateObject);
                         updateObject.WriteGuid(pChar.Guid);
-                        updateObject.WriteUInt8(4);
+                        updateObject.WriteUInt8((byte)ObjectType.Player);
 
                         updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
                         WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref pChar, updateFlags);

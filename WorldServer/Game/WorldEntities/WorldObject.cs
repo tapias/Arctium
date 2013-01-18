@@ -19,7 +19,6 @@ using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using System.Collections;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Spawns;
 
 namespace WorldServer.Game.WorldEntities

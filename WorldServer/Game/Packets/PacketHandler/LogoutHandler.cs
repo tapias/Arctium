@@ -17,9 +17,7 @@
 
 using Framework.Constants;
 using Framework.Network.Packets;
-using WorldServer.Game.Managers;
 using WorldServer.Network;
-using WorldServer.Game.PacketHandler;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {

@@ -20,7 +20,6 @@ using Framework.Database;
 using Framework.DBC;
 using System;
 using System.Collections.Generic;
-using WorldServer.Game.Managers;
 
 namespace WorldServer.Game.WorldEntities
 {

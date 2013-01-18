@@ -25,6 +25,7 @@ using System;
 using System.Collections;
 using System.Net;
 using System.Net.Sockets;
+using WorldServer.Game.Packets;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Network

@@ -19,7 +19,6 @@ using Framework.Configuration;
 using Framework.Constants;
 using Framework.Database;
 using Framework.Network.Packets;
-using WorldServer.Game.Managers;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;

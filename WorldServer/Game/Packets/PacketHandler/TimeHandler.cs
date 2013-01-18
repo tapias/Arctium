@@ -17,10 +17,9 @@
 
 using Framework.Constants;
 using Framework.Network.Packets;
-using WorldServer.Game.Managers;
 using WorldServer.Network;
 
-namespace WorldServer.Game.PacketHandler
+namespace WorldServer.Game.Packets.PacketHandler
 {
     public class TimeHandler : Globals
     {

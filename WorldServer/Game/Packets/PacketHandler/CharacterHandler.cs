@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;

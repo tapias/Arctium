@@ -18,7 +18,6 @@
 using Framework.Constants;
 using Framework.Network.Packets;
 using WorldServer.Game.Chat;
-using WorldServer.Game.Managers;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Packets.PacketHandler

@@ -22,11 +22,9 @@ using Framework.Database;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
-using WorldServer.Game.Managers;
-using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
-namespace WorldServer.Game.PacketHandler
+namespace WorldServer.Game.Packets.PacketHandler
 {
     public class AuthenticationHandler : Globals
     {

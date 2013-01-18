@@ -20,7 +20,6 @@ using Framework.Constants.Movement;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
-using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 

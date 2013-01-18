@@ -17,11 +17,10 @@
 
 using Framework.Constants;
 using Framework.Network.Packets;
-using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
-namespace WorldServer.Game.PacketHandler
+namespace WorldServer.Game.Packets.PacketHandler
 {
     public class SpellHandler : Globals
     {

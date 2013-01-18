@@ -19,7 +19,6 @@ using Framework.Database;
 using Framework.Logging;
 using Framework.Singleton;
 using System;
-using System.Collections.Generic;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using System.Collections.Concurrent;

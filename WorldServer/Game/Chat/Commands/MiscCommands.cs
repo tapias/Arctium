@@ -16,7 +16,6 @@
  */
 
 using System.Text;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 

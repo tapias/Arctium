@@ -19,10 +19,10 @@ using Framework.Constants;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using WorldServer.Game.Managers;
+using Framework.Network.Packets;
 using WorldServer.Network;
 
-namespace Framework.Network.Packets
+namespace WorldServer.Game.Packets
 {
     public class PacketManager : Globals
     {

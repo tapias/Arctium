@@ -19,7 +19,6 @@ using Framework.Constants;
 using Framework.Logging;
 using Framework.Network.Packets;
 using WorldServer.Network;
-using WorldServer.Game.Managers;
 using Framework.Database;
 using Framework.ObjectDefines;
 

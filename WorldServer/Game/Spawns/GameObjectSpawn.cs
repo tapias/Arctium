@@ -21,7 +21,6 @@ using Framework.Logging;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
-using WorldServer.Game.Managers;
 using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Game.Spawns

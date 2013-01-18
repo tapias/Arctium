@@ -21,11 +21,11 @@ using Framework.Console.Commands;
 using Framework.Database;
 using Framework.DBC;
 using Framework.Logging;
-using Framework.Network.Packets;
-using System;
-using WorldServer.Game.Chat;
-using WorldServer.Game.Managers;
-using WorldServer.Network;
+﻿using System;
+﻿using WorldServer.Game;
+﻿using WorldServer.Game.Chat;
+﻿using WorldServer.Game.Packets;
+﻿using WorldServer.Network;
 
 namespace WorldServer
 {

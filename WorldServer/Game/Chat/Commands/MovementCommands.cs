@@ -16,10 +16,8 @@
  */
 
 using Framework.Console;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using Framework.ObjectDefines;
-using WorldServer.Game.PacketHandler;
 using Framework.Database;
 using System;
 using WorldServer.Network;

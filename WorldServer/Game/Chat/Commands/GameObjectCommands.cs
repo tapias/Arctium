@@ -16,7 +16,6 @@
  */
 
 using Framework.Console;
-using WorldServer.Game.Managers;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;

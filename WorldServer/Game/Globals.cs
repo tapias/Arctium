@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using WorldServer.Network;
+using WorldServer.Game.Managers;
 
-namespace WorldServer.Game.Managers
+namespace WorldServer.Game
 {
     public class Globals
     {
