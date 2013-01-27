@@ -18,7 +18,6 @@
 using Framework.Constants;
 using Framework.Logging;
 using Framework.Network.Packets;
-using System.Collections.Generic;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
