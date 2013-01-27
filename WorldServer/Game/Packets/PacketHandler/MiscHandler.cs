@@ -120,13 +120,18 @@ namespace WorldServer.Game.Packets.PacketHandler
             ulong fullGuid = GuidUnpacker.GetGuid(guidMask, guidBytes);
             ulong guid = ObjectGuid.GetGuid(fullGuid);
 
-            var sess = WorldMgr.GetSession(session.Character.Guid);
-            sess.Character.TargetGuid = fullGuid;
+            if (session.Character != null)
+            {
+                var sess = WorldMgr.GetSession(session.Character.Guid);
 
-            if (guid == 0)
-                Log.Message(LogType.DEBUG, "Character (Guid: {0}) removed current selection.", session.Character.Guid);
-            else
-                Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, ObjectGuid.GetGuidType(fullGuid), guid, ObjectGuid.GetId(fullGuid));
+                if (sess != null)
+                    sess.Character.TargetGuid = fullGuid;
+
+                if (guid == 0)
+                    Log.Message(LogType.DEBUG, "Character (Guid: {0}) removed current selection.", session.Character.Guid);
+                else
+                    Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, ObjectGuid.GetGuidType(fullGuid), guid, ObjectGuid.GetId(fullGuid));
+            }
         }
     }
 }
