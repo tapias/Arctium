@@ -23,6 +23,7 @@ using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 using Framework.Logging;
+using Framework.ObjectDefines;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -120,6 +121,33 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
             else
                 Log.Message(LogType.DEBUG, "Gameobject (Id: {0}) not found.", id);
+        }
+
+        [Opcode(ClientMessage.NPCText, "16357")]
+        public static void HandleNPCText(ref PacketReader packet, ref WorldClass session)
+        {
+            var gossipTextId = packet.ReadInt32();
+            var guid = packet.ReadUInt64();
+
+            var gossipData = GossipMgr.GetGossip<Creature>(ObjectGuid.GetGuid(guid));
+
+            if (gossipData != null)
+            {
+                PacketWriter npcText = new PacketWriter(LegacyMessage.NPCText);
+
+                npcText.WriteInt32(gossipTextId);
+                npcText.WriteFloat(1);
+
+                for (int i = 0; i < 7; i++)
+                    npcText.WriteUInt32(0);
+
+                npcText.WriteInt32(gossipData.BroadCastText.Id);
+
+                for (int i = 0; i < 7; i++)
+                    npcText.WriteUInt32(0);
+
+                session.Send(ref npcText);
+            }
         }
 
         [Opcode(ClientMessage.NameCache, "16357")]

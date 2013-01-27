@@ -170,6 +170,10 @@ namespace Framework.Network.Packets
         public void WriteString(string data)
         {
             byte[] sBytes = Encoding.ASCII.GetBytes(data);
+
+            if (sBytes.Length == 0)
+                sBytes = new byte[1];
+
             this.WriteBytes(sBytes);
         }
 

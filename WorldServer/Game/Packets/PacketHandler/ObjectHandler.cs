@@ -44,60 +44,6 @@ namespace WorldServer.Game.Packets.PacketHandler
             character.WriteDynamicUpdateFields(ref updateObject);
 
             session.Send(ref updateObject);
-
-            var tempSessions = new Dictionary<ulong, WorldClass>(WorldMgr.Sessions);
-            tempSessions.Remove(character.Guid);
-
-            if (tempSessions != null)
-            {
-                foreach (var s in tempSessions)
-                {
-                    if (s.Value.Character.CheckUpdateDistance(character))
-                    {
-                        updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                        updateObject.WriteUInt16((ushort)character.Map);
-                        updateObject.WriteUInt32(1);
-                        updateObject.WriteUInt8((byte)UpdateType.CreateObject);
-                        updateObject.WriteGuid(character.Guid);
-                        updateObject.WriteUInt8((byte)ObjectType.Player);
-
-                        updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
-                        WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref character, updateFlags);
-
-                        character.WriteUpdateFields(ref updateObject);
-                        character.WriteDynamicUpdateFields(ref updateObject);
-
-                        s.Value.Send(ref updateObject);
-                    }
-                }
-
-                foreach (var s in tempSessions)
-                {
-                    WorldObject pChar = s.Value.Character;
-
-                    if (character.CheckUpdateDistance(pChar))
-                    {
-                        character.ToCharacter().InRangeObjects.Add(pChar.Guid, pChar);
-
-                        updateObject = new PacketWriter(LegacyMessage.UpdateObject);
-
-                        updateObject.WriteUInt16((ushort)pChar.Map);
-                        updateObject.WriteUInt32(1);
-                        updateObject.WriteUInt8((byte)UpdateType.CreateObject);
-                        updateObject.WriteGuid(pChar.Guid);
-                        updateObject.WriteUInt8((byte)ObjectType.Player);
-
-                        updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation;
-                        WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref pChar, updateFlags);
-
-                        pChar.WriteUpdateFields(ref updateObject);
-                        pChar.WriteDynamicUpdateFields(ref updateObject);
-
-                        session.Send(ref updateObject);
-                    }
-                }
-            }
         }
 
         public static PacketWriter HandleObjectDestroy(ref WorldClass session, ulong guid)

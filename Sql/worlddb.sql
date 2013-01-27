@@ -10,10 +10,35 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2013-01-04 03:35:30
+Date: 2013-01-27 17:55:18
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `broadcast_texts`
+-- ----------------------------
+DROP TABLE IF EXISTS `broadcast_texts`;
+CREATE TABLE `broadcast_texts` (
+  `Id` int(11) NOT NULL,
+  `Language` int(11) NOT NULL,
+  `Text` text,
+  `AlternativeText` text,
+  `Emote0` int(11) NOT NULL,
+  `Emote1` int(11) NOT NULL,
+  `Emote2` int(11) NOT NULL,
+  `Emote3` int(11) NOT NULL,
+  `Emote4` int(11) NOT NULL,
+  `Emote5` int(11) NOT NULL,
+  `Emote6` int(11) NOT NULL,
+  `Emote7` int(11) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of broadcast_texts
+-- ----------------------------
+INSERT INTO `broadcast_texts` VALUES ('56417', '0', 'Shouldn\'t you be training, young $c?$B$BDiscipline your mind and body, and there is little that you cannot achieve.', null, '0', '0', '0', '0', '0', '0', '0', '0');
 
 -- ----------------------------
 -- Table structure for `creature_data`
@@ -35,7 +60,23 @@ CREATE TABLE `creature_data` (
 -- ----------------------------
 -- Records of creature_data
 -- ----------------------------
-INSERT INTO `creature_data` VALUES ('53566', '393941', '90', '1', '35', '1', '0', '0', '3');
+INSERT INTO `creature_data` VALUES ('57754', '408', '5', '1', '35', '1', '33536', '2048', '1');
+
+-- ----------------------------
+-- Table structure for `creature_gossips`
+-- ----------------------------
+DROP TABLE IF EXISTS `creature_gossips`;
+CREATE TABLE `creature_gossips` (
+  `Guid` bigint(20) NOT NULL,
+  `GossipDataId` int(11) NOT NULL,
+  `BroadcastTextId` int(11) NOT NULL,
+  PRIMARY KEY (`Guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of creature_gossips
+-- ----------------------------
+INSERT INTO `creature_gossips` VALUES ('1', '13346', '56417');
 
 -- ----------------------------
 -- Table structure for `creature_spawns`
@@ -51,11 +92,12 @@ CREATE TABLE `creature_spawns` (
   `o` float NOT NULL,
   PRIMARY KEY (`guid`),
   KEY `creatureId` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of creature_spawns
 -- ----------------------------
+INSERT INTO `creature_spawns` VALUES ('1', '57754', '860', '1449.7', '3406.6', '171.092', '2.2868');
 
 -- ----------------------------
 -- Table structure for `creature_stats`
@@ -94,7 +136,22 @@ CREATE TABLE `creature_stats` (
 -- ----------------------------
 -- Records of creature_stats
 -- ----------------------------
-INSERT INTO `creature_stats` VALUES ('53566', 'Master Shang Xi', null, null, '0', '0', '7', '0', '0', '0', '0', '39574', '0', '0', '0', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0');
+INSERT INTO `creature_stats` VALUES ('57754', 'Instructor Mossthorn', '', '', '0', '0', '7', '0', '0', '0', '0', '39795', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');
+
+-- ----------------------------
+-- Table structure for `gameobject_gossips`
+-- ----------------------------
+DROP TABLE IF EXISTS `gameobject_gossips`;
+CREATE TABLE `gameobject_gossips` (
+  `Guid` bigint(20) NOT NULL,
+  `GossipDataId` int(11) NOT NULL,
+  `BroadcastTextId` int(11) NOT NULL,
+  PRIMARY KEY (`Guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of gameobject_gossips
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `gameobject_spawns`
@@ -177,7 +234,24 @@ CREATE TABLE `gameobject_stats` (
 -- ----------------------------
 -- Records of gameobject_stats
 -- ----------------------------
-INSERT INTO `gameobject_stats` VALUES ('210020', '3', '0', '10721', 'Weapon Rack', null, null, '57', '40864', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '13364', '0', '0', '0', '0', '0', '0', '0', '0', '128680', '0', '0', '0', '0', '0', '1', '73210', '0', '0', '0', '0', '0', '0');
+
+-- ----------------------------
+-- Table structure for `gossip_data`
+-- ----------------------------
+DROP TABLE IF EXISTS `gossip_data`;
+CREATE TABLE `gossip_data` (
+  `Id` int(11) NOT NULL,
+  `FriendshipFactionID` int(11) NOT NULL,
+  `TextID` int(11) NOT NULL,
+  `OptionsCount` int(11) NOT NULL,
+  `QuestsCount` int(11) NOT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of gossip_data
+-- ----------------------------
+INSERT INTO `gossip_data` VALUES ('13346', '0', '18919', '0', '0');
 
 -- ----------------------------
 -- Table structure for `teleport_locations`

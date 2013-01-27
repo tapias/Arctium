@@ -60,6 +60,7 @@
     <Compile Include="Game\Globals.cs" />
     <Compile Include="Game\Managers\AddonManager.cs" />
     <Compile Include="Game\Managers\DataManager.cs" />
+    <Compile Include="Game\Managers\GossipManager.cs" />
     <Compile Include="Game\Managers\ObjectManager.cs" />
     <Compile Include="Game\Managers\SkillManager.cs" />
     <Compile Include="Game\Managers\SpawnManager.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Game\Packets\PacketHandler\CharacterHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\ChatHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\CinematicHandler.cs" />
+    <Compile Include="Game\Packets\PacketHandler\GossipHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\LogoutHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\MiscHandler.cs" />
     <Compile Include="Game\Packets\PacketHandler\MoveHandler.cs" />
@@ -83,9 +85,11 @@
     <Compile Include="Game\Packets\PacketManager.cs" />
     <Compile Include="Game\Spawns\CreatureSpawn.cs" />
     <Compile Include="Game\Spawns\GameObjectSpawn.cs" />
+    <Compile Include="Game\WorldEntities\BroadcastText.cs" />
     <Compile Include="Game\WorldEntities\Character.cs" />
     <Compile Include="Game\WorldEntities\Creature.cs" />
     <Compile Include="Game\WorldEntities\GameObject.cs" />
+    <Compile Include="Game\WorldEntities\Gossip.cs" />
     <Compile Include="Game\WorldEntities\Skill.cs" />
     <Compile Include="Game\WorldEntities\Spell.cs" />
     <Compile Include="Game\WorldEntities\WorldObject.cs" />

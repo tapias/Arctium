@@ -456,8 +456,10 @@ namespace Framework.Constants
         MessageChat                              = 0x009,
         CreatureStats                            = 0xAA4,
         GameObjectStats                          = 0x80D,
+        NPCText                                  = 0x544,
         NameCache                                = 0x30D,
         RealmCache                               = 0xD81,
+        GossipMessage                            = 0x88C,
     }
 
     [Flags]
@@ -504,11 +506,13 @@ namespace Framework.Constants
         ActivePlayer                             = 0xF84,
         CreatureStats                            = 0x285,
         GameObjectStats                          = 0xBE9,
+        NPCText                                  = 0x2E5,
         NameCache                                = 0x1EC,
         RealmCache                               = 0xA4D,
         ZoneUpdate                               = 0x88D,
         SetSelection                             = 0x17E,
         ObjectUpdateFailed                       = 0x2FB,
+        DBQueryBulk                              = 0x537,
         #endregion
 
         #region ChatMessages
@@ -516,6 +520,7 @@ namespace Framework.Constants
         ChatMessageYell                          = 0xF7F,
         ChatMessageWhisper                       = 0x306,
         #endregion
+
         #region PlayerMovement
         MoveStartForward                         = 0x0FE,
         MoveStartBackward                        = 0x37A,
@@ -524,6 +529,10 @@ namespace Framework.Constants
         MoveStartTurnLeft                        = 0x46E,
         MoveStartTurnRight                       = 0x9F7,
         MoveStopTurn                             = 0x4CB,
+        #endregion
+
+        #region Gossip
+        TalkToGossip                             = 0x764,
         #endregion
     }
 
