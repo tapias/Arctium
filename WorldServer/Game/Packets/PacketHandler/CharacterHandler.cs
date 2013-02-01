@@ -273,7 +273,9 @@ namespace WorldServer.Game.PacketHandler
             WorldMgr.WriteAccountData(AccountDataMasks.CharacterCacheMask, ref session);
 
             MiscHandler.HandleMessageOfTheDay(ref session);
+            SpecializationHandler.HandleTalentUpdate(ref session);
             SpellHandler.HandleSendKnownSpells(ref session);
+            MiscHandler.HandleUpdateActionButtons(ref session);
 
             if (session.Character.LoginCinematic)
                 CinematicHandler.HandleStartCinematic(ref session);

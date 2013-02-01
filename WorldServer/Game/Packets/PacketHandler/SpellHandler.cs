@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Collections.Generic;
 using Framework.Constants;
 using Framework.Network.Packets;
 using WorldServer.Game.WorldEntities;
@@ -28,15 +29,58 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             Character pChar = session.Character;
 
+            var specializationSpells = SpecializationMgr.GetSpecializationSpells(pChar);
+            var specializationSpellCount = ((specializationSpells != null) ? specializationSpells.Count : 0);
+
+            var talentSpells = SpecializationMgr.GetTalentSpells(pChar, pChar.ActiveSpecGroup);
+            var talentSpellCount = ((talentSpells != null) ? talentSpells.Count : 0);
+
+            int count = pChar.SpellList.Count + specializationSpellCount + talentSpellCount;
+
             PacketWriter writer = new PacketWriter(JAMCMessage.SendKnownSpells);
             BitPack BitPack = new BitPack(writer);
 
-            BitPack.Write<uint>((uint)pChar.SpellList.Count, 24);
+            BitPack.Write<uint>((uint)count, 24);
             BitPack.Write(1);
             BitPack.Flush();
 
             pChar.SpellList.ForEach(spell =>
                 writer.WriteUInt32(spell.SpellId));
+
+            if (specializationSpells != null)
+                specializationSpells.ForEach(spell => writer.WriteUInt32(spell.SpellId));
+
+            if (talentSpells != null)
+                talentSpells.ForEach(spell => writer.WriteUInt32(spell));
+
+            session.Send(ref writer);
+        }
+
+        public static void HandleLearnedSpells(ref WorldClass session, List<uint> newSpells)
+        {
+            PacketWriter writer = new PacketWriter(JAMCMessage.LearnedSpells);
+            BitPack BitPack = new BitPack(writer);
+
+            BitPack.Write(0);
+            BitPack.Write<int>(newSpells.Count, 24);
+            BitPack.Flush();
+
+            for (int i = 0; i < newSpells.Count; i++)
+                writer.WriteUInt32(newSpells[i]);
+
+            session.Send(ref writer);
+        }
+
+        public static void HandleUnlearnedSpells(ref WorldClass session, List<uint> oldSpells)
+        {
+            PacketWriter writer = new PacketWriter(JAMCMessage.UnlearnedSpells);
+            BitPack BitPack = new BitPack(writer);
+
+            BitPack.Write<int>(oldSpells.Count, 24);
+            BitPack.Flush();
+
+            for (int i = 0; i < oldSpells.Count; i++)
+                writer.WriteUInt32(oldSpells[i]);
 
             session.Send(ref writer);
         }

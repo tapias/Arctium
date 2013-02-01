@@ -45,12 +45,76 @@ CREATE TABLE `characters` (
   `characterFlags` int(11) NOT NULL DEFAULT '0',
   `customizeFlags` int(11) NOT NULL DEFAULT '0',
   `loginCinematic` bit(1) NOT NULL DEFAULT b'1',
+  `specGroupCount` tinyint(4) unsigned NOT NULL DEFAULT '1',
+  `activeSpecGroup` tinyint(4) unsigned NOT NULL DEFAULT '0',
+  `primarySpecId` int(5) unsigned NOT NULL DEFAULT '0',
+  `secondarySpecId` int(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of characters
 -- ----------------------------
+
+
+-- ----------------------------
+-- Table structure for `character_actions`
+-- ----------------------------
+DROP TABLE IF EXISTS `character_actions`;
+CREATE TABLE `character_actions` (
+  `guid` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `action` int(11) unsigned NOT NULL DEFAULT '0',
+  `slotId` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `specGroup` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guid`,`slotId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of character_actions
+-- ----------------------------
+
+
+-- ----------------------------
+-- Table structure for `character_creation_actions`
+-- ----------------------------
+DROP TABLE IF EXISTS `character_creation_actions`;
+CREATE TABLE `character_creation_actions` (
+  `race` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `class` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `action` int(11) unsigned NOT NULL DEFAULT '0',
+  `slotId` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`race`,`class`,`slotId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of character_creation_actions
+-- ----------------------------
+INSERT INTO `character_creation_actions` VALUES ('24', '1', '88163', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '1', '78', '1');
+INSERT INTO `character_creation_actions` VALUES ('24', '1', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '1', '77273', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '3', '3044', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '3', '77272', '7');
+INSERT INTO `character_creation_actions` VALUES ('24', '3', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '3', '9', '10');
+INSERT INTO `character_creation_actions` VALUES ('24', '3', '982', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '4', '1752', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '4', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '4', '77272', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '5', '585', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '5', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '5', '77264', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '7', '6603', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '7', '403', '1');
+INSERT INTO `character_creation_actions` VALUES ('24', '7', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '7', '77272', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '7', '403', '72');
+INSERT INTO `character_creation_actions` VALUES ('24', '8', '44614', '0');
+INSERT INTO `character_creation_actions` VALUES ('24', '8', '107079', '9');
+INSERT INTO `character_creation_actions` VALUES ('24', '8', '77264', '11');
+INSERT INTO `character_creation_actions` VALUES ('24', '10', '100780', '72');
+INSERT INTO `character_creation_actions` VALUES ('24', '10', '107079', '81');
+INSERT INTO `character_creation_actions` VALUES ('24', '10', '77272', '83');
 
 -- ----------------------------
 -- Table structure for `character_creation_data`
@@ -4959,4 +5023,19 @@ CREATE TABLE `character_spells` (
 
 -- ----------------------------
 -- Records of character_spells
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `character_talents`
+-- ----------------------------
+DROP TABLE IF EXISTS `character_talents`;
+CREATE TABLE `character_talents` (
+  `guid` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `specGroup` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `talentId` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`guid`,`specGroup`,`talentId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of character_talents
 -- ----------------------------

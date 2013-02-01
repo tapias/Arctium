@@ -27,6 +27,11 @@ namespace Framework.DBC
         public static Dictionary<uint, ChrRaces> RaceStorage;
         public static Dictionary<uint, CharStartOutfit> CharStartOutfitStorage;
         public static Dictionary<uint, NameGen> NameGenStorage;
+        public static Dictionary<uint, ChrSpecialization> SpecializationStorage;
+        public static Dictionary<uint, SpecializationSpell> SpecializationSpellStorage;
+        public static Dictionary<uint, Spell> SpellStorage;
+        public static Dictionary<uint, SpellLevels> SpellLevelStorage;
+        public static Dictionary<uint, Talent> TalentStorage;
 
         //Strings
         internal static Dictionary<uint, string> ClassStrings = new Dictionary<uint, string>();

@@ -20,6 +20,8 @@ using Framework.Database;
 using Framework.DBC;
 using System;
 using System.Collections.Generic;
+using WorldServer.Game.ObjectDefines;
+using Talent = WorldServer.Game.ObjectDefines.Talent;
 
 namespace WorldServer.Game.WorldEntities
 {
@@ -44,44 +46,56 @@ namespace WorldServer.Game.WorldEntities
         public UInt32 CharacterFlags;
         public UInt32 CustomizeFlags;
         public Boolean LoginCinematic;
+        public Byte SpecGroupCount;
+        public Byte ActiveSpecGroup;
+        public UInt32 PrimarySpec;
+        public UInt32 SecondarySpec;
 
         public Dictionary<ulong, WorldObject> InRangeObjects = new Dictionary<ulong, WorldObject>();
 
+        public List<ActionButton> ActionButtons = new List<ActionButton>();
         public List<Skill> Skills = new List<Skill>();
         public List<PlayerSpell> SpellList = new List<PlayerSpell>();
+        public List<Talent> TalentList = new List<Talent>();
 
         public Character(UInt64 guid, int updateLength = (int)PlayerFields.End) : base(updateLength)
         {
             SQLResult result = DB.Characters.Select("SELECT * FROM characters WHERE guid = ?", guid);
 
-            Guid           = result.Read<UInt64>(0, "Guid");
-            AccountId      = result.Read<UInt32>(0, "AccountId");
-            Name           = result.Read<String>(0, "Name");
-            Race           = result.Read<Byte>(0, "Race");
-            Class          = result.Read<Byte>(0, "Class");
-            Gender         = result.Read<Byte>(0, "Gender");
-            Skin           = result.Read<Byte>(0, "Skin");
-            Face           = result.Read<Byte>(0, "Face");
-            HairStyle      = result.Read<Byte>(0, "HairStyle");
-            HairColor      = result.Read<Byte>(0, "HairColor");
-            FacialHair     = result.Read<Byte>(0, "FacialHair");
-            Level          = result.Read<Byte>(0, "Level");
-            Zone           = result.Read<UInt32>(0, "Zone");
-            Map            = result.Read<UInt32>(0, "Map");
-            Position.X     = result.Read<Single>(0, "X");
-            Position.Y     = result.Read<Single>(0, "Y");
-            Position.Z     = result.Read<Single>(0, "Z");
-            Position.O     = result.Read<Single>(0, "O");
-            GuildGuid      = result.Read<UInt64>(0, "GuildGuid");
-            PetDisplayInfo = result.Read<UInt32>(0, "PetDisplayId");
-            PetLevel       = result.Read<UInt32>(0, "PetLevel");
-            PetFamily      = result.Read<UInt32>(0, "PetFamily");
-            CharacterFlags = result.Read<UInt32>(0, "CharacterFlags");
-            CustomizeFlags = result.Read<UInt32>(0, "CustomizeFlags");
-            LoginCinematic = result.Read<Boolean>(0, "LoginCinematic");
+            Guid            = result.Read<UInt64>(0, "Guid");
+            AccountId       = result.Read<UInt32>(0, "AccountId");
+            Name            = result.Read<String>(0, "Name");
+            Race            = result.Read<Byte>(0, "Race");
+            Class           = result.Read<Byte>(0, "Class");
+            Gender          = result.Read<Byte>(0, "Gender");
+            Skin            = result.Read<Byte>(0, "Skin");
+            Face            = result.Read<Byte>(0, "Face");
+            HairStyle       = result.Read<Byte>(0, "HairStyle");
+            HairColor       = result.Read<Byte>(0, "HairColor");
+            FacialHair      = result.Read<Byte>(0, "FacialHair");
+            Level           = result.Read<Byte>(0, "Level");
+            Zone            = result.Read<UInt32>(0, "Zone");
+            Map             = result.Read<UInt32>(0, "Map");
+            Position.X      = result.Read<Single>(0, "X");
+            Position.Y      = result.Read<Single>(0, "Y");
+            Position.Z      = result.Read<Single>(0, "Z");
+            Position.O      = result.Read<Single>(0, "O");
+            GuildGuid       = result.Read<UInt64>(0, "GuildGuid");
+            PetDisplayInfo  = result.Read<UInt32>(0, "PetDisplayId");
+            PetLevel        = result.Read<UInt32>(0, "PetLevel");
+            PetFamily       = result.Read<UInt32>(0, "PetFamily");
+            CharacterFlags  = result.Read<UInt32>(0, "CharacterFlags");
+            CustomizeFlags  = result.Read<UInt32>(0, "CustomizeFlags");
+            LoginCinematic  = result.Read<Boolean>(0, "LoginCinematic");
+            SpecGroupCount  = result.Read<Byte>(0, "SpecGroupCount");
+            ActiveSpecGroup = result.Read<Byte>(0, "ActiveSpecGroup");
+            PrimarySpec     = result.Read<UInt32>(0, "PrimarySpecId");
+            SecondarySpec   = result.Read<UInt32>(0, "SecondarySpecId");
 
+            Globals.SpecializationMgr.LoadTalents(this);
             Globals.SpellMgr.LoadSpells(this);
             Globals.SkillMgr.LoadSkills(this);
+            Globals.ActionMgr.LoadActionButtons(this);
 
             SetUpdateFields();
         }
@@ -197,9 +211,17 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<Single>((int)PlayerFields.RangedCritPercentage, 0);
             SetUpdateField<Int32>((int)PlayerFields.ModHealingDonePos, 0);
 
+            SetUpdateField<Int32>((int)PlayerFields.CurrentSpecID, (int)GetActiveSpecId());
+
+            SetUpdateField<Int32>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(this), 0);
+            SetUpdateField<Int32>((int)PlayerFields.SpellCritPercentage + 1, SpecializationMgr.GetMaxTalentRowCount(this), 0);
+
+            for (int i = 2; i < 7; i++)
+                SetUpdateField<Single>((int)PlayerFields.SpellCritPercentage + i, 0);
+
+
             for (int i = 0; i < 7; i++)
             {
-                SetUpdateField<Single>((int)PlayerFields.SpellCritPercentage + i, 0);
                 SetUpdateField<Int32>((int)PlayerFields.ModDamageDonePos + i, 0);
                 SetUpdateField<Int32>((int)PlayerFields.ModDamageDoneNeg + i, 0);
                 SetUpdateField<Single>((int)PlayerFields.ModDamageDonePercent + i, 0);
@@ -226,6 +248,14 @@ namespace WorldServer.Game.WorldEntities
         public static string NormalizeName(string name)
         {
             return name[0].ToString().ToUpper() + name.Remove(0, 1).ToLower();
+        }
+
+        public uint GetActiveSpecId()
+        {
+            if ((ActiveSpecGroup == 0 && PrimarySpec == 0) || (ActiveSpecGroup == 1 && SecondarySpec == 0))
+                return 0;
+
+            return (ActiveSpecGroup == 0 && PrimarySpec != 0) ? PrimarySpec : SecondarySpec;
         }
     }
 }

@@ -15,18 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Framework.DBC
+namespace WorldServer.Game.ObjectDefines
 {
-    public static class DBCFmt
+    public class ActionButton
     {
-        public static string ChrClassesEntryfmt = "nixsxxxixiixxxxxxx";
-        public static string ChrRacesEntryfmt = "nxixiixixxxxixsxxxxxxxxxxxxxxxxxxxxx";
-        public static string ChrSpecializationfmt = "nxiixixixxxxxx";
-        public static string CharStartOutfitfmt = "xiiiiiiiiiiiiiiiiiiiiiiiiixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-        public static string NameGenfmt = "nsii";
-        public static string SpecializationSpellfmt = "xiiix";
-        public static string Spellfmt = "nxxxxixxxiiiiiiiiiiiiiiii";
-        public static string SpellLevelsfmt = "nixiii";
-        public static string TalentEntryfmt = "nxiiixxxiix";
+        public uint Action;
+        public byte SlotId;
+        public byte SpecGroup;
     }
 }

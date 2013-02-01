@@ -460,6 +460,7 @@ namespace Framework.Constants
         NameCache                                = 0x30D,
         RealmCache                               = 0xD81,
         GossipMessage                            = 0x88C,
+        TalentUpdate                             = 0xBAC,
     }
 
     [Flags]
@@ -513,6 +514,8 @@ namespace Framework.Constants
         SetSelection                             = 0x17E,
         ObjectUpdateFailed                       = 0x2FB,
         DBQueryBulk                              = 0x537,
+        SetActionButton                          = 0x4B,
+        SetActionBarToggles                      = 0x1C0,
         #endregion
 
         #region ChatMessages
@@ -533,6 +536,11 @@ namespace Framework.Constants
 
         #region Gossip
         TalkToGossip                             = 0x764,
+        #endregion
+
+        #region Specialization
+        SetSpecialization                        = 0x2FF,
+        LearnTalents                             = 0x136,
         #endregion
     }
 
