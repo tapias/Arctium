@@ -33,7 +33,6 @@ namespace WorldServer.Game.WorldEntities
         // Some data
         public UInt64 TargetGuid;
 
-        public bool IsInWorld { get; set; }
         public int MaskSize;
         public BitArray Mask;
         public Hashtable UpdateData = new Hashtable();
@@ -42,7 +41,6 @@ namespace WorldServer.Game.WorldEntities
         
         public WorldObject(int dataLength)
         {
-            IsInWorld = false;
             MaskSize = (dataLength + 32) / 32;
             Mask = new BitArray(dataLength, false);
         }
@@ -127,7 +125,7 @@ namespace WorldServer.Game.WorldEntities
             }
         }
 
-        public void WriteUpdateFields(ref PacketWriter packet, bool sendAllFields = false)
+        public void WriteUpdateFields(ref PacketWriter packet)
         {
             packet.WriteUInt8((byte)MaskSize);
             packet.WriteBitArray(Mask, MaskSize * 4);    // Int32 = 4 Bytes
@@ -153,11 +151,11 @@ namespace WorldServer.Game.WorldEntities
                     }
                     catch
                     {
-                        if (sendAllFields)
-                            packet.WriteInt32(0);
                     }
                 }
             }
+
+            Mask.SetAll(false);
         }
 
         public void WriteDynamicUpdateFields(ref PacketWriter packet)

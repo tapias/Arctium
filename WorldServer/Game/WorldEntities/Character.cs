@@ -94,41 +94,11 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<Int32>((int)ObjectFields.Type, 0x19);
             SetUpdateField<Single>((int)ObjectFields.Scale, 1.0f);
 
-            // UnitFields
-            SetUpdateField<UInt64>((int)UnitFields.Charm, 0);
-            SetUpdateField<UInt64>((int)UnitFields.Summon, 0);
-            SetUpdateField<UInt64>((int)UnitFields.Critter, 0);
-            SetUpdateField<UInt64>((int)UnitFields.CharmedBy, 0);
-            SetUpdateField<UInt64>((int)UnitFields.SummonedBy, 0);
-            SetUpdateField<UInt64>((int)UnitFields.CreatedBy, 0);
-            SetUpdateField<UInt64>((int)UnitFields.Target, 0);
-            SetUpdateField<UInt64>((int)UnitFields.ChannelObject, 0);
-
             SetUpdateField<Int32>((int)UnitFields.Health, 123);
-
-            for (int i = 0; i < 5; i++)
-                SetUpdateField<Int32>((int)UnitFields.Power + i, 0);
-
             SetUpdateField<Int32>((int)UnitFields.MaxHealth, 123);
 
-            for (int i = 0; i < 5; i++)
-                SetUpdateField<Int32>((int)UnitFields.MaxPower + i, 0);
-
-            SetUpdateField<Int32>((int)UnitFields.PowerRegenFlatModifier, 0);
-            SetUpdateField<Int32>((int)UnitFields.PowerRegenInterruptedFlatModifier, 0);
-            SetUpdateField<Int32>((int)UnitFields.BaseHealth, 0);
-            SetUpdateField<Int32>((int)UnitFields.BaseMana, 0);
             SetUpdateField<Int32>((int)UnitFields.Level, Level);
             SetUpdateField<Int32>((int)UnitFields.FactionTemplate, (int)DBCStorage.RaceStorage[Race].FactionID);
-            SetUpdateField<Int32>((int)UnitFields.Flags, 0);
-            SetUpdateField<Int32>((int)UnitFields.Flags2, 0);
-
-            for (int i = 0; i < 5; i++)
-            {
-                SetUpdateField<Int32>((int)UnitFields.Stats + i, 0);
-                SetUpdateField<Int32>((int)UnitFields.StatPosBuff + i, 0);
-                SetUpdateField<Int32>((int)UnitFields.StatNegBuff + i, 0);
-            }
 
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, Race, 0);
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, Class, 1);
@@ -138,43 +108,13 @@ namespace WorldServer.Game.WorldEntities
             uint displayId = Gender == 0 ? DBCStorage.RaceStorage[Race].model_m : DBCStorage.RaceStorage[Race].model_f;
             SetUpdateField<Int32>((int)UnitFields.DisplayID, (int)displayId);
             SetUpdateField<Int32>((int)UnitFields.NativeDisplayID, (int)displayId);
-            SetUpdateField<Int32>((int)UnitFields.MountDisplayID, 0);
-            SetUpdateField<Int32>((int)UnitFields.DynamicFlags, 0);
 
             SetUpdateField<Single>((int)UnitFields.BoundingRadius, 0.389F);
             SetUpdateField<Single>((int)UnitFields.CombatReach, 1.5F);
-            SetUpdateField<Single>((int)UnitFields.MinDamage, 0);
-            SetUpdateField<Single>((int)UnitFields.MaxDamage, 0);
             SetUpdateField<Single>((int)UnitFields.ModCastingSpeed, 1);
-            SetUpdateField<Int32>((int)UnitFields.AttackPower, 0);
-            SetUpdateField<Int32>((int)UnitFields.RangedAttackPower, 0);
-
-            for (int i = 0; i < 7; i++)
-            {
-                SetUpdateField<Int32>((int)UnitFields.Resistances + i, 0);
-                SetUpdateField<Int32>((int)UnitFields.ResistanceBuffModsPositive + i, 0);
-                SetUpdateField<Int32>((int)UnitFields.ResistanceBuffModsNegative + i, 0);
-            }
-
-            SetUpdateField<Byte>((int)UnitFields.AnimTier, 0, 0);
-            SetUpdateField<Byte>((int)UnitFields.AnimTier, 0, 1);
-            SetUpdateField<Byte>((int)UnitFields.AnimTier, 0, 2);
-            SetUpdateField<Byte>((int)UnitFields.AnimTier, 0, 3);
-
-            SetUpdateField<Int16>((int)UnitFields.RangedAttackRoundBaseTime, 0);
-            SetUpdateField<Int16>((int)UnitFields.RangedAttackRoundBaseTime, 0, 1);
-            SetUpdateField<Single>((int)UnitFields.MinOffHandDamage, 0);
-            SetUpdateField<Single>((int)UnitFields.MaxOffHandDamage, 0);
-            SetUpdateField<Int32>((int)UnitFields.AttackPowerModPos, 0);
-            SetUpdateField<Int32>((int)UnitFields.RangedAttackPowerModPos, 0);
-            SetUpdateField<Single>((int)UnitFields.MinRangedDamage, 0);
-            SetUpdateField<Single>((int)UnitFields.MaxRangedDamage, 0);
-            SetUpdateField<Single>((int)UnitFields.AttackPowerMultiplier, 0);
-            SetUpdateField<Single>((int)UnitFields.RangedAttackPowerMultiplier, 0);
             SetUpdateField<Single>((int)UnitFields.MaxHealthModifier, 1);
             
             // PlayerFields
-            SetUpdateField<Int32>((int)PlayerFields.MaxLevel, 90);
             SetUpdateField<Byte>((int)PlayerFields.HairColorID, Skin, 0);
             SetUpdateField<Byte>((int)PlayerFields.HairColorID, Face, 1);
             SetUpdateField<Byte>((int)PlayerFields.HairColorID, HairStyle, 2);
@@ -190,37 +130,12 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<Int32>((int)PlayerFields.WatchedFactionIndex, -1);
             SetUpdateField<Int32>((int)PlayerFields.XP, 0);
             SetUpdateField<Int32>((int)PlayerFields.NextLevelXP, 400);
-            SetUpdateField<Int32>((int)PlayerFields.PlayerFlags, 0);
-            SetUpdateField<Int32>((int)PlayerFields.CharacterPoints, 0);
-            SetUpdateField<Int32>((int)PlayerFields.GuildRankID, 0);
-            SetUpdateField<Single>((int)PlayerFields.CritPercentage, 0);
-            SetUpdateField<Single>((int)PlayerFields.RangedCritPercentage, 0);
-            SetUpdateField<Int32>((int)PlayerFields.ModHealingDonePos, 0);
-
-            for (int i = 0; i < 7; i++)
-            {
-                SetUpdateField<Single>((int)PlayerFields.SpellCritPercentage + i, 0);
-                SetUpdateField<Int32>((int)PlayerFields.ModDamageDonePos + i, 0);
-                SetUpdateField<Int32>((int)PlayerFields.ModDamageDoneNeg + i, 0);
-                SetUpdateField<Single>((int)PlayerFields.ModDamageDonePercent + i, 0);
-            }
-
-            SetUpdateField<UInt64>((int)PlayerFields.Coinage, 0);
 
             for (int i = 0; i < 448; i++)
                 if (i < Skills.Count)
                     SetUpdateField<UInt32>((int)PlayerFields.Skill + i, Skills[i].Id);
-                else
-                    SetUpdateField<UInt32>((int)PlayerFields.Skill + i, 0);
-
-            for (int i = 0; i < 750; i++)
-                SetUpdateField<Int32>((int)PlayerFields.QuestLog + i, 0);
 
             SetUpdateField<UInt32>((int)PlayerFields.HomePlayerRealm, 1);
-            SetUpdateField<Single>((int)PlayerFields.BlockPercentage, 0);
-
-            for (int i = 0; i < 200; i++)
-                SetUpdateField<UInt32>((int)PlayerFields.ExploredZones + i, 0);
         }
 
         public static string NormalizeName(string name)
