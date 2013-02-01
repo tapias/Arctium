@@ -113,6 +113,7 @@ namespace WorldServer.Game.Managers
 
             Globals.WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref obj, updateFlags);
 
+            obj.SetUpdateFields();
             obj.WriteUpdateFields(ref updateObject);
             obj.WriteDynamicUpdateFields(ref updateObject);
         }

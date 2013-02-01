@@ -132,7 +132,6 @@ namespace WorldServer.Game.Managers
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
-                spawn.SetUpdateFields();
 
                 AddSpawn(spawn);
             }
@@ -190,7 +189,6 @@ namespace WorldServer.Game.Managers
 
                 spawn.CreateFullGuid();
                 spawn.CreateData(data);
-                spawn.SetUpdateFields();
 
                 AddSpawn(spawn, ref data);
             }

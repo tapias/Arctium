@@ -40,6 +40,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation | UpdateFlag.Self;
             WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref character, updateFlags);
 
+            character.SetUpdateFields();
             character.WriteUpdateFields(ref updateObject);
             character.WriteDynamicUpdateFields(ref updateObject);
 

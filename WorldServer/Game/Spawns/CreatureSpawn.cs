@@ -66,7 +66,6 @@ namespace WorldServer.Game.Spawns
         {
             CreateFullGuid();
             CreateData(Creature);
-            SetUpdateFields();
 
             Globals.SpawnMgr.AddSpawn(this);
 

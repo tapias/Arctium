@@ -96,8 +96,6 @@ namespace WorldServer.Game.WorldEntities
             Globals.SpellMgr.LoadSpells(this);
             Globals.SkillMgr.LoadSkills(this);
             Globals.ActionMgr.LoadActionButtons(this);
-
-            SetUpdateFields();
         }
 
         public override void SetUpdateFields()
