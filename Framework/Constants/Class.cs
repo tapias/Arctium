@@ -15,18 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Framework.DBC
+namespace Framework.Constants
 {
-    public static class DBCFmt
+    public enum Class
     {
-        public static string ChrClassesEntryfmt = "nixsxxxixiixxxxxxx";
-        public static string ChrRacesEntryfmt = "nxixiixixxxxixsxxxxxxxxxxxxxxxxxxxxx";
-        public static string ChrSpecializationfmt = "nxiixixixxxxxx";
-        public static string CharStartOutfitfmt = "xiiiiiiiiiiiiiiiiiiiiiiiiixxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-        public static string NameGenfmt = "nsii";
-        public static string SpecializationSpellfmt = "xiiix";
-        public static string Spellfmt = "nxxxxixxxiiiiiiiiiiiiiiii";
-        public static string SpellLevelsfmt = "nixiii";
-        public static string TalentEntryfmt = "nxiiixxxiix";
+        Warrior     = 1,
+        Paladin     = 2,
+        Hunter      = 3,
+        Rogue       = 4,
+        Priest      = 5,
+        Deathknight = 6,
+        Shaman      = 7,
+        Mage        = 8,
+        Warlock     = 9,
+        Monk        = 10,
+        Druid       = 11
     }
 }

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using Framework.Constants;
 using Framework.Logging;
 using Framework.Network.Packets;
@@ -38,6 +39,22 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             UpdateFlag updateFlags = UpdateFlag.Alive | UpdateFlag.Rotation | UpdateFlag.Self;
             WorldMgr.WriteUpdateObjectMovement(ref updateObject, ref character, updateFlags);
+
+            character.WriteUpdateFields(ref updateObject);
+            character.WriteDynamicUpdateFields(ref updateObject);
+
+            session.Send(ref updateObject);
+        }
+
+        public static void HandleUpdateObjectValues(ref WorldClass session)
+        {
+            WorldObject character = session.Character;
+            PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+
+            updateObject.WriteUInt16((ushort)character.Map);
+            updateObject.WriteUInt32(1);
+            updateObject.WriteUInt8((byte)UpdateType.Values);
+            updateObject.WriteGuid(character.Guid);
 
             character.WriteUpdateFields(ref updateObject);
             character.WriteDynamicUpdateFields(ref updateObject);

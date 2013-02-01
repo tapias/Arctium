@@ -28,6 +28,11 @@ namespace Framework.DBC
             DBCStorage.ClassStorage = DBCReader.ReadDBC<ChrClasses>(null, DBCFmt.ChrClassesEntryfmt, "ChrClasses.dbc");
             DBCStorage.CharStartOutfitStorage = DBCReader.ReadDBC<CharStartOutfit>(null, DBCFmt.CharStartOutfitfmt, "CharStartOutfit.dbc");
             DBCStorage.NameGenStorage = DBCReader.ReadDBC<NameGen>(DBCStorage.NameGenStrings, DBCFmt.NameGenfmt, "NameGen.dbc");
+            DBCStorage.SpecializationStorage = DBCReader.ReadDBC<ChrSpecialization>(null, DBCFmt.ChrSpecializationfmt, "ChrSpecialization.dbc");
+            DBCStorage.SpecializationSpellStorage = DBCReader.ReadDBC<SpecializationSpell>(null, DBCFmt.SpecializationSpellfmt, "SpecializationSpells.dbc");
+            DBCStorage.SpellStorage = DBCReader.ReadDBC<Spell>(null, DBCFmt.Spellfmt, "Spell.dbc");
+            DBCStorage.SpellLevelStorage = DBCReader.ReadDBC<SpellLevels>(null, DBCFmt.SpellLevelsfmt, "SpellLevels.dbc");
+            DBCStorage.TalentStorage = DBCReader.ReadDBC<Talent>(null, DBCFmt.TalentEntryfmt, "Talent.dbc");
 
             Log.Message(LogType.NORMAL, "Loaded {0} dbc files.", DBCStorage.DBCFileCount);
             Log.Message();

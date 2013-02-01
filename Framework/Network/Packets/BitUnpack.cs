@@ -84,5 +84,20 @@ namespace Framework.Network.Packets
 
             return BitConverter.ToUInt64(guidBytes, 0);
         }
+
+        public UInt32 GetValue(byte[] mask, byte[] bytes)
+        {
+            bool[] valueMask = new bool[mask.Length];
+            byte[] valueBytes = new byte[bytes.Length];
+
+            for (int i = 0; i < valueMask.Length; i++)
+                valueMask[i] = GetBit();
+     
+            for (byte i = 0; i < bytes.Length; i++)
+                if (valueMask[mask[i]])
+                    valueBytes[bytes[i]] = (byte)(reader.ReadUInt8() ^ 1);
+
+            return BitConverter.ToUInt32(valueBytes, 0);
+        }
     }
 }

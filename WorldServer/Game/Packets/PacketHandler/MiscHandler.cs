@@ -15,9 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.Linq;
 using Framework.Constants;
 using Framework.Logging;
 using Framework.Network.Packets;
+using WorldServer.Game.ObjectDefines;
 using WorldServer.Network;
 using Framework.Database;
 using Framework.ObjectDefines;
@@ -132,6 +135,81 @@ namespace WorldServer.Game.Packets.PacketHandler
                 else
                     Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, ObjectGuid.GetGuidType(fullGuid), guid, ObjectGuid.GetId(fullGuid));
             }
+        }
+
+        [Opcode(ClientMessage.SetActionButton, "16357")]
+        public static void HandleSetActionButton(ref PacketReader packet, ref WorldClass session)
+        {
+            var pChar = session.Character;
+
+            byte[] actionMask = { 4, 0, 3, 7, 1, 6, 2, 5 };
+            byte[] actionBytes = { 3, 0, 1, 4, 7, 2, 6, 5 };
+
+            var slotId = packet.ReadByte();
+            
+            BitUnpack actionUnpacker = new BitUnpack(packet);
+            
+            var actionId = actionUnpacker.GetValue(actionMask, actionBytes);
+            
+            if (actionId == 0)
+            {
+                var action = pChar.ActionButtons.Where(button => button.SlotId == slotId && button.SpecGroup == pChar.ActiveSpecGroup).Select(button => button).First();
+                ActionMgr.RemoveActionButton(pChar, action, true);
+                Log.Message(LogType.DEBUG, "Character (Guid: {0}) removed action button {1} from slot {2}.", pChar.Guid, actionId, slotId);
+                return;
+            }
+
+            var newAction = new ActionButton
+            {
+                Action = actionId,
+                SlotId = slotId,
+                SpecGroup = pChar.ActiveSpecGroup
+            };
+
+            ActionMgr.AddActionButton(pChar, newAction, true);
+            Log.Message(LogType.DEBUG, "Character (Guid: {0}) added action button {1} to slot {2}.", pChar.Guid, actionId, slotId);
+        }
+
+        public static void HandleUpdateActionButtons(ref WorldClass session)
+        {
+            var pChar = session.Character;
+
+            PacketWriter updateActionButtons = new PacketWriter(JAMCMessage.UpdateActionButtons);
+            BitPack BitPack = new BitPack(updateActionButtons);
+
+            const int buttonCount = 132;
+            var buttons = new byte[buttonCount][];
+
+            byte[] buttonMask = { 4, 0, 7, 2, 6, 3, 1, 5 };
+            byte[] buttonBytes = { 0, 3, 5, 7, 6, 1, 4, 2 };
+
+            var actions = ActionMgr.GetActionButtons(pChar, pChar.ActiveSpecGroup);
+            
+            for (int i = 0; i < buttonCount; i++)
+                if (actions.Any(action => action.SlotId == i))
+                    buttons[i] = BitConverter.GetBytes((ulong)actions.Where(action => action.SlotId == i).Select(action => action.Action).First());
+                else
+                    buttons[i] = new byte[8];
+
+            for (int i = 0; i < 16; i++)
+            {
+                for (int j = 0; j < buttonCount; j++)
+                {
+                    if (i < 8)
+                        BitPack.Write(buttons[j][buttonMask[i]]);
+                    else if (i < 16)
+                    {
+                        if (buttons[j][buttonBytes[i - 8]] != 0)
+                            updateActionButtons.WriteUInt8((byte)(buttons[j][buttonBytes[i - 8]] ^ 1));
+                    }
+                }
+            }
+
+            // Packet Type (NYI)
+            // 0 - Initial packet on Login (no verification) / 1 - Verify spells on switch (Spec change) / 2 - Clear Action Buttons (Spec change)
+            updateActionButtons.WriteInt8(0);
+
+            session.Send(ref updateActionButtons);
         }
     }
 }

@@ -21,25 +21,29 @@ namespace WorldServer.Game
 {
     public class Globals
     {
+        public static ActionManager ActionMgr;
         public static AddonManager AddonMgr;
         public static DataManager DataMgr;
         public static GossipManager GossipMgr;
         public static ObjectManager ObjectMgr;
         public static SkillManager SkillMgr;
         public static SpawnManager SpawnMgr;
+        public static SpecializationManager SpecializationMgr;
         public static SpellManager SpellMgr;
         public static WorldManager WorldMgr;
 
         public static void InitializeManager()
         {
-            AddonMgr  = AddonManager.GetInstance();
-            SkillMgr  = SkillManager.GetInstance();
-            SpellMgr  = SpellManager.GetInstance();
-            DataMgr   = DataManager.GetInstance();
-            SpawnMgr  = SpawnManager.GetInstance();
-            GossipMgr = GossipManager.GetInstance();
-            ObjectMgr = ObjectManager.GetInstance();
-            WorldMgr  = WorldManager.GetInstance();
+            ActionMgr         = ActionManager.GetInstance();
+            AddonMgr          = AddonManager.GetInstance();
+            SkillMgr          = SkillManager.GetInstance();
+            SpellMgr          = SpellManager.GetInstance();
+            SpecializationMgr = SpecializationManager.GetInstance();
+            DataMgr           = DataManager.GetInstance();
+            SpawnMgr          = SpawnManager.GetInstance();
+            GossipMgr         = GossipManager.GetInstance();
+            ObjectMgr         = ObjectManager.GetInstance();
+            WorldMgr          = WorldManager.GetInstance();
         }
     }
 }
