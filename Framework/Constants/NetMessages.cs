@@ -451,7 +451,7 @@ namespace Framework.Constants
         UpdateObject                             = 0x120,
         ObjectDestroy                            = 0x34C,
         TutorialFlags                            = 0x6A8,
-        UITime                                   = 0,
+        UITime                                   = 0x04D,
         LogoutComplete                           = 0x2A0,
         MessageChat                              = 0x009,
         CreatureStats                            = 0xAA4,

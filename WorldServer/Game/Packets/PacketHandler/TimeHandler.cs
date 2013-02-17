@@ -29,7 +29,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             WorldMgr.WriteAccountData(AccountDataMasks.GlobalCacheMask, ref session);
         }
 
-        [Opcode(ClientMessage.RequestUITime, "")]
+        [Opcode(ClientMessage.RequestUITime, "16357")]
         public static void HandleUITime(ref PacketReader packet, ref WorldClass session)
         {
             PacketWriter uiTime = new PacketWriter(LegacyMessage.UITime);
