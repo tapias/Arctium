@@ -30,7 +30,7 @@ using WorldServer.Game.WorldEntities;
 
 namespace WorldServer.Network
 {
-    public class WorldClass
+    public sealed class WorldClass : IDisposable
     {
         public Account Account { get; set; }
         public Character Character { get; set; }
@@ -111,7 +111,7 @@ namespace WorldServer.Network
             }
         }
 
-        protected void Decode(ref byte[] data)
+        void Decode(ref byte[] data)
         {
             Crypt.Decrypt(data);
 
@@ -164,6 +164,12 @@ namespace WorldServer.Network
 
                 clientSocket.Close();
             }
+        }
+
+        public void Dispose()
+        {
+            Crypt.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

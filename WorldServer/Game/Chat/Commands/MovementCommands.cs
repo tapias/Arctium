@@ -27,7 +27,7 @@ namespace WorldServer.Game.Chat.Commands
     public class MovementCommands : Globals
     {
         [ChatCommand("fly", "Usage: !fly #state (Turns the fly mode 'on' or 'off')")]
-        public static void Fly(string[] args, ref WorldClass session)
+        public static void Fly(string[] args, WorldClass session)
         {
             string state = CommandParser.Read<string>(args, 1);
 
@@ -44,7 +44,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("walkspeed", "Usage: !walkspeed #speed (Set the current walk speed)")]
-        public static void WalkSpeed(string[] args, ref WorldClass session)
+        public static void WalkSpeed(string[] args, WorldClass session)
         {
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetWalkSpeed(ref session);
@@ -67,7 +67,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("runspeed", "Usage: !runspeed #speed (Set the current run speed)")]
-        public static void RunSpeed(string[] args, ref WorldClass session)
+        public static void RunSpeed(string[] args, WorldClass session)
         {
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetRunSpeed(ref session);
@@ -89,7 +89,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("swimspeed", "Usage: !swimspeed #speed (Set the current swim speed)")]
-        public static void SwimSpeed(string[] args, ref WorldClass session)
+        public static void SwimSpeed(string[] args, WorldClass session)
         {
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetSwimSpeed(ref session);
@@ -111,7 +111,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("flightspeed", "Usage: !flightspeed #speed (Set the current flight speed)")]
-        public static void FlightSpeed(string[] args, ref WorldClass session)
+        public static void FlightSpeed(string[] args, WorldClass session)
         {
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetFlightSpeed(ref session);
@@ -134,7 +134,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("tele", "Usage: !tele [#x #y #z #o #map] or [#location] (Force teleport to a new location by coordinates or location)")]
-        public static void Teleport(string[] args, ref WorldClass session)
+        public static void Teleport(string[] args, WorldClass session)
         {
             var pChar = session.Character;
             Vector4 vector;
@@ -192,7 +192,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("start", "Usage: !start (Teleports yourself to your start position)")]
-        public static void Start(string[] args, ref WorldClass session)
+        public static void Start(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -226,7 +226,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("gps", "Usage: !gps (Show your current location)")]
-        public static void GPS(string[] args, ref WorldClass session)
+        public static void GPS(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -235,7 +235,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("addtele", "Usage: !addtele #name (Adds a new teleport location to the world database with the given name)")]
-        public static void AddTele(string[] args, ref WorldClass session)
+        public static void AddTele(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -255,7 +255,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("deltele", "Usage: !deltele #name (Delete the given teleport location from the world database)")]
-        public static void DelTele(string[] args, ref WorldClass session)
+        public static void DelTele(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 

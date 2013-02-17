@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
 using System.Text;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
@@ -33,7 +34,7 @@ namespace WorldServer.Game.Chat.Commands
                 var helpAttribute = (ChatCommandAttribute[])command.Value.Method.GetCustomAttributes(typeof(ChatCommandAttribute), false);
                 foreach (var desc in helpAttribute)
                 {
-                    if (desc.Description != "")
+                    if (String.IsNullOrEmpty(desc.Description))
                         commandList.AppendLine("!" + command.Key + " [" + desc.Description + "]");
                     else
                         commandList.AppendLine("!" + command.Key);
@@ -44,7 +45,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("save")]
-        public static void Save(string[] args, ref WorldClass session)
+        public static void Save(string[] args, WorldClass session)
         {
             ObjectMgr.SavePositionToDB(session.Character);
 

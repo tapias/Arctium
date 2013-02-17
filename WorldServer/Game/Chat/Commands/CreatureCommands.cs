@@ -26,7 +26,7 @@ namespace WorldServer.Game.Chat.Commands
     public class CreatureCommands : Globals
     {
         [ChatCommand("addnpc")]
-        public static void AddNpc(string[] args, ref WorldClass session)
+        public static void AddNpc(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 
@@ -55,7 +55,7 @@ namespace WorldServer.Game.Chat.Commands
         }
 
         [ChatCommand("delnpc")]
-        public static void DeleteNpc(string[] args, ref WorldClass session)
+        public static void DeleteNpc(string[] args, WorldClass session)
         {
             var pChar = session.Character;
             var spawn = SpawnMgr.FindSpawn(pChar.TargetGuid);

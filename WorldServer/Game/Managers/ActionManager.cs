@@ -71,6 +71,9 @@ namespace WorldServer.Game.Managers
 
         public void AddActionButton(Character pChar, ActionButton actionButton, bool addToDb = false)
         {
+            if (pChar == null || actionButton == null)
+                return;
+
             pChar.ActionButtons.Add(actionButton);
 
             if (addToDb)
@@ -79,6 +82,9 @@ namespace WorldServer.Game.Managers
 
         public void RemoveActionButton(Character pChar, ActionButton actionButton, bool deleteFromDb = false)
         {
+            if (pChar == null || actionButton == null)
+                return;
+
             var deleted = pChar.ActionButtons.Remove(actionButton);
 
             if (deleted && deleteFromDb)

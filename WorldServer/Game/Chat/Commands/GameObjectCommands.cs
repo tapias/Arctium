@@ -26,7 +26,7 @@ namespace WorldServer.Game.Chat.Commands
     public class GameObjectCommands : Globals
     {
         [ChatCommand("addobject")]
-        public static void AddObject(string[] args, ref WorldClass session)
+        public static void AddObject(string[] args, WorldClass session)
         {
             var pChar = session.Character;
 

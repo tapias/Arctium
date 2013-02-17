@@ -31,7 +31,7 @@ namespace WorldServer
 {
     class WorldServer
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Log.ServerType = "World";
 
