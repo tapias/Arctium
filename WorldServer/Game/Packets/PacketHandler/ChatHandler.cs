@@ -34,7 +34,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             string chatMessage = packet.ReadString(messageLength);
 
             if (ChatCommandParser.CheckForCommand(chatMessage))
-                ChatCommandParser.ExecuteChatHandler(chatMessage, ref session);
+                ChatCommandParser.ExecuteChatHandler(chatMessage, session);
             else
                 SendMessageByType(ref session, MessageType.ChatMessageSay, language, chatMessage);
         }

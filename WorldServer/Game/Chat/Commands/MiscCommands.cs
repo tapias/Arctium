@@ -25,7 +25,7 @@ namespace WorldServer.Game.Chat.Commands
     public class MiscCommands : Globals
     {
         [ChatCommand("help")]
-        public static void Help(string[] args, ref WorldClass session)
+        public static void Help(string[] args, WorldClass session)
         {
             StringBuilder commandList = new StringBuilder();
 

@@ -26,7 +26,7 @@ namespace WorldServer.Game.Chat
     public class ChatCommandParser
     {
         public static Dictionary<string, HandleChatCommand> ChatCommands = new Dictionary<string, HandleChatCommand>();
-        public delegate void HandleChatCommand(string[] args, ref WorldClass session);
+        public delegate void HandleChatCommand(string[] args, WorldClass session);
 
         public static void DefineChatCommands()
         {
@@ -43,13 +43,13 @@ namespace WorldServer.Game.Chat
             }
         }
 
-        public static void ExecuteChatHandler(string chatCommand, ref WorldClass session)
+        public static void ExecuteChatHandler(string chatCommand, WorldClass session)
         {
             var args = chatCommand.Split(new string[] { " " }, StringSplitOptions.None);
             var command = args[0].Remove(0, 1);
 
             if (ChatCommands.ContainsKey(command))
-                ChatCommands[command].Invoke(args, ref session);
+                ChatCommands[command].Invoke(args, session);
         }
 
         public static bool CheckForCommand(string command)
