@@ -45,14 +45,14 @@ namespace Framework.DBC
 
                     if (header.RecordSize != _fmt.Length * 4)
                     {
-                        Logging.Log.Message(Logging.LogType.ERROR, "Size of '{0}' setted by format string ({1}) not equal size of DBC structure ({2}).", FileName, _fmt.Length * 4, header.RecordSize);
+                        Logging.Log.Message(Logging.LogType.ERROR, "Size of '{0}' set by format string ({1}) not equal size of DBC structure ({2}).", FileName, _fmt.Length * 4, header.RecordSize);
                         return null;
                     }
 
                     int structsize = Marshal.SizeOf(typeof(T));
                     if (structsize != _fmt.GetFMTCount())
                     {
-                        Logging.Log.Message(Logging.LogType.ERROR, "Size of '{0}' setted by format string ({1}) not equal size of C# Structure ({2}).", FileName, _fmt.GetFMTCount(), structsize);
+                        Logging.Log.Message(Logging.LogType.ERROR, "Size of '{0}' set by format string ({1}) not equal size of C# Structure ({2}).", FileName, _fmt.GetFMTCount(), structsize);
                         return null;
                     }
 

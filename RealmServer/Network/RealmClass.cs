@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Framework.Native;
 
 namespace Framework.Network.Realm
 {
@@ -110,7 +111,7 @@ namespace Framework.Network.Realm
                 {
                     session.SecureRemotePassword.CalculateX(username, password);
                     byte[] buf = new byte[0x10];
-                    SRP6.RAND_bytes(buf, 0x10);
+                    NativeMethods.RAND_bytes(buf, 0x10);
 
                     logonChallenge.WriteUInt8((byte)AuthResults.WOW_SUCCESS);
                     logonChallenge.WriteBytes(session.SecureRemotePassword.B);

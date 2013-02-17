@@ -18,6 +18,7 @@
 using Framework.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 
 namespace Framework.Console
@@ -38,7 +39,7 @@ namespace Framework.Console
                 string[] args = new string[line.Length - 1];
                 Array.Copy(line, 1, args, 0, line.Length - 1);
 
-                InvokeHandler(line[0].ToLower(), args);
+                InvokeHandler(line[0].ToLowerInvariant(), args);
             }
         }
 

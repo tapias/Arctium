@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 
 namespace Framework.Cryptography
 {
-    public class PacketCrypt
+    public sealed class PacketCrypt : IDisposable
     {
         public bool IsInitialized { get; set; }
 
@@ -72,6 +72,18 @@ namespace Framework.Cryptography
                 throw new InvalidOperationException("PacketCrypt not initialized!");
 
             SARC4Decrypt.ProcessBuffer(data, 4);
+        }
+
+        public void Dispose()
+        {
+            SARC4Encrypt.Dispose();
+            SARC4Decrypt.Dispose();
+            DecryptSHA1.Dispose();
+            EncryptSHA1.Dispose();
+
+            GC.SuppressFinalize(this);
+
+            IsInitialized = false;
         }
     }
 }

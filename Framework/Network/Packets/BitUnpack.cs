@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Framework.Network.Packets
 {
@@ -51,10 +52,13 @@ namespace Framework.Network.Packets
         {
             int returnValue = 0;
 
-            for (var i = bitCount - 1 ; i >= 0; --i)
-                returnValue = GetBit() ? (1 << i) | returnValue : returnValue;
+            checked
+            {
+                for (var i = bitCount - 1; i >= 0; --i)
+                    returnValue = GetBit() ? (1 << i) | returnValue : returnValue;
+            }
 
-            return (T)Convert.ChangeType(returnValue, typeof(T));
+            return (T)Convert.ChangeType(returnValue, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public T GetNameLength<T>(byte bitCount)
@@ -64,10 +68,13 @@ namespace Framework.Network.Packets
             // Unknown, always before namelength bits...
             GetBit();
 
-            for (var i = bitCount - 1; i >= 0; --i)
-                returnValue = GetBit() ? (1 << i) | returnValue : returnValue;
+            checked
+            {
+                for (var i = bitCount - 1; i >= 0; --i)
+                    returnValue = GetBit() ? (1 << i) | returnValue : returnValue;
+            }
 
-            return (T)Convert.ChangeType(returnValue, typeof(T));
+            return (T)Convert.ChangeType(returnValue, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public UInt64 GetGuid(byte[] mask, byte[] bytes)

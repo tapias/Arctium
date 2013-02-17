@@ -18,6 +18,7 @@
 using Framework.Constants;
 using Framework.Network.Packets;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -39,32 +40,32 @@ namespace Framework.Logging.PacketLogging
 
                     if (serverPacket != null)
                     {
-                        sb.AppendLine(String.Format("Client: {0}", clientInfo));
-                        sb.AppendLine(String.Format("Time: {0}", DateTime.Now.ToString()));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Client: {0}", clientInfo));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Time: {0}", DateTime.Now.ToString()));
 
                         if (Enum.IsDefined(typeof(LegacyMessage), serverPacket.Opcode))
                         {
                             sb.AppendLine("Type: LegacyMessage");
-                            sb.AppendLine(String.Format("Name: {0}", Enum.GetName(typeof(LegacyMessage), serverPacket.Opcode)));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(LegacyMessage), serverPacket.Opcode)));
                         }
                         else if (Enum.IsDefined(typeof(JAMCMessage), serverPacket.Opcode))
                         {
                             sb.AppendLine("Type: JAMCMessage");
-                            sb.AppendLine(String.Format("Name: {0}", Enum.GetName(typeof(JAMCMessage), serverPacket.Opcode)));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(JAMCMessage), serverPacket.Opcode)));
                         }
                         else if (Enum.IsDefined(typeof(Message), serverPacket.Opcode))
                         {
                             sb.AppendLine("Type: Message");
-                            sb.AppendLine(String.Format("Name: {0}", Enum.GetName(typeof(Message), serverPacket.Opcode)));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(Message), serverPacket.Opcode)));
                         }
                         else
                         {
                             sb.AppendLine("Type: JAMCCMessage");
-                            sb.AppendLine(String.Format("Name: {0}", Enum.GetName(typeof(JAMCCMessage), serverPacket.Opcode)));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(JAMCCMessage), serverPacket.Opcode)));
                         }
 
-                        sb.AppendLine(String.Format("Value: 0x{0:X} ({1})", serverPacket.Opcode, serverPacket.Opcode));
-                        sb.AppendLine(String.Format("Length: {0}", serverPacket.Size - 2));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Value: 0x{0:X} ({1})", serverPacket.Opcode, serverPacket.Opcode));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Length: {0}", serverPacket.Size - 2));
 
                         sb.AppendLine("|----------------------------------------------------------------|");
                         sb.AppendLine("| 00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F |");
@@ -80,9 +81,9 @@ namespace Framework.Logging.PacketLogging
                             data.ForEach(b =>
                             {
                                 if (b <= 0xF)
-                                    sb.Append(String.Format(" 0{0:X} ", b));
+                                    sb.Append(String.Format(CultureInfo.InvariantCulture, " 0{0:X} ", b));
                                 else
-                                    sb.Append(String.Format(" {0:X} ", b));
+                                    sb.Append(String.Format(CultureInfo.InvariantCulture, " {0:X} ", b));
 
                                 if (count == 15)
                                 {
@@ -104,18 +105,18 @@ namespace Framework.Logging.PacketLogging
 
                     if (clientPacket != null)
                     {
-                        sb.AppendLine(String.Format("Client: {0}", clientInfo));
-                        sb.AppendLine(String.Format("Time: {0}", DateTime.Now.ToString()));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Client: {0}", clientInfo));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Time: {0}", DateTime.Now.ToString()));
 
                         sb.AppendLine("Type: ClientMessage");
 
                         if (Enum.IsDefined(typeof(ClientMessage), clientPacket.Opcode))
-                            sb.AppendLine(String.Format("Name: {0}", clientPacket.Opcode));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", clientPacket.Opcode));
                         else
-                            sb.AppendLine(String.Format("Name: {0}", "Unknown"));
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", "Unknown"));
 
-                        sb.AppendLine(String.Format("Value: 0x{0:X} ({1})", (ushort)clientPacket.Opcode, (ushort)clientPacket.Opcode));
-                        sb.AppendLine(String.Format("Length: {0}", clientPacket.Size));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Value: 0x{0:X} ({1})", (ushort)clientPacket.Opcode, (ushort)clientPacket.Opcode));
+                        sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Length: {0}", clientPacket.Size));
 
                         sb.AppendLine("|----------------------------------------------------------------|");
                         sb.AppendLine("| 00  01  02  03  04  05  06  07  08  09  0A  0B  0C  0D  0E  0F |");
@@ -131,9 +132,9 @@ namespace Framework.Logging.PacketLogging
                             {
 
                                 if (b <= 0xF)
-                                    sb.Append(String.Format(" 0{0:X} ", b));
+                                    sb.Append(String.Format(CultureInfo.InvariantCulture, " 0{0:X} ", b));
                                 else
-                                    sb.Append(String.Format(" {0:X} ", b));
+                                    sb.Append(String.Format(CultureInfo.InvariantCulture, " {0:X} ", b));
 
                                 if (count == 15)
                                 {

@@ -141,7 +141,7 @@ namespace Framework.Database
 
                 for (int i = 0; i < resultCount; i++)
                 {
-                    sqlString.AppendFormat("(");
+                    sqlString.AppendFormat("(", CultureInfo.InvariantCulture);
 
                     for (int j = 0; j < fieldCount; j++)
                     {
@@ -154,9 +154,9 @@ namespace Framework.Database
                     }
 
                     if (i == resultCount - 1)
-                        sqlString.AppendFormat(");");
+                        sqlString.AppendFormat(");", CultureInfo.InvariantCulture);
                     else
-                        sqlString.AppendFormat("),");
+                        sqlString.AppendFormat("),", CultureInfo.InvariantCulture);
                 }
 
                 using (var Connection = new MySqlConnection(ConnectionString))

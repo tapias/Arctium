@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using System.Globalization;
 
 namespace Framework.Database
 {
@@ -26,7 +27,10 @@ namespace Framework.Database
 
         public T Read<T>(int row, string columnName, int number = 0)
         {
-            return (T)Convert.ChangeType(Rows[row][columnName + (number != 0 ? (1 + number).ToString() : "")], typeof(T));
+            checked
+            {
+                return (T)Convert.ChangeType(Rows[row][columnName + (number != 0 ? (1 + number).ToString(CultureInfo.GetCultureInfo("en-US")) : "")], typeof(T), CultureInfo.GetCultureInfo("en-US"));
+            }
         }
 
         public object[] ReadAllValuesFromField(string columnName)

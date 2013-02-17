@@ -28,17 +28,15 @@ namespace Framework.Network.Packets
     {
         public uint Opcode { get; set; }
         public uint Size { get; set; }
-        public byte[] Storage
+        public byte[] GetStorage()
         {
-            get
-            {
-                byte[] data = new byte[BaseStream.Length - 4];
-                Seek(4, SeekOrigin.Begin);
+            byte[] data = new byte[BaseStream.Length - 4];
+            Seek(4, SeekOrigin.Begin);
 
-                for (int i = 0; i < BaseStream.Length - 4; i++)
-                    data[i] = (byte)BaseStream.ReadByte();
-                return data;
-            }
+            for (int i = 0; i < BaseStream.Length - 4; i++)
+                data[i] = (byte)BaseStream.ReadByte();
+            
+            return data;
         }
 
         public PacketWriter() : base(new MemoryStream()) { }

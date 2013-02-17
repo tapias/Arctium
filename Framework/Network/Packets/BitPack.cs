@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Globalization;
 
 namespace Framework.Network.Packets
 {
@@ -51,7 +52,7 @@ namespace Framework.Network.Packets
         {
             --BitPosition;
 
-            if (Convert.ToBoolean(bit))
+            if (Convert.ToBoolean(bit, CultureInfo.InvariantCulture))
                 BitValue |= (byte)(1 << (BitPosition));
 
             if (BitPosition == 0)
@@ -64,8 +65,11 @@ namespace Framework.Network.Packets
 
         public void Write<T>(T bit, int count)
         {
-            for (int i = count - 1; i >= 0; --i)
-                Write<T>((T)Convert.ChangeType(((Convert.ToInt32(bit) >> i) & 1), typeof(T)));
+            checked
+            {
+                for (int i = count - 1; i >= 0; --i)
+                    Write<T>((T)Convert.ChangeType(((Convert.ToInt32(bit, CultureInfo.InvariantCulture) >> i) & 1), typeof(T), CultureInfo.InvariantCulture));
+            }
         }
 
         public void WriteGuidMask(params byte[] order)

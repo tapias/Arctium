@@ -19,6 +19,7 @@ using Framework.Logging;
 using System;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 namespace Framework.Configuration
 {
@@ -43,7 +44,7 @@ namespace Framework.Configuration
         public T Read<T>(string name, T value, bool hex = false)
         {
             string nameValue = null;
-            T trueValue = (T)Convert.ChangeType(value, typeof(T));
+            T trueValue = (T)Convert.ChangeType(value, typeof(T), CultureInfo.GetCultureInfo("en-US"));
             int lineCounter = 0;
 
             try
@@ -51,15 +52,15 @@ namespace Framework.Configuration
                 foreach (var option in ConfigContent)
                 {
                     var configOption = option.Split(new char[] { '=' }, StringSplitOptions.None);
-                    if (configOption[0].StartsWith(name, StringComparison.InvariantCulture))
-                        if (configOption[1].Trim().Equals(""))
+                    if (configOption[0].StartsWith(name, StringComparison.Ordinal))
+                        if (configOption[1].Trim() == "")
                             nameValue = value.ToString();
                         else
                             nameValue = configOption[1].Replace("\"", "").Trim();
 
                     if (typeof(T) == typeof(bool) && (nameValue != "0" && nameValue != "1"))
                     {
-                        Log.Message(LogType.ERROR, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString());
+                        Log.Message(LogType.ERROR, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString(CultureInfo.GetCultureInfo("en-US")));
                         Log.Message(LogType.ERROR, "Use default value for boolean config option: {0}. Default: {1}", name, value);
                     }
 
@@ -68,13 +69,13 @@ namespace Framework.Configuration
             }
             catch
             {
-                Log.Message(LogType.ERROR, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString());
+                Log.Message(LogType.ERROR, "Error in {0} in line {1}", ConfigFile, lineCounter.ToString(CultureInfo.GetCultureInfo("en-US")));
             }
 
             if (hex)
-                return (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+                return (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T), CultureInfo.GetCultureInfo("en-US"));
 
-            return (T)Convert.ChangeType(nameValue, typeof(T));
+            return (T)Convert.ChangeType(nameValue, typeof(T), CultureInfo.GetCultureInfo("en-US"));
         }
     }
 }

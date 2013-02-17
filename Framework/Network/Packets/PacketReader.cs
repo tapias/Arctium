@@ -17,6 +17,7 @@
 
 using Framework.Constants;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -99,7 +100,7 @@ namespace Framework.Network.Packets
         {
             StringBuilder tmpString = new StringBuilder();
             char tmpChar = base.ReadChar();
-            char tmpEndChar = Convert.ToChar(Encoding.UTF8.GetString(new byte[] { 0 }));
+            char tmpEndChar = Convert.ToChar(Encoding.UTF8.GetString(new byte[] { 0 }), CultureInfo.InvariantCulture);
 
             while (tmpChar != tmpEndChar)
             {
@@ -152,7 +153,7 @@ namespace Framework.Network.Packets
                 nameBuilder.Append(name[i]);
             }
 
-            return nameBuilder.ToString().ToUpper();
+            return nameBuilder.ToString().ToUpper(CultureInfo.InvariantCulture);
         }
 
         public void Skip(int count)

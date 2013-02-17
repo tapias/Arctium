@@ -17,6 +17,7 @@
  
 using Framework.Database;
 using Framework.Logging;
+using System.Globalization;
 
 namespace Framework.Console.Commands
 {
@@ -30,7 +31,7 @@ namespace Framework.Console.Commands
             if (name == null || password == null)
                 return;
 
-            name = name.ToUpper();
+            name = name.ToUpper(CultureInfo.InvariantCulture);
 
             //byte[] hash = new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(password));
             //string hashString = BitConverter.ToString(hash).Replace("-", "");
@@ -42,7 +43,7 @@ namespace Framework.Console.Commands
                 SQLResult result = DB.Realms.Select("SELECT * FROM accounts WHERE name = ?", name);
                 if (result.Count == 0)
                 {
-                    if (DB.Realms.Execute("INSERT INTO accounts (name, password, language) VALUES (?, ?, '')", name, password.ToUpper()))
+                    if (DB.Realms.Execute("INSERT INTO accounts (name, password, language) VALUES (?, ?, '')", name, password.ToUpperInvariant()))
                         Log.Message(LogType.NORMAL, "Account {0} successfully created", name);
                 }
                 else
