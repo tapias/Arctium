@@ -504,7 +504,7 @@ namespace Framework.Constants
         AuthContinuedSession                     = -1,
         EnableNagle                              = -1,
         SuspendTokenResponse                     = -1,
-        RequestUITime                            = -1,
+        RequestUITime                            = 0x780,
         ActivePlayer                             = 0xF84,
         CreatureStats                            = 0x285,
         GameObjectStats                          = 0xBE9,
