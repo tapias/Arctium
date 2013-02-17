@@ -37,7 +37,7 @@ namespace Framework.Network.Realm
 
                 return true;
             }
-            catch (Exception e)
+            catch (SocketException e)
             {
                 Log.Message(LogType.ERROR, "{0}", e.Message);
                 Log.Message();
@@ -61,7 +61,7 @@ namespace Framework.Network.Realm
                     RealmClass realmClient = new RealmClass();
                     realmClient.clientSocket = listener.AcceptSocket();
 
-                    new Thread(realmClient.Recieve).Start();
+                    new Thread(realmClient.Receive).Start();
                 }
             }
         }

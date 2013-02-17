@@ -27,6 +27,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Framework.Native;
+using System.Globalization;
 
 namespace Framework.Network.Realm
 {
@@ -47,29 +48,31 @@ namespace Framework.Network.Realm
 
         void HandleRealmData(byte[] data)
         {
-            PacketReader reader = new PacketReader(data, false);
-            ClientLink cmd = (ClientLink)reader.ReadUInt8();
-
-            switch (cmd)
+            using (var reader = new PacketReader(data, false))
             {
-                case ClientLink.CMD_AUTH_LOGON_CHALLENGE:
-                case ClientLink.CMD_AUTH_RECONNECT_CHALLENGE:
-                    HandleAuthLogonChallenge(this, reader);
-                    break;
-                case ClientLink.CMD_AUTH_LOGON_PROOF:
-                case ClientLink.CMD_AUTH_RECONNECT_PROOF:
-                    HandleAuthLogonProof(this, reader);
-                    break;
-                case ClientLink.CMD_REALM_LIST:
-                    HandleRealmList(this, reader);
-                    break;
-                default:
-                    Log.Message(LogType.NORMAL, "Received unknown ClientLink: {0}", cmd);
-                    break;
+                ClientLink cmd = (ClientLink)reader.ReadUInt8();
+
+                switch (cmd)
+                {
+                    case ClientLink.CMD_AUTH_LOGON_CHALLENGE:
+                    case ClientLink.CMD_AUTH_RECONNECT_CHALLENGE:
+                        HandleAuthLogonChallenge(reader);
+                        break;
+                    case ClientLink.CMD_AUTH_LOGON_PROOF:
+                    case ClientLink.CMD_AUTH_RECONNECT_PROOF:
+                        HandleAuthLogonProof(reader);
+                        break;
+                    case ClientLink.CMD_REALM_LIST:
+                        HandleRealmList(reader);
+                        break;
+                    default:
+                        Log.Message(LogType.NORMAL, "Received unknown ClientLink: {0}", cmd);
+                        break;
+                }
             }
         }
 
-        public void HandleAuthLogonChallenge(RealmClass session, PacketReader data)
+        public void HandleAuthLogonChallenge(PacketReader data)
         {
             Log.Message(LogType.NORMAL, "AuthLogonChallenge");
 
@@ -84,129 +87,136 @@ namespace Framework.Network.Realm
 
             SQLResult result = DB.Realms.Select("SELECT id, name, password, expansion, gmlevel, securityFlags, online FROM accounts WHERE name = ?", account.Name);
 
-            PacketWriter logonChallenge = new PacketWriter();
-            logonChallenge.WriteUInt8((byte)ClientLink.CMD_AUTH_LOGON_CHALLENGE);
-            logonChallenge.WriteUInt8(0);
-
-            if (result.Count != 0)
+            using (var logonChallenge = new PacketWriter())
             {
-                if (result.Read<bool>(0, "online"))
+                logonChallenge.WriteUInt8((byte)ClientLink.CMD_AUTH_LOGON_CHALLENGE);
+                logonChallenge.WriteUInt8(0);
+
+                if (result.Count != 0)
                 {
-                    logonChallenge.WriteUInt8((byte)AuthResults.WOW_FAIL_ALREADY_ONLINE);
-                    session.Send(logonChallenge);
-                    return;
-                }
+                    if (result.Read<bool>(0, "online"))
+                    {
+                        logonChallenge.WriteUInt8((byte)AuthResults.WOW_FAIL_ALREADY_ONLINE);
+                        Send(logonChallenge);
+                        return;
+                    }
 
-                account.Id = result.Read<Int32>(0, "id");
-                account.Expansion = result.Read<Byte>(0, "expansion");
-                account.SecurityFlags = result.Read<Byte>(0, "securityFlags");
+                    account.Id = result.Read<Int32>(0, "id");
+                    account.Expansion = result.Read<Byte>(0, "expansion");
+                    account.SecurityFlags = result.Read<Byte>(0, "securityFlags");
 
-                DB.Realms.Execute("UPDATE accounts SET ip = ?, language = ? WHERE id = ?", account.IP, account.Language, account.Id);
+                    DB.Realms.Execute("UPDATE accounts SET ip = ?, language = ? WHERE id = ?", account.IP, account.Language, account.Id);
 
-                byte[] username = Encoding.ASCII.GetBytes(result.Read<String>(0, "name").ToUpper());
-                byte[] password = Encoding.ASCII.GetBytes(result.Read<String>(0, "password").ToUpper());
+                    byte[] username = Encoding.ASCII.GetBytes(result.Read<String>(0, "name").ToUpperInvariant());
+                    byte[] password = Encoding.ASCII.GetBytes(result.Read<String>(0, "password").ToUpperInvariant());
 
-                // WoW 5.1.0.16357 (5.1.0a)
-                if (ClientBuild == 16357)
-                {
-                    session.SecureRemotePassword.CalculateX(username, password);
-                    byte[] buf = new byte[0x10];
-                    NativeMethods.RAND_bytes(buf, 0x10);
+                    // WoW 5.1.0.16357 (5.1.0a)
+                    if (ClientBuild == 16357)
+                    {
+                        SecureRemotePassword.CalculateX(username, password);
+                        byte[] buf = new byte[0x10];
+                        NativeMethods.RAND_bytes(buf, 0x10);
 
-                    logonChallenge.WriteUInt8((byte)AuthResults.WOW_SUCCESS);
-                    logonChallenge.WriteBytes(session.SecureRemotePassword.B);
-                    logonChallenge.WriteUInt8(1);
-                    logonChallenge.WriteUInt8(session.SecureRemotePassword.g[0]);
-                    logonChallenge.WriteUInt8(0x20);
-                    logonChallenge.WriteBytes(session.SecureRemotePassword.N);
-                    logonChallenge.WriteBytes(session.SecureRemotePassword.salt);
-                    logonChallenge.WriteBytes(buf);
-
-                    // Security flags
-                    logonChallenge.WriteUInt8(account.SecurityFlags);
-
-                    // Enable authenticator
-                    if ((account.SecurityFlags & 4) != 0)
+                        logonChallenge.WriteUInt8((byte)AuthResults.WOW_SUCCESS);
+                        logonChallenge.WriteBytes(SecureRemotePassword.B);
                         logonChallenge.WriteUInt8(1);
-                }
-            }
-            else
-                logonChallenge.WriteUInt8((byte)AuthResults.WOW_FAIL_UNKNOWN_ACCOUNT);
+                        logonChallenge.WriteUInt8(SecureRemotePassword.g[0]);
+                        logonChallenge.WriteUInt8(0x20);
+                        logonChallenge.WriteBytes(SecureRemotePassword.N);
+                        logonChallenge.WriteBytes(SecureRemotePassword.salt);
+                        logonChallenge.WriteBytes(buf);
 
-            session.Send(logonChallenge);
+                        // Security flags
+                        logonChallenge.WriteUInt8(account.SecurityFlags);
+
+                        // Enable authenticator
+                        if ((account.SecurityFlags & 4) != 0)
+                            logonChallenge.WriteUInt8(1);
+                    }
+                }
+                else
+                    logonChallenge.WriteUInt8((byte)AuthResults.WOW_FAIL_UNKNOWN_ACCOUNT);
+
+                Send(logonChallenge);
+            }
         }
 
-        public void HandleAuthAuthenticator(RealmClass session, PacketReader data)
+        public void HandleAuthAuthenticator(PacketReader data)
         {
             Log.Message(LogType.NORMAL, "AuthAuthenticator");
         }
 
-        public void HandleAuthLogonProof(RealmClass session, PacketReader data)
+        public void HandleAuthLogonProof(PacketReader data)
         {
             Log.Message(LogType.NORMAL, "AuthLogonProof");
 
-            PacketWriter logonProof = new PacketWriter();
+            using (var logonProof = new PacketWriter())
+            {
 
-            byte[] a = new byte[32];
-            byte[] m1 = new byte[20];
+                byte[] a = new byte[32];
+                byte[] m1 = new byte[20];
 
-            Array.Copy(DataBuffer, 1, a, 0, 32);
-            Array.Copy(DataBuffer, 33, m1, 0, 20);
+                Array.Copy(DataBuffer, 1, a, 0, 32);
+                Array.Copy(DataBuffer, 33, m1, 0, 20);
 
-            session.SecureRemotePassword.CalculateU(a);
-            session.SecureRemotePassword.CalculateM2(m1);
-            session.SecureRemotePassword.CalculateK();
+                SecureRemotePassword.CalculateU(a);
+                SecureRemotePassword.CalculateM2(m1);
+                SecureRemotePassword.CalculateK();
 
-            foreach (var b in session.SecureRemotePassword.K)
-                if (b < 0x10)
-                    account.SessionKey += "0" + String.Format("{0:X}", b);
-                else
-                    account.SessionKey += String.Format("{0:X}", b);
+                foreach (var b in SecureRemotePassword.K)
+                    if (b < 0x10)
+                        account.SessionKey += "0" + String.Format(CultureInfo.InvariantCulture, "{0:X}", b);
+                    else
+                        account.SessionKey += String.Format(CultureInfo.InvariantCulture, "{0:X}", b);
 
-            logonProof.WriteUInt8((byte)ClientLink.CMD_AUTH_LOGON_PROOF);
-            logonProof.WriteUInt8(0);
-            logonProof.WriteBytes(session.SecureRemotePassword.M2);
-            logonProof.WriteUInt32(0x800000);
-            logonProof.WriteUInt32(0);
-            logonProof.WriteUInt16(0);
+                logonProof.WriteUInt8((byte)ClientLink.CMD_AUTH_LOGON_PROOF);
+                logonProof.WriteUInt8(0);
+                logonProof.WriteBytes(SecureRemotePassword.M2);
+                logonProof.WriteUInt32(0x800000);
+                logonProof.WriteUInt32(0);
+                logonProof.WriteUInt16(0);
 
-            DB.Realms.Execute("UPDATE accounts SET sessionkey = ? WHERE id = ?", account.SessionKey, account.Id);
+                DB.Realms.Execute("UPDATE accounts SET sessionkey = ? WHERE id = ?", account.SessionKey, account.Id);
 
-            session.Send(logonProof);
+                Send(logonProof);
+            }
         }
 
-        public void HandleRealmList(RealmClass session, PacketReader data)
+        public void HandleRealmList(PacketReader data)
         {
             Log.Message(LogType.NORMAL, "RealmList");
 
-            PacketWriter realmData = new PacketWriter();
-
-            Realms.ForEach(r =>
+            using (var realmData = new PacketWriter())
             {
-                realmData.WriteUInt8(1);
-                realmData.WriteUInt8(0);
-                realmData.WriteUInt8(0);
-                realmData.WriteCString(r.Name);
-                realmData.WriteCString(r.IP + ":" + r.Port);
-                realmData.WriteFloat(0);
-                realmData.WriteUInt8(0);  // CharCount
-                realmData.WriteUInt8(1);
-                realmData.WriteUInt8(0x2C);
-            });
+                Realms.ForEach(r =>
+                {
+                    realmData.WriteUInt8(1);
+                    realmData.WriteUInt8(0);
+                    realmData.WriteUInt8(0);
+                    realmData.WriteCString(r.Name);
+                    realmData.WriteCString(r.IP + ":" + r.Port);
+                    realmData.WriteFloat(0);
+                    realmData.WriteUInt8(0);  // CharCount
+                    realmData.WriteUInt8(1);
+                    realmData.WriteUInt8(0x2C);
+                });
 
-            PacketWriter realmList = new PacketWriter();
-            realmList.WriteUInt8((byte)ClientLink.CMD_REALM_LIST);
-            realmList.WriteUInt16((ushort)(realmData.BaseStream.Length + 8));
-            realmList.WriteUInt32(0);
-            realmList.WriteUInt16((ushort)Realms.Count);
-            realmList.WriteBytes(realmData.ReadDataToSend());
-            realmList.WriteUInt8(0);
-            realmList.WriteUInt8(0x10);
+                using (var realmList = new PacketWriter())
+                {
+                    realmList.WriteUInt8((byte)ClientLink.CMD_REALM_LIST);
+                    realmList.WriteUInt16((ushort)(realmData.BaseStream.Length + 8));
+                    realmList.WriteUInt32(0);
+                    realmList.WriteUInt16((ushort)Realms.Count);
+                    realmList.WriteBytes(realmData.ReadDataToSend());
+                    realmList.WriteUInt8(0);
+                    realmList.WriteUInt8(0x10);
 
-            session.Send(realmList);
+                    Send(realmList);
+                }
+            }
         }
 
-        public void Recieve()
+        public void Receive()
         {
             while (realm.listenSocket)
             {
@@ -225,6 +235,9 @@ namespace Framework.Network.Realm
 
         public void Send(PacketWriter packet)
         {
+            if (packet == null)
+                return;
+
             DataBuffer = packet.ReadDataToSend(true);
 
             try
@@ -232,10 +245,11 @@ namespace Framework.Network.Realm
                 clientSocket.BeginSend(DataBuffer, 0, DataBuffer.Length, SocketFlags.None, new AsyncCallback(FinishSend), clientSocket);
                 packet.Flush();
             }
-            catch (Exception ex)
+            catch (SocketException ex)
             {
                 Log.Message(LogType.ERROR, "{0}", ex.Message);
                 Log.Message();
+
                 clientSocket.Close();
             }
         }

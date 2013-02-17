@@ -19,13 +19,14 @@ using Framework.Configuration;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Realm;
+using Framework.ObjectDefines;
 using System;
 
 namespace RealmServer
 {
     class RealmServer
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Log.ServerType = "Realm";
 
@@ -46,11 +47,12 @@ namespace RealmServer
 
             // Add realms from database.
             Log.Message(LogType.NORMAL, "Updating Realm List..."); 
-            Log.Message();
+
             SQLResult result = DB.Realms.Select("SELECT * FROM realms");
+
             for (int i = 0; i < result.Count; i++)
             {
-                RealmClass.Realms.Add(new Framework.ObjectDefines.Realm()
+                RealmClass.Realms.Add(new Realm()
                 {
                     Id   = result.Read<uint>(i, "id"),
                     Name = result.Read<string>(i, "name"),
@@ -60,21 +62,17 @@ namespace RealmServer
 
                 Log.Message(LogType.NORMAL, "Added Realm \"{0}\"", RealmClass.Realms[i].Name);
             }
-            Log.Message();
 
             if (RealmClass.realm.Start(RealmConfig.BindIP, (int)RealmConfig.BindPort))
             {
                 RealmClass.realm.AcceptConnectionThread();
+
                 Log.Message(LogType.NORMAL, "RealmServer listening on {0} port {1}.", RealmConfig.BindIP, RealmConfig.BindPort);
                 Log.Message(LogType.NORMAL, "RealmServer successfully started!");
             }
             else
-            {
                 Log.Message(LogType.ERROR, "RealmServer couldn't be started: ");
-            }
 
-            // Free memory...
-            GC.Collect();
             Log.Message(LogType.NORMAL, "Total Memory: {0} Kilobytes", GC.GetTotalMemory(false) / 1024);
         }
     }
