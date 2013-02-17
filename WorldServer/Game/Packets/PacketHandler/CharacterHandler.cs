@@ -273,6 +273,7 @@ namespace WorldServer.Game.PacketHandler
             WorldMgr.WriteAccountData(AccountDataMasks.CharacterCacheMask, ref session);
 
             MiscHandler.HandleMessageOfTheDay(ref session);
+            TimeHandler.HandleSendNewTimeSpeed(ref session);
             SpecializationHandler.HandleTalentUpdate(ref session);
             SpellHandler.HandleSendKnownSpells(ref session);
             MiscHandler.HandleUpdateActionButtons(ref session);

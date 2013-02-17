@@ -56,5 +56,18 @@ namespace WorldServer.Game.Packets.PacketHandler
             // Wrong data sent...
             // AddonMgr.WriteAddonData(ref session);
         }
+
+        public static void HandleSendNewTimeSpeed(ref WorldClass session)
+        {
+            PacketWriter newTimeSpeed = new PacketWriter(LegacyMessage.SendNewTimeSpeed);
+
+            newTimeSpeed.WritePackedTime();
+            newTimeSpeed.WritePackedTime();
+            newTimeSpeed.WriteFloat(0.01666667f);
+            newTimeSpeed.WriteInt32(0);
+            newTimeSpeed.WriteInt32(0);
+
+            session.Send(ref newTimeSpeed);
+        }
     }
 }

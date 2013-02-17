@@ -461,6 +461,7 @@ namespace Framework.Constants
         RealmCache                               = 0xD81,
         GossipMessage                            = 0x88C,
         TalentUpdate                             = 0xBAC,
+        SendNewTimeSpeed                         = 0xE68,
     }
 
     [Flags]
