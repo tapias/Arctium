@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : local
 Source Server Version : 50519
 Source Host           : localhost:3306
-Source Database       : characters
+Source Database       : chars
 
 Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2012-11-12 17:35:54
+Date: 2013-02-18 03:37:12
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -56,7 +56,6 @@ CREATE TABLE `characters` (
 -- Records of characters
 -- ----------------------------
 
-
 -- ----------------------------
 -- Table structure for `character_actions`
 -- ----------------------------
@@ -72,7 +71,6 @@ CREATE TABLE `character_actions` (
 -- ----------------------------
 -- Records of character_actions
 -- ----------------------------
-
 
 -- ----------------------------
 -- Table structure for `character_creation_actions`
@@ -123,6 +121,7 @@ DROP TABLE IF EXISTS `character_creation_data`;
 CREATE TABLE `character_creation_data` (
   `race` tinyint(4) NOT NULL,
   `class` tinyint(4) NOT NULL,
+  `baseMap` smallint(6) NOT NULL DEFAULT '0',
   `map` smallint(6) NOT NULL,
   `zone` smallint(6) NOT NULL,
   `posX` float NOT NULL,
@@ -135,102 +134,102 @@ CREATE TABLE `character_creation_data` (
 -- ----------------------------
 -- Records of character_creation_data
 -- ----------------------------
-INSERT INTO `character_creation_data` VALUES ('1', '1', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '2', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '3', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '4', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '5', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '8', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '9', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('1', '10', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
-INSERT INTO `character_creation_data` VALUES ('2', '1', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '3', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '4', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '7', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '8', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '9', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('2', '10', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
-INSERT INTO `character_creation_data` VALUES ('3', '1', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '2', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '3', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '4', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '5', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '7', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '8', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '9', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('3', '10', '0', '1', '-6230', '330', '383', '0');
-INSERT INTO `character_creation_data` VALUES ('4', '1', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '3', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '4', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '5', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '8', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '10', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('4', '11', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
-INSERT INTO `character_creation_data` VALUES ('5', '1', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '3', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '4', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '5', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '8', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '9', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('5', '10', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
-INSERT INTO `character_creation_data` VALUES ('6', '1', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '2', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '3', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '5', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '7', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '10', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('6', '11', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
-INSERT INTO `character_creation_data` VALUES ('7', '1', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('7', '4', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('7', '5', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('7', '8', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('7', '9', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('7', '10', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
-INSERT INTO `character_creation_data` VALUES ('8', '1', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '3', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '4', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '5', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '7', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '8', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '9', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '10', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('8', '11', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
-INSERT INTO `character_creation_data` VALUES ('9', '1', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '3', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '4', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '5', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '7', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '8', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('9', '9', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
-INSERT INTO `character_creation_data` VALUES ('10', '1', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '2', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '3', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '4', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '5', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '8', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '9', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('10', '10', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
-INSERT INTO `character_creation_data` VALUES ('11', '1', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '2', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '3', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '5', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '7', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '8', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('11', '10', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
-INSERT INTO `character_creation_data` VALUES ('22', '1', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '3', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '4', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '5', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '8', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '9', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('22', '11', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
-INSERT INTO `character_creation_data` VALUES ('24', '1', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '3', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '4', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '5', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '7', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '8', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
-INSERT INTO `character_creation_data` VALUES ('24', '10', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('1', '1', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '2', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '3', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '4', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '5', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '8', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '9', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('1', '10', '0', '0', '9', '-8914.57', '-133.909', '80.5378', '5.13806');
+INSERT INTO `character_creation_data` VALUES ('2', '1', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '3', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '4', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '7', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '8', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '9', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('2', '10', '0', '1', '14', '-618.518', '-4251.67', '38.718', '4.72222');
+INSERT INTO `character_creation_data` VALUES ('3', '1', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '2', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '3', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '4', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '5', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '7', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '8', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '9', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('3', '10', '0', '0', '1', '-6230', '330', '383', '0');
+INSERT INTO `character_creation_data` VALUES ('4', '1', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '3', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '4', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '5', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '8', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '10', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('4', '11', '0', '1', '141', '10311.3', '831.463', '1326.57', '5.48033');
+INSERT INTO `character_creation_data` VALUES ('5', '1', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '3', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '4', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '5', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '8', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '9', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('5', '10', '0', '0', '85', '1699.85', '1706.56', '135.928', '4.88839');
+INSERT INTO `character_creation_data` VALUES ('6', '1', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '2', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '3', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '5', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '7', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '10', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('6', '11', '0', '1', '215', '-2915.55', '-257.347', '59.2693', '0.302378');
+INSERT INTO `character_creation_data` VALUES ('7', '1', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('7', '4', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('7', '5', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('7', '8', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('7', '9', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('7', '10', '0', '0', '1', '-4983.42', '877.7', '274.31', '3.06393');
+INSERT INTO `character_creation_data` VALUES ('8', '1', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '3', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '4', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '5', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '7', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '8', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '9', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '10', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('8', '11', '0', '1', '14', '-1171.45', '-5263.65', '0.847728', '5.78945');
+INSERT INTO `character_creation_data` VALUES ('9', '1', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '3', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '4', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '5', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '7', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '8', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('9', '9', '0', '648', '4737', '-8423.81', '1361.3', '104.671', '1.55428');
+INSERT INTO `character_creation_data` VALUES ('10', '1', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '2', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '3', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '4', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '5', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '8', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '9', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('10', '10', '0', '530', '3430', '10349.6', '-6357.29', '33.4026', '5.31605');
+INSERT INTO `character_creation_data` VALUES ('11', '1', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '2', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '3', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '5', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '7', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '8', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('11', '10', '0', '530', '3524', '-3961.64', '-13931.2', '100.615', '2.08364');
+INSERT INTO `character_creation_data` VALUES ('22', '1', '0', '654', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '3', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '4', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '5', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '8', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '9', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('22', '11', '654', '638', '4714', '-1451.53', '1403.35', '35.5561', '0.333847');
+INSERT INTO `character_creation_data` VALUES ('24', '1', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '3', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '4', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '5', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '7', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '8', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
+INSERT INTO `character_creation_data` VALUES ('24', '10', '0', '860', '5736', '1471.67', '3466.25', '181.675', '2.77359');
 
 -- ----------------------------
 -- Table structure for `character_creation_skills`
