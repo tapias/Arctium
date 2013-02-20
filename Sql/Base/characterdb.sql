@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2013-02-18 03:37:12
+Date: 2013-02-20 18:48:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -50,7 +50,7 @@ CREATE TABLE `characters` (
   `primarySpecId` int(5) unsigned NOT NULL DEFAULT '0',
   `secondarySpecId` int(5) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of characters
@@ -66,7 +66,7 @@ CREATE TABLE `character_actions` (
   `slotId` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `specGroup` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`slotId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_actions
@@ -82,7 +82,7 @@ CREATE TABLE `character_creation_actions` (
   `action` int(11) unsigned NOT NULL DEFAULT '0',
   `slotId` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`race`,`class`,`slotId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_creation_actions
@@ -129,7 +129,7 @@ CREATE TABLE `character_creation_data` (
   `posZ` float NOT NULL,
   `posO` float NOT NULL,
   PRIMARY KEY (`race`,`class`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_creation_data
@@ -240,7 +240,7 @@ CREATE TABLE `character_creation_skills` (
   `skill` int(6) NOT NULL,
   `skillName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`race`,`skill`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_creation_skills
@@ -278,7 +278,7 @@ CREATE TABLE `character_creation_spells` (
   `spellId` int(6) NOT NULL,
   `spellName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`race`,`class`,`spellId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_creation_spells
@@ -5003,7 +5003,7 @@ CREATE TABLE `character_skills` (
   `skill` int(5) NOT NULL,
   `skillLevel` mediumint(9) NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`skill`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_skills
@@ -5033,7 +5033,7 @@ CREATE TABLE `character_talents` (
   `specGroup` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `talentId` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`guid`,`specGroup`,`talentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of character_talents

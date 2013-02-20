@@ -35,7 +35,7 @@ namespace Framework.Database
         {
             ConnectionString = "Server=" + host + ";User Id=" + user + ";Port=" + port + ";" + 
                                "Password=" + password + ";Database=" + database + ";Allow Zero Datetime=True;" +
-                               "Min Pool Size = 25;Max Pool Size=150";
+                               "Min Pool Size = 25;Max Pool Size=150;CharSet=utf8";
 
             using (var Connection = new MySqlConnection(ConnectionString))
             {

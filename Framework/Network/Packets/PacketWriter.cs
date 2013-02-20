@@ -160,19 +160,20 @@ namespace Framework.Network.Packets
 
         public void WriteCString(string data)
         {
-            byte[] sBytes = Encoding.ASCII.GetBytes(data);
-            this.WriteBytes(sBytes);
-            base.Write((byte)0);    // String null terminated
+            byte[] sBytes = UTF8Encoding.UTF8.GetBytes(data);
+
+            WriteBytes(sBytes);
+            WriteUInt8(0);
         }
 
         public void WriteString(string data)
         {
-            byte[] sBytes = Encoding.ASCII.GetBytes(data);
+            byte[] sBytes = UTF8Encoding.UTF8.GetBytes(data);
 
             if (sBytes.Length == 0)
                 sBytes = new byte[1];
 
-            this.WriteBytes(sBytes);
+            WriteBytes(sBytes);
         }
 
         public void WriteUnixTime()

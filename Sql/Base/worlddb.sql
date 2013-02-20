@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2013-01-27 17:55:18
+Date: 2013-02-20 18:52:18
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -33,7 +33,7 @@ CREATE TABLE `broadcast_texts` (
   `Emote6` int(11) NOT NULL,
   `Emote7` int(11) NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of broadcast_texts
@@ -55,7 +55,7 @@ CREATE TABLE `creature_data` (
   `UnitFlags2` int(11) NOT NULL DEFAULT '0',
   `NpcFlags` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of creature_data
@@ -71,7 +71,7 @@ CREATE TABLE `creature_gossips` (
   `GossipDataId` int(11) NOT NULL,
   `BroadcastTextId` int(11) NOT NULL,
   PRIMARY KEY (`Guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of creature_gossips
@@ -92,7 +92,7 @@ CREATE TABLE `creature_spawns` (
   `o` float NOT NULL,
   PRIMARY KEY (`guid`),
   KEY `creatureId` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of creature_spawns
@@ -131,7 +131,7 @@ CREATE TABLE `creature_stats` (
   `MovementInfoId` int(11) NOT NULL DEFAULT '0',
   `ExpansionRequired` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of creature_stats
@@ -147,7 +147,7 @@ CREATE TABLE `gameobject_gossips` (
   `GossipDataId` int(11) NOT NULL,
   `BroadcastTextId` int(11) NOT NULL,
   PRIMARY KEY (`Guid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of gameobject_gossips
@@ -170,7 +170,7 @@ CREATE TABLE `gameobject_spawns` (
   `activated` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`guid`),
   KEY `creatureId` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of gameobject_spawns
@@ -229,7 +229,7 @@ CREATE TABLE `gameobject_stats` (
   `QuestItemId6` int(11) NOT NULL DEFAULT '0',
   `ExpansionRequired` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 
 -- ----------------------------
 -- Records of gameobject_stats
@@ -246,7 +246,7 @@ CREATE TABLE `gossip_data` (
   `OptionsCount` int(11) NOT NULL,
   `QuestsCount` int(11) NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of gossip_data
@@ -265,7 +265,7 @@ CREATE TABLE `teleport_locations` (
   `o` float NOT NULL,
   `map` int(10) unsigned NOT NULL,
   PRIMARY KEY (`location`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of teleport_locations

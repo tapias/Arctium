@@ -61,7 +61,7 @@ namespace WorldServer.Game.PacketHandler
                     BitPack.WriteGuidMask(7, 0, 4);
                     BitPack.WriteGuildGuidMask(2);
                     BitPack.WriteGuidMask(5, 3);
-                    BitPack.Write((uint)Encoding.ASCII.GetBytes(name).Length, 7);
+                    BitPack.Write((uint)UTF8Encoding.UTF8.GetBytes(name).Length, 7);
                     BitPack.WriteGuildGuidMask(0, 5, 3);
                     BitPack.Write(loginCinematic);
                     BitPack.WriteGuildGuidMask(6, 7);
@@ -199,9 +199,12 @@ namespace WorldServer.Game.PacketHandler
             float posZ = result.Read<float>(0, "posZ");
             float posO = result.Read<float>(0, "posO");
 
-            DB.Characters.Execute("INSERT INTO characters (name, accountid, race, class, gender, skin, zone, map, x, y, z, o, face, hairstyle, haircolor, facialhair) VALUES (" +
-                                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                  name, session.Account.Id, race, pClass, gender, skin, zone, map, posX, posY, posZ, posO, face, hairStyle, hairColor, facialHair);
+            // Allow declined names for now
+            var characterFlags = CharacterFlag.Decline;
+
+            DB.Characters.Execute("INSERT INTO characters (name, accountid, race, class, gender, skin, zone, map, x, y, z, o, face, hairstyle, haircolor, facialhair, characterFlags) VALUES (" +
+                                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                  name, session.Account.Id, race, pClass, gender, skin, zone, map, posX, posY, posZ, posO, face, hairStyle, hairColor, facialHair, characterFlags);
 
             // Success
             writer.WriteUInt8(0x2F);

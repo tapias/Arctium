@@ -107,8 +107,8 @@ namespace Framework.Network.Realm
 
                     DB.Realms.Execute("UPDATE accounts SET ip = ?, language = ? WHERE id = ?", account.IP, account.Language, account.Id);
 
-                    byte[] username = Encoding.ASCII.GetBytes(result.Read<String>(0, "name").ToUpperInvariant());
-                    byte[] password = Encoding.ASCII.GetBytes(result.Read<String>(0, "password").ToUpperInvariant());
+                    byte[] username = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "name").ToUpperInvariant());
+                    byte[] password = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "password").ToUpperInvariant());
 
                     // WoW 5.1.0.16357 (5.1.0a)
                     if (ClientBuild == 16357)

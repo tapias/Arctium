@@ -114,7 +114,7 @@ namespace Framework.Network.Packets
         public string ReadString(uint count)
         {
             byte[] stringArray = ReadBytes(count);
-            return Encoding.ASCII.GetString(stringArray);
+            return Encoding.UTF8.GetString(stringArray);
         }
 
         public byte[] ReadBytes(uint count)
@@ -127,7 +127,7 @@ namespace Framework.Network.Packets
             byte[] stringArray = ReadBytes(count);
             Array.Reverse(stringArray);
 
-            return Encoding.ASCII.GetString(stringArray);
+            return UTF8Encoding.UTF8.GetString(stringArray);
         }
 
         public string ReadIPAddress()

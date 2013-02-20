@@ -68,6 +68,7 @@
     <Compile Include="Console\Commands\AccountCommands.cs" />
     <Compile Include="Constants\AccountDataTypes.cs" />
     <Compile Include="Constants\Authentication\AuthResults.cs" />
+    <Compile Include="Constants\CharacterFlags.cs" />
     <Compile Include="Constants\Class.cs" />
     <Compile Include="Constants\DBTypes.cs" />
     <Compile Include="Constants\Guids\HighGuidMask.cs" />

@@ -31,7 +31,7 @@ CREATE TABLE `accounts` (
   `language` varchar(4) DEFAULT NULL,
   `online` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of accounts
@@ -47,7 +47,7 @@ CREATE TABLE `realms` (
   `ip` varchar(15) DEFAULT NULL,
   `port` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of realms
@@ -63,7 +63,7 @@ CREATE TABLE `realm_classes` (
   `class` tinyint(4) NOT NULL COMMENT 'Class Id',
   `expansion` tinyint(4) NOT NULL COMMENT 'Expansion for class activation',
   PRIMARY KEY (`realmId`,`class`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of realm_classes
@@ -89,7 +89,7 @@ CREATE TABLE `realm_races` (
   `race` tinyint(4) NOT NULL COMMENT 'Race Id',
   `expansion` tinyint(4) NOT NULL COMMENT 'Expansion for race activation',
   PRIMARY KEY (`realmId`,`race`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of realm_races

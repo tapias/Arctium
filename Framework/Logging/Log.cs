@@ -19,6 +19,7 @@ using Framework.Configuration;
 using System;
 using DefaultConsole = System.Console;
 using Framework.ObjectDefines;
+using System.Text;
 
 namespace Framework.Logging
 {
@@ -38,6 +39,8 @@ namespace Framework.Logging
 
         static void SetLogger(LogType type, string text, params object[] args)
         {
+            DefaultConsole.OutputEncoding = UTF8Encoding.UTF8;
+
             switch (type)
             {
                 case LogType.NORMAL:

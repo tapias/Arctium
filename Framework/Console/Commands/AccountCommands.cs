@@ -31,24 +31,20 @@ namespace Framework.Console.Commands
             if (name == null || password == null)
                 return;
 
-            name = name.ToUpper(CultureInfo.InvariantCulture);
+            name = name.ToUpperInvariant();
+            password = password.ToUpperInvariant();
 
             //byte[] hash = new SHA1CryptoServiceProvider().ComputeHash(Encoding.ASCII.GetBytes(password));
             //string hashString = BitConverter.ToString(hash).Replace("-", "");
 
-            if (!name.Contains("@"))
-                Log.Message(LogType.ERROR, "Account name requires an email address");
-            else
+            SQLResult result = DB.Realms.Select("SELECT * FROM accounts WHERE name = ?", name);
+            if (result.Count == 0)
             {
-                SQLResult result = DB.Realms.Select("SELECT * FROM accounts WHERE name = ?", name);
-                if (result.Count == 0)
-                {
-                    if (DB.Realms.Execute("INSERT INTO accounts (name, password, language) VALUES (?, ?, '')", name, password.ToUpperInvariant()))
-                        Log.Message(LogType.NORMAL, "Account {0} successfully created", name);
-                }
-                else
-                    Log.Message(LogType.ERROR, "Account {0} already in database", name);
+                if (DB.Realms.Execute("INSERT INTO accounts (name, password, language) VALUES (?, ?, '')", name, password))
+                    Log.Message(LogType.NORMAL, "Account {0} successfully created", name);
             }
+            else
+                Log.Message(LogType.ERROR, "Account {0} already in database", name);
         }
     }
 }
