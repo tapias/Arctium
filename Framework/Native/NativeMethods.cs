@@ -22,27 +22,6 @@ namespace Framework.Native
 {
     public class NativeMethods
     {
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void EVP_CIPHER_CTX_init(ref EVP_CTX ctx);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern void EVP_EncryptInit_ex(ref EVP_CTX ctx, IntPtr Cipher, IntPtr Engine, byte[] key, byte[] iv);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EVP_CIPHER_CTX_set_key_length(ref EVP_CTX ctx, int keylen);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EVP_CIPHER_CTX_cleanup(ref EVP_CTX ctx);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EVP_EncryptUpdate(ref EVP_CTX ctx, [Out] byte[] outp, ref int outL, [In] byte[] inp, int inplen);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int EVP_EncryptFinal_ex(ref EVP_CTX ctx, [Out] byte[] output, ref int outL);
-
-        [DllImport("Libeay32.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr EVP_rc4();
-
         [DllImport("libeay32.dll")]
         internal static extern int BN_add(IntPtr r, IntPtr a, IntPtr b);
 

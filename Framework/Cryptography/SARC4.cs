@@ -16,86 +16,58 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
-using Framework.Native;
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct EVP_CTX
-{
-    IntPtr cipher;
-    IntPtr Engine;
-    int encrypt;
-    int buflen;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-    byte[] oiv;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-    byte[] iv;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    byte[] buf;
-    int num;
-    IntPtr app_data;
-    int key_len;
-    uint flags;
-    IntPtr cipher_data;
-    int final_used;
-    int block_mask;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    byte[] final;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct EVP_MD_CTX
-{
-    IntPtr digest;
-    IntPtr Engine;
-    uint flags;
-    IntPtr md_data;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct HMAC_CTX
-{
-    IntPtr md;
-    EVP_MD_CTX md_ctx;
-    EVP_MD_CTX i_ctx;
-    EVP_MD_CTX o_ctx;
-    uint key_length;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-    byte[] key;
-}
 
 namespace Framework.Cryptography
 {
     public sealed class SARC4 : IDisposable
     {
-        EVP_CTX context;
+        internal byte[] S;
+        byte tmp, tmp2;
 
         public SARC4()
         {
-            context = new EVP_CTX();
-            NativeMethods.EVP_CIPHER_CTX_init(ref context);
-            NativeMethods.EVP_EncryptInit_ex(ref context, NativeMethods.EVP_rc4(), IntPtr.Zero, null, null);
-            NativeMethods.EVP_CIPHER_CTX_set_key_length(ref context, 20);
+            S = new byte[0x100];
+            tmp = 0;
+            tmp2 = 0;
         }
 
-        public void Dispose()
+        public void PrepareKey(byte[] key)
         {
-            NativeMethods.EVP_CIPHER_CTX_cleanup(ref context);
-            GC.SuppressFinalize(this);
-        }
+            for (int i = 0; i < 0x100; i++)
+                S[i] = (byte)i;
 
-        public void PrepareKey(byte[] seed)
-        {
-            NativeMethods.EVP_EncryptInit_ex(ref context, IntPtr.Zero, IntPtr.Zero, seed, null);
+            var i2 = 0;
+
+            for (int i = 0; i < 0x100; i++)
+            {
+                i2 = (byte)((i2 + S[i] + key[i % key.Length]) % 0x100);
+
+                var tempS = S[i];
+
+                S[i] = S[i2];
+                S[i2] = tempS;
+            }
         }
 
         public void ProcessBuffer(byte[] data, int len)
         {
-            int outLen = 0;
-            NativeMethods.EVP_EncryptUpdate(ref context, data, ref outLen, data, len);
-            NativeMethods.EVP_EncryptFinal_ex(ref context, data, ref outLen);
+            for (int i = 0; i < len; i++)
+            {
+                tmp = (byte)((tmp + 1) % 0x100);
+                tmp2 = (byte)((tmp2 + S[tmp]) % 0x100);
+
+                var sTemp = S[tmp];
+
+                S[tmp] = S[tmp2];
+                S[tmp2] = sTemp;
+
+                data[i] = (byte)(S[(S[tmp] + S[tmp2]) % 0x100] ^ data[i]);
+            }
         }
 
-        private byte[] mCryptBuffer = new byte[258];
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
     }
 }
