@@ -31,6 +31,7 @@ namespace Framework.Network.Packets
 
         byte BitPosition { get; set; }
         byte BitValue { get; set; }
+        bool flushed = false;
 
         public UInt64 Guid { set { GuidBytes = BitConverter.GetBytes(value); } }
         public UInt64 GuildGuid { set { GuildGuidBytes = BitConverter.GetBytes(value); } }
@@ -126,12 +127,14 @@ namespace Framework.Network.Packets
 
         public void Flush()
         {
-            if (BitPosition == 8)
+            if (flushed || BitPosition == 8)
                 return;
 
             writer.WriteUInt8(BitValue);
             BitValue = 0;
             BitPosition = 8;
+
+            flushed = true;
         }
     }
 }

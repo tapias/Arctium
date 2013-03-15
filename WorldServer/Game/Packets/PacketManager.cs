@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
+using Framework.Logging;
+using Framework.Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Framework.Network.Packets;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Packets
@@ -36,15 +37,14 @@ namespace WorldServer.Game.Packets
             {
                 foreach (var methodInfo in type.GetMethods())
                 {
-                    var opcodeAttr = methodInfo.GetCustomAttribute<OpcodeAttribute>();
-
-                    if (opcodeAttr != null)
-                        OpcodeHandlers[opcodeAttr.Opcode] = (HandlePacket)Delegate.CreateDelegate(typeof(HandlePacket), methodInfo);
+                    foreach (var opcodeAttr in methodInfo.GetCustomAttributes<OpcodeAttribute>())
+                        if (opcodeAttr != null)
+                            OpcodeHandlers[opcodeAttr.Opcode] = (HandlePacket)Delegate.CreateDelegate(typeof(HandlePacket), methodInfo);
                 }
             }
         }
 
-        public static bool InvokeHandler(ref PacketReader reader, WorldClass session, ClientMessage opcode)
+        public static void InvokeHandler(ref PacketReader reader, WorldClass session)
         {
             if (session.Character != null)
             {
@@ -54,13 +54,10 @@ namespace WorldServer.Game.Packets
                     WorldMgr.Sessions[charGuid] = session;
             }
 
-            if (OpcodeHandlers.ContainsKey(opcode))
-            {
-                OpcodeHandlers[opcode].Invoke(ref reader, ref session);
-                return true;
-            }
+            if (OpcodeHandlers.ContainsKey(reader.Opcode))
+                OpcodeHandlers[reader.Opcode].Invoke(ref reader, ref session);
             else
-                return false;
+                Log.Message(LogType.DUMP, "UNKNOWN OPCODE: {0} (0x{1:X}), LENGTH: {2}", reader.Opcode, reader.Opcode, reader.Size);
         }
     }
 }

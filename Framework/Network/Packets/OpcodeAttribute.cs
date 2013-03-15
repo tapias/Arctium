@@ -15,12 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using System;
 
 namespace Framework.Network.Packets
 {
-    public class OpcodeAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
+    public sealed class OpcodeAttribute : Attribute
     {
         public ClientMessage Opcode { get; set; }
         public string WoWBuild { get; set; }

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using System;
 using System.Collections;
 using System.IO;
@@ -26,59 +26,28 @@ namespace Framework.Network.Packets
 {
     public class PacketWriter : BinaryWriter
     {
-        public uint Opcode { get; set; }
+        public ServerMessage Opcode { get; set; }
         public uint Size { get; set; }
-        public byte[] GetStorage()
-        {
-            byte[] data = new byte[BaseStream.Length - 4];
-            Seek(4, SeekOrigin.Begin);
-
-            for (int i = 0; i < BaseStream.Length - 4; i++)
-                data[i] = (byte)BaseStream.ReadByte();
-            
-            return data;
-        }
 
         public PacketWriter() : base(new MemoryStream()) { }
-        public PacketWriter(JAMCCMessage message, bool isWorldPacket = false) : base(new MemoryStream())
+        public PacketWriter(ServerMessage message, bool isWorldPacket = false) : base(new MemoryStream())
         {
-            SetMessageAndHeader((uint)message, isWorldPacket);
+            WritePacketHeader(message, isWorldPacket);
         }
 
-        public PacketWriter(JAMCMessage message, bool isWorldPacket = false) : base(new MemoryStream())
-        {
-            SetMessageAndHeader((uint)message, isWorldPacket);
-        }
-
-        public PacketWriter(LegacyMessage message, bool isWorldPacket = false) : base(new MemoryStream())
-        {
-            SetMessageAndHeader((uint)message, isWorldPacket);
-        }
-
-        public PacketWriter(Message message, bool isWorldPacket = false) : base(new MemoryStream())
-        {
-            SetMessageAndHeader((uint)message, isWorldPacket);
-        }
-
-        void SetMessageAndHeader(uint mess, bool isWorldPacket)
-        {
-            Opcode = mess;
-            WritePacketHeader(mess, isWorldPacket);
-        }
-
-        protected void WritePacketHeader(uint opcode, bool isWorldPacket = false)
+        protected void WritePacketHeader(ServerMessage opcode, bool isWorldPacket = false)
         {
             Opcode = opcode;
 
             WriteUInt8(0);
             WriteUInt8(0);
-            WriteUInt8((byte)(0xFF & opcode));
-            WriteUInt8((byte)(0xFF & (opcode >> 8)));
+            WriteUInt8((byte)(0xFF & (ushort)opcode));
+            WriteUInt8((byte)(0xFF & ((ushort)opcode >> 8)));
 
             if (isWorldPacket)
             {
-                WriteUInt8((byte)(0xFF & (opcode >> 16)));
-                WriteUInt8((byte)(0xFF & (opcode >> 24)));
+                WriteUInt8(0);
+                WriteUInt8(0);
             }
         }
 
@@ -104,7 +73,7 @@ namespace Framework.Network.Packets
                     WriteUInt8(bigSize);
                 }
             }
-           
+
             return data;
         }
 
@@ -226,6 +195,15 @@ namespace Framework.Network.Packets
             buffer.CopyTo(bufferarray, 0);
 
             WriteBytes(bufferarray.ToArray(), Len);
+        }
+
+        public void WriteUInt32Pos(uint data, int pos)
+        {
+            Seek(pos, SeekOrigin.Begin);
+
+            WriteUInt32(data);
+
+            Seek((int)BaseStream.Length - 1, SeekOrigin.Begin);
         }
     }
 }

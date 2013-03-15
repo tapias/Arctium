@@ -74,6 +74,8 @@
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
     <Compile Include="Constants\Guids\HighGuidType.cs" />
     <Compile Include="Constants\MessageTypes.cs" />
+    <Compile Include="Constants\NetMessage\ClientMessages.cs" />
+    <Compile Include="Constants\NetMessage\ServerMessages.cs" />
     <Compile Include="Constants\ObjectSettings\MovementSpeeds.cs" />
     <Compile Include="Constants\Movement\MovementFlagMasks.cs" />
     <Compile Include="Constants\Movement\MovementFlags.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="ObjectDefines\Account.cs" />
     <Compile Include="Constants\Authentication\AuthCodes.cs" />
     <Compile Include="Constants\Authentication\AuthLinks.cs" />
-    <Compile Include="Constants\NetMessages.cs" />
     <Compile Include="Cryptography\PacketCrypt.cs" />
     <Compile Include="Cryptography\SARC4.cs" />
     <Compile Include="Cryptography\SRP6.cs" />
