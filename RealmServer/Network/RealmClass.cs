@@ -19,15 +19,15 @@ using Framework.Constants.Authentication;
 using Framework.Cryptography;
 using Framework.Database;
 using Framework.Logging;
+using Framework.Native;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Framework.Native;
-using System.Globalization;
 
 namespace Framework.Network.Realm
 {
@@ -110,8 +110,8 @@ namespace Framework.Network.Realm
                     byte[] username = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "name").ToUpperInvariant());
                     byte[] password = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "password").ToUpperInvariant());
 
-                    // WoW 5.1.0.16357 (5.1.0a)
-                    if (ClientBuild == 16357)
+                    // WoW 5.2.0.16709
+                    if (ClientBuild == 16709)
                     {
                         SecureRemotePassword.CalculateX(username, password);
                         byte[] buf = new byte[0x10];
@@ -242,7 +242,7 @@ namespace Framework.Network.Realm
 
             try
             {
-                clientSocket.BeginSend(DataBuffer, 0, DataBuffer.Length, SocketFlags.None, new AsyncCallback(FinishSend), clientSocket);
+                clientSocket.Send(DataBuffer, DataBuffer.Length, SocketFlags.None);
                 packet.Flush();
             }
             catch (SocketException ex)
@@ -252,11 +252,6 @@ namespace Framework.Network.Realm
 
                 clientSocket.Close();
             }
-        }
-
-        public void FinishSend(IAsyncResult result)
-        {
-            clientSocket.EndSend(result);
         }
     }
 }
