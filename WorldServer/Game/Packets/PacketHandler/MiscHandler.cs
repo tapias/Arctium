@@ -15,15 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Linq;
 using Framework.Constants;
+using Framework.Constants.NetMessage;
+using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Packets;
+using Framework.ObjectDefines;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Network;
-using Framework.Database;
-using Framework.ObjectDefines;
 
 namespace WorldServer.Game.Packets.PacketHandler
 {
@@ -31,28 +33,39 @@ namespace WorldServer.Game.Packets.PacketHandler
     {
         public static void HandleMessageOfTheDay(ref WorldClass session)
         {
-            PacketWriter motd = new PacketWriter(LegacyMessage.MessageOfTheDay);
-            motd.WriteUInt32(3);
+            PacketWriter motd = new PacketWriter(ServerMessage.MOTD);
+            BitPack BitPack = new BitPack(motd);
 
-            motd.WriteCString("Arctium MoP test");
-            motd.WriteCString("Welcome to our MoP server test.");
-            motd.WriteCString("Your development team =)");
+            List<String> motds = new List<String>();
+
+            motds.Add("Arctium MoP test");
+            motds.Add("Welcome to our MoP server test.");
+            motds.Add("Your development team =)");
+
+            BitPack.Write<uint>(3, 4);
+
+            motds.ForEach(m => BitPack.Write(m.Length, 7));
+
+            BitPack.Flush();
+
+            motds.ForEach(m => motd.WriteString(m));
+
             session.Send(ref motd);
         }
 
-        [Opcode(ClientMessage.Ping, "16357")]
+        [Opcode(ClientMessage.Ping, "16709")]
         public static void HandlePong(ref PacketReader packet, ref WorldClass session)
         {
-            uint sequence = packet.ReadUInt32();
             uint latency = packet.ReadUInt32();
+            uint sequence = packet.ReadUInt32();
 
-            PacketWriter pong = new PacketWriter(JAMCCMessage.Pong);
+            PacketWriter pong = new PacketWriter(ServerMessage.Pong);
             pong.WriteUInt32(sequence);
 
             session.Send(ref pong);
         }
 
-        [Opcode(ClientMessage.LogDisconnect, "16357")]
+        [Opcode(ClientMessage.LogDisconnect, "16709")]
         public static void HandleDisconnectReason(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
@@ -66,16 +79,16 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Account with Id {0} disconnected. Reason: {1}", session.Account.Id, disconnectReason);
         }
 
-        public static void HandleUpdateClientCacheVersion(ref WorldClass session)
+        public static void HandleCacheVersion(ref WorldClass session)
         {
-            PacketWriter cacheVersion = new PacketWriter(LegacyMessage.UpdateClientCacheVersion);
+            PacketWriter cacheVersion = new PacketWriter(ServerMessage.CacheVersion);
 
             cacheVersion.WriteUInt32(0);
 
             session.Send(ref cacheVersion);
         }
 
-        [Opcode(ClientMessage.LoadingScreenNotify, "16357")]
+        [Opcode(ClientMessage.LoadingScreenNotify, "16709")]
         public static void HandleLoadingScreenNotify(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -86,7 +99,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Loading screen for map '{0}' is {1}.", mapId, loadingScreenState ? "enabled" : "disabled");
         }
 
-        [Opcode(ClientMessage.ViolenceLevel, "16357")]
+        [Opcode(ClientMessage.ViolenceLevel, "16709")]
         public static void HandleViolenceLevel(ref PacketReader packet, ref WorldClass session)
         {
             byte violenceLevel = packet.ReadUInt8();
@@ -94,7 +107,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Violence level from account '{0} (Id: {1})' is {2}.", session.Account.Name, session.Account.Id, (ViolenceLevel)violenceLevel);
         }
 
-        [Opcode(ClientMessage.ActivePlayer, "16357")]
+        [Opcode(ClientMessage.ActivePlayer, "16709")]
         public static void HandleActivePlayer(ref PacketReader packet, ref WorldClass session)
         {
             byte active = packet.ReadUInt8();    // Always 0
@@ -102,7 +115,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Player {0} (Guid: {1}) is active.", session.Character.Name, session.Character.Guid);
         }
 
-        [Opcode(ClientMessage.ZoneUpdate, "16357")]
+        [Opcode(ClientMessage.ZoneUpdate, "16709")]
         public static void HandleZoneUpdate(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
@@ -112,15 +125,15 @@ namespace WorldServer.Game.Packets.PacketHandler
             ObjectMgr.SetZone(ref pChar, zone);
         }
 
-        [Opcode(ClientMessage.SetSelection, "16357")]
+        [Opcode(ClientMessage.CliSetSelection, "16709")]
         public static void HandleSetSelection(ref PacketReader packet, ref WorldClass session)
         {
-            byte[] guidMask = { 3, 1, 7, 2, 6, 4, 0, 5 };
-            byte[] guidBytes = { 4, 1, 5, 2, 6, 7, 0, 3 };
+            byte[] guidMask = { 2, 6, 1, 7, 4, 5, 3, 0 };
+            byte[] guidBytes = { 0, 6, 3, 2, 1, 4, 7, 5 };
 
             BitUnpack GuidUnpacker = new BitUnpack(packet);
 
-            ulong fullGuid = GuidUnpacker.GetGuid(guidMask, guidBytes);
+            ulong fullGuid = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
             ulong guid = ObjectGuid.GetGuid(fullGuid);
 
             if (session.Character != null)
@@ -137,19 +150,19 @@ namespace WorldServer.Game.Packets.PacketHandler
             }
         }
 
-        [Opcode(ClientMessage.SetActionButton, "16357")]
+        [Opcode(ClientMessage.SetActionButton, "16709")]
         public static void HandleSetActionButton(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
 
-            byte[] actionMask = { 4, 0, 3, 7, 1, 6, 2, 5 };
-            byte[] actionBytes = { 3, 0, 1, 4, 7, 2, 6, 5 };
+            byte[] actionMask = { 5, 2, 6, 7, 1, 4, 0, 3 };
+            byte[] actionBytes = { 4, 3, 2, 0, 5, 7, 6, 1 };
 
             var slotId = packet.ReadByte();
             
             BitUnpack actionUnpacker = new BitUnpack(packet);
             
-            var actionId = actionUnpacker.GetValue(actionMask, actionBytes);
+            var actionId = actionUnpacker.GetPackedValue(actionMask, actionBytes);
             
             if (actionId == 0)
             {
@@ -174,14 +187,14 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             var pChar = session.Character;
 
-            PacketWriter updateActionButtons = new PacketWriter(JAMCMessage.UpdateActionButtons);
+            PacketWriter updateActionButtons = new PacketWriter(ServerMessage.UpdateActionButtons);
             BitPack BitPack = new BitPack(updateActionButtons);
 
             const int buttonCount = 132;
             var buttons = new byte[buttonCount][];
 
-            byte[] buttonMask = { 4, 0, 7, 2, 6, 3, 1, 5 };
-            byte[] buttonBytes = { 0, 3, 5, 7, 6, 1, 4, 2 };
+            byte[] buttonMask = { 7, 2, 6, 5, 0, 3, 4, 1 };
+            byte[] buttonBytes = { 7, 1, 4, 0, 2, 5, 3, 6 };
 
             var actions = ActionMgr.GetActionButtons(pChar, pChar.ActiveSpecGroup);
             
@@ -199,6 +212,8 @@ namespace WorldServer.Game.Packets.PacketHandler
                         BitPack.Write(buttons[j][buttonMask[i]]);
                     else if (i < 16)
                     {
+                        BitPack.Flush();
+
                         if (buttons[j][buttonBytes[i - 8]] != 0)
                             updateActionButtons.WriteUInt8((byte)(buttons[j][buttonBytes[i - 8]] ^ 1));
                     }

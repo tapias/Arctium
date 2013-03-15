@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
 using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Logging;
 using Framework.Network.Packets;
 using WorldServer.Game.WorldEntities;
@@ -29,7 +29,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void HandleUpdateObjectCreate(ref WorldClass session)
         {
             WorldObject character = session.Character;
-            PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+            PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
 
             updateObject.WriteUInt16((ushort)character.Map);
             updateObject.WriteUInt32(1);
@@ -50,7 +50,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void HandleUpdateObjectValues(ref WorldClass session)
         {
             WorldObject character = session.Character;
-            PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+            PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
 
             updateObject.WriteUInt16((ushort)character.Map);
             updateObject.WriteUInt32(1);
@@ -63,17 +63,22 @@ namespace WorldServer.Game.Packets.PacketHandler
             session.Send(ref updateObject);
         }
 
-        public static PacketWriter HandleObjectDestroy(ref WorldClass session, ulong guid)
+        public static PacketWriter HandleDestroyObject(ref WorldClass session, ulong guid)
         {
-            PacketWriter objectDestroy = new PacketWriter(LegacyMessage.ObjectDestroy);
+            PacketWriter destroyObject = new PacketWriter(ServerMessage.DestroyObject);
+            BitPack BitPack = new BitPack(destroyObject, guid);
 
-            objectDestroy.WriteUInt64(guid);
-            objectDestroy.WriteUInt8(0);
+            BitPack.WriteGuidMask(1, 6, 5, 7, 4, 2, 0, 3);
+            BitPack.Write(0);
 
-            return objectDestroy;
+            BitPack.Flush();
+
+            BitPack.WriteGuidBytes(7, 2, 6, 1, 3, 7, 5, 0);
+
+            return destroyObject;
         }
 
-        [Opcode(ClientMessage.ObjectUpdateFailed, "16357")]
+        [Opcode(ClientMessage.CliObjectUpdateFailed, "16357")]
         public static void HandleObjectUpdateFailed(ref PacketReader packet, ref WorldClass session)
         {
             byte[] guidMask = { 6, 1, 7, 5, 0, 4, 2, 3 };
@@ -81,7 +86,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             BitUnpack GuidUnpacker = new BitUnpack(packet);
 
-            ulong guid = GuidUnpacker.GetGuid(guidMask, guidBytes);
+            ulong guid = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
             Log.Message(LogType.DEBUG, "ObjectUpdate failed for object with Guid {0}", guid);
         }
     }

@@ -49,7 +49,12 @@ namespace WorldServer.Game.WorldEntities
                 Stats.Size = result.Read<Single>(0, "Size");
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
-                    Stats.QuestItemId.Add(result.Read<Int32>(0, "QuestItemId", i));
+                {
+                    var questItem = result.Read<Int32>(0, "QuestItemId", i);
+
+                    if (questItem != 0)
+                        Stats.QuestItemId.Add(questItem);
+                }
 
                 Stats.ExpansionRequired = result.Read<Int32>(0, "ExpansionRequired");
             }

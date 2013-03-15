@@ -106,7 +106,12 @@ namespace WorldServer.Game.Managers
                     Stats.DisplayInfoId.Add(result.Read<Int32>(r, "DisplayInfoId", i));
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
-                    Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
+                {
+                    var questItem = result.Read<Int32>(r, "QuestItemId", i);
+
+                    if (questItem != 0)
+                        Stats.QuestItemId.Add(questItem);
+                }
 
                 Add(new Creature
                 {
@@ -177,7 +182,12 @@ namespace WorldServer.Game.Managers
                     Stats.Data.Add(result.Read<Int32>(r, "Data", i));
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
-                    Stats.QuestItemId.Add(result.Read<Int32>(r, "QuestItemId", i));
+                {
+                    var questItem = result.Read<Int32>(r, "QuestItemId", i);
+
+                    if (questItem != 0)
+                        Stats.QuestItemId.Add(questItem);
+                }
 
                 Add(new GameObject
                 {

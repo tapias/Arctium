@@ -58,7 +58,12 @@ namespace WorldServer.Game.WorldEntities
                 Stats.RacialLeader   = result.Read<Byte>(0, "RacialLeader");
 
                 for (int i = 0; i < Stats.QuestItemId.Capacity; i++)
-                    Stats.QuestItemId.Add(result.Read<Int32>(0, "QuestItemId", i));
+                {
+                    var questItem = result.Read<Int32>(0, "QuestItemId", i);
+
+                    if (questItem != 0)
+                        Stats.QuestItemId.Add(questItem);
+                }
 
                 Stats.MovementInfoId    = result.Read<Int32>(0, "MovementInfoId");
                 Stats.ExpansionRequired = result.Read<Int32>(0, "ExpansionRequired");

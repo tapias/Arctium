@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using WorldServer.Game.WorldEntities;
@@ -25,73 +26,66 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class GossipHandler : Globals
     {
-        [Opcode(ClientMessage.TalkToGossip, "16357")]
+        [Opcode(ClientMessage.CliTalkToGossip, "16709")]
         public static void HandleTalkToGossip(ref PacketReader packet, ref WorldClass session)
         {
-            var guid = packet.ReadUInt64();
+            BitUnpack BitUnpack = new BitUnpack(packet);
+
+            byte[] guidMask = { 2, 1, 7, 3, 6, 0, 4, 5 };
+            byte[] guidBytes = { 5, 3, 6, 2, 7, 0, 4, 1 };
+
+            var guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
             var gossipData = GossipMgr.GetGossip<Creature>(ObjectGuid.GetGuid(guid));
 
             if (gossipData != null)
             {
-                PacketWriter gossipMessage = new PacketWriter(LegacyMessage.GossipMessage);
+                PacketWriter gossipMessage = new PacketWriter(ServerMessage.GossipMessage);
+                BitPack BitPack = new BitPack(gossipMessage, guid);
 
-                gossipMessage.WriteUInt64(guid);
+                BitPack.WriteGuidMask(0, 5);
+                BitPack.Write(gossipData.OptionsCount, 20);
+                BitPack.WriteGuidMask(6, 1);
+
+                for (int i = 0; i < gossipData.OptionsCount; i++)
+                {
+                    // OptionsCount not supported.
+                }
+
+                BitPack.WriteGuidMask(2);
+                BitPack.Write(gossipData.QuestsCount, 19);
+                BitPack.WriteGuidMask(4);
+
+                for (int i = 0; i < gossipData.QuestsCount; i++)
+                {
+                    // QuestsCount not supported.
+                }
+
+                BitPack.WriteGuidMask(3, 7);
+                BitPack.Flush();
+
+                for (int i = 0; i < gossipData.OptionsCount; i++)
+                {
+                    // OptionsCount not supported.
+                }
+
+                for (int i = 0; i < gossipData.QuestsCount; i++)
+                {
+                    // QuestsCount not supported.
+                }
+
+                BitPack.WriteGuidBytes(5, 2, 6, 0);
+
                 gossipMessage.WriteInt32(gossipData.Id);
-                gossipMessage.WriteInt32(gossipData.FriendshipFactionID);
+
+                BitPack.WriteGuidBytes(4, 7);
+
                 gossipMessage.WriteInt32(gossipData.TextID);
-                gossipMessage.WriteInt32(gossipData.OptionsCount);
-                gossipMessage.WriteInt32(gossipData.QuestsCount);
+
+                BitPack.WriteGuidBytes(3, 1);
+
+                gossipMessage.WriteInt32(gossipData.FriendshipFactionID);
 
                 session.Send(ref gossipMessage);
-            }
-        }
-
-        [Opcode(ClientMessage.DBQueryBulk, "16357")]
-        public static void HandleDBQueryBulk(ref PacketReader packet, ref WorldClass session)
-        {
-            var type = (DBTypes)packet.ReadUInt32();
-            var unknown = packet.ReadInt32();
-            var id = packet.ReadInt32();
-
-            switch (type)
-            {
-                case DBTypes.BroadcastText:
-                {
-                    var broadCastText = GossipMgr.GetBroadCastText<Creature>(id);
-
-                    PacketWriter dbReply = new PacketWriter(JAMCMessage.DBReply);
-                    BitPack BitPack = new BitPack(dbReply);
-
-                    var textLength = broadCastText.Text.Length;
-                    var alternativeTextLength = broadCastText.AlternativeText.Length;
-                    var size = 48;
-
-                    if (textLength == 0 || alternativeTextLength == 0)
-                        size += 1;
-                    
-                    size += textLength + alternativeTextLength;
-
-                    dbReply.WriteUInt32((uint)size);
-                    dbReply.WriteInt32(broadCastText.Id);
-                    dbReply.WriteInt32(broadCastText.Language);
-
-                    dbReply.WriteUInt16((ushort)broadCastText.Text.Length);
-                    dbReply.WriteString(broadCastText.Text);
-
-                    dbReply.WriteUInt16((ushort)broadCastText.AlternativeText.Length);
-                    dbReply.WriteString(broadCastText.AlternativeText);
-
-                    broadCastText.Emotes.ForEach(emote => dbReply.WriteInt32(emote));
-
-                    dbReply.WriteUInt32(1);
-
-                    dbReply.WriteUInt32(0);    // UnixTime, last change server side
-                    dbReply.WriteUInt32((uint)DBTypes.BroadcastText);
-                    dbReply.WriteInt32(broadCastText.Id);
-
-                    session.Send(ref dbReply);
-                    break;
-                }
             }
         }
     }

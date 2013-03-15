@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using Framework.Singleton;
 using WorldServer.Network;
@@ -28,7 +28,7 @@ namespace WorldServer.Game.Managers
 
         public void WriteAddonData(ref WorldClass session)
         {
-            PacketWriter addonInfo = new PacketWriter(LegacyMessage.AddonInfo);
+            PacketWriter addonInfo = new PacketWriter(ServerMessage.AddonInfo);
 
             // Default static value for now.
             // Full system will be implanted later.

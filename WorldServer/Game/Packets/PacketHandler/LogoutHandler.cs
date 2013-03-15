@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using WorldServer.Network;
 
@@ -23,23 +23,18 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class LogoutHandler : Globals
     {
-        [Opcode(ClientMessage.Logout, "16357")]
-        public static void HandleLogoutComplete(ref PacketReader packet, ref WorldClass session)
+        [Opcode(ClientMessage.CliLogoutRequest, "16709")]
+        public static void HandleLogoutRequest(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
 
             ObjectMgr.SavePositionToDB(pChar);
 
-            PacketWriter logoutComplete = new PacketWriter(LegacyMessage.LogoutComplete);
+            PacketWriter logoutComplete = new PacketWriter(ServerMessage.LogoutComplete);
             session.Send(ref logoutComplete);
 
             // Destroy object after logout
-            PacketWriter objectDestroy = new PacketWriter(LegacyMessage.ObjectDestroy);
-
-            objectDestroy.WriteUInt64(pChar.Guid);
-            objectDestroy.WriteUInt8(0);
-
-            WorldMgr.SendToInRangeCharacter(pChar, objectDestroy);
+            WorldMgr.SendToInRangeCharacter(pChar, ObjectHandler.HandleDestroyObject(ref session, pChar.Guid));
             WorldMgr.DeleteSession(pChar.Guid);
         }
     }

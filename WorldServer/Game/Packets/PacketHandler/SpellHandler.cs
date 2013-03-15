@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System.Collections.Generic;
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
+using System.Collections.Generic;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
@@ -37,11 +37,11 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             int count = pChar.SpellList.Count + specializationSpellCount + talentSpellCount;
 
-            PacketWriter writer = new PacketWriter(JAMCMessage.SendKnownSpells);
+            PacketWriter writer = new PacketWriter(ServerMessage.SendKnownSpells);
             BitPack BitPack = new BitPack(writer);
 
-            BitPack.Write<uint>((uint)count, 24);
             BitPack.Write(1);
+            BitPack.Write(count, 22);
             BitPack.Flush();
 
             pChar.SpellList.ForEach(spell =>
@@ -58,11 +58,11 @@ namespace WorldServer.Game.Packets.PacketHandler
 
         public static void HandleLearnedSpells(ref WorldClass session, List<uint> newSpells)
         {
-            PacketWriter writer = new PacketWriter(JAMCMessage.LearnedSpells);
+            PacketWriter writer = new PacketWriter(ServerMessage.LearnedSpells);
             BitPack BitPack = new BitPack(writer);
 
+            BitPack.Write<int>(newSpells.Count, 22);
             BitPack.Write(0);
-            BitPack.Write<int>(newSpells.Count, 24);
             BitPack.Flush();
 
             for (int i = 0; i < newSpells.Count; i++)
@@ -73,10 +73,10 @@ namespace WorldServer.Game.Packets.PacketHandler
 
         public static void HandleUnlearnedSpells(ref WorldClass session, List<uint> oldSpells)
         {
-            PacketWriter writer = new PacketWriter(JAMCMessage.UnlearnedSpells);
+            PacketWriter writer = new PacketWriter(ServerMessage.UnlearnedSpells);
             BitPack BitPack = new BitPack(writer);
 
-            BitPack.Write<int>(oldSpells.Count, 24);
+            BitPack.Write<int>(oldSpells.Count, 22);
             BitPack.Flush();
 
             for (int i = 0; i < oldSpells.Count; i++)

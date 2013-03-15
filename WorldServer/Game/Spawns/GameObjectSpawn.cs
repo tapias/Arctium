@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.Logging;
 using Framework.Network.Packets;
@@ -81,7 +82,7 @@ namespace WorldServer.Game.Spawns
 
                 if (pChar.CheckUpdateDistance(this))
                 {
-                    PacketWriter updateObject = new PacketWriter(LegacyMessage.UpdateObject);
+                    PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
 
                     updateObject.WriteUInt16((ushort)Map);
                     updateObject.WriteUInt32(1);

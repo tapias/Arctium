@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using WorldServer.Network;
 
@@ -25,7 +25,7 @@ namespace WorldServer.Game.Packets.PacketHandler
     {
         public static void HandleTutorialFlags(ref WorldClass session)
         {
-            PacketWriter tutorialFlags = new PacketWriter(LegacyMessage.TutorialFlags);
+            PacketWriter tutorialFlags = new PacketWriter(ServerMessage.TutorialFlags);
             for (int i = 0; i < 8; i++)
                 tutorialFlags.WriteUInt32(0);
 

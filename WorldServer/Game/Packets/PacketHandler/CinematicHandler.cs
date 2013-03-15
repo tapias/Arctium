@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Database;
 using Framework.DBC;
 using Framework.Network.Packets;
@@ -30,7 +30,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             Character pChar = session.Character;
 
-            PacketWriter startCinematic = new PacketWriter(LegacyMessage.StartCinematic);
+            PacketWriter startCinematic = new PacketWriter(ServerMessage.StartCinematic);
 
             startCinematic.WriteUInt32(DBCStorage.RaceStorage[pChar.Race].CinematicSequence);
 

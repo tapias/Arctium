@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+
 namespace WorldServer.Game.ObjectDefines
 {
     public class ActionButton
     {
-        public uint Action;
-        public byte SlotId;
-        public byte SpecGroup;
+        public UInt64 Action;
+        public Byte SlotId;
+        public Byte SpecGroup;
     }
 }
