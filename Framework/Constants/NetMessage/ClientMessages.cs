@@ -21,6 +21,8 @@ namespace Framework.Constants.NetMessage
     {
         #region ChatMessages
         ChatMessageSay                             = 0x17EF,
+        ChatMessageYell                            = 0x1AED,
+        ChatMessageWhisper                         = 0x167F,
         #endregion
 
         #region Legacy

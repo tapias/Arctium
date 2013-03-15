@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
 using Framework.Constants.Movement;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
@@ -27,8 +27,16 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class MoveHandler : Globals
     {
-        [Opcode(ClientMessage.MoveStartForward, "16357")]
-        public static void HandleMoveStartForward(ref PacketReader packet, ref WorldClass session)
+        [Opcode(ClientMessage.MoveStartForward, "16709")]
+        [Opcode(ClientMessage.MoveStartBackward, "16709")]
+        [Opcode(ClientMessage.MoveStop, "16709")]
+        [Opcode(ClientMessage.MoveJump, "16709")]
+        [Opcode(ClientMessage.MoveStartTurnLeft, "16709")]
+        [Opcode(ClientMessage.MoveStartTurnRight, "16709")]
+        [Opcode(ClientMessage.MoveStopTurn, "16709")]
+        [Opcode(ClientMessage.MoveFallLand, "16709")]
+        [Opcode(ClientMessage.MoveHeartbeat, "16709")]
+        public static void HandleMove(ref PacketReader packet, ref WorldClass session)
         {
             ObjectMovementValues movementValues = new ObjectMovementValues();
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -43,189 +51,70 @@ namespace WorldServer.Game.Packets.PacketHandler
                 Z = packet.ReadFloat()
             };
 
-            guidMask[5] = BitUnpack.GetBit();
-            guidMask[4] = BitUnpack.GetBit();
+            guidMask[0] = BitUnpack.GetBit();
+            guidMask[3] = BitUnpack.GetBit();
+
+            bool HasPitch = !BitUnpack.GetBit();
+
+            guidMask[2] = BitUnpack.GetBit();
 
             bool HasSplineElevation = !BitUnpack.GetBit();
 
-            guidMask[3] = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
             bool Unknown = BitUnpack.GetBit();
+            bool Unknown2 = BitUnpack.GetBit();
 
             guidMask[6] = BitUnpack.GetBit();
+            guidMask[7] = BitUnpack.GetBit();
+            guidMask[5] = BitUnpack.GetBit();
 
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
+            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            movementValues.HasRotation = !BitUnpack.GetBit();
 
-            guidMask[0] = BitUnpack.GetBit();
-            guidMask[2] = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
             bool Unknown3 = BitUnpack.GetBit();
 
-            guidMask[7] = BitUnpack.GetBit();
-
+            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
             movementValues.IsAlive = !BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
 
             guidMask[1] = BitUnpack.GetBit();
 
-            bool HasTime = !BitUnpack.GetBit();
-            bool HasPitch = !BitUnpack.GetBit();
+            movementValues.IsTransport = BitUnpack.GetBit();
 
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-            bool Unknown4 = BitUnpack.GetBit();
-
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }
-            
-            if (IsInterpolated)
-            {
-
-            }*/
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }
-            
-            if (IsInterpolated)
-            {
-
-            }*/
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
-
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveStartBackward, "16357")]
-        public static void HandleMoveStartBackward(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                X = packet.ReadFloat(),
-                Z = packet.ReadFloat(),
-                Y = packet.ReadFloat()
-            };
-
-            guidMask[3] = BitUnpack.GetBit();
-            guidMask[6] = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
+            guidMask[4] = BitUnpack.GetBit();
 
             movementValues.IsInterpolated = BitUnpack.GetBit();
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
-            guidMask[4] = BitUnpack.GetBit();
-
-            movementValues.IsAlive = !BitUnpack.GetBit();
-
-            guidMask[1] = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            guidMask[0] = BitUnpack.GetBit();
-
-            bool Unknown = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-
-            guidMask[2] = BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-            bool Unknown3 = BitUnpack.GetBit();
-
-            guidMask[5] = BitUnpack.GetBit();
-            guidMask[7] = BitUnpack.GetBit();
-
             bool HasTime = !BitUnpack.GetBit();
 
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
+            uint counter = BitUnpack.GetBits<uint>(22);
 
             if (movementValues.IsInterpolated)
                 movementValues.IsInterpolated2 = BitUnpack.GetBit();
 
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-            
             if (movementValues.HasMovementFlags)
                 movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
 
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
+            if (movementValues.HasMovementFlags2)
+                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
+
             if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
             if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
 
             for (int i = 0; i < counter; i++)
                 packet.ReadUInt32();
 
             if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
             if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+
+            if (HasSplineElevation)
+                packet.ReadFloat();
 
             /*if (movementValues.IsTransport)
             {
 
             }*/
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
 
             if (movementValues.IsInterpolated)
             {
@@ -240,578 +129,14 @@ namespace WorldServer.Game.Packets.PacketHandler
                 packet.ReadFloat();
             }
 
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveHeartBeat, "16357")]
-        public static void HandleMoveHeartBeat(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                X = packet.ReadFloat(),
-                Y = packet.ReadFloat(),
-                Z = packet.ReadFloat()
-            };
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-            movementValues.IsInterpolated = BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            movementValues.IsAlive = !BitUnpack.GetBit();
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            guidMask[4] = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            guidMask[7] = BitUnpack.GetBit();
-            guidMask[0] = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            guidMask[3] = BitUnpack.GetBit();
-
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            guidMask[1] = BitUnpack.GetBit();
-
-            bool Unknown3 = BitUnpack.GetBit();
-
-            guidMask[5] = BitUnpack.GetBit();
-            guidMask[2] = BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-            bool Unknown4 = BitUnpack.GetBit();
-
-            guidMask[6] = BitUnpack.GetBit();
-
-            bool HasTime = !BitUnpack.GetBit();
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.IsInterpolated)
-                movementValues.IsInterpolated2 = BitUnpack.GetBit();
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-
-            if (movementValues.IsInterpolated)
-            {
-                if (movementValues.IsInterpolated2)
-                {
-                    packet.ReadFloat();
-                    packet.ReadFloat();
-                    packet.ReadFloat();
-                }
-
-                packet.ReadFloat();
-                packet.ReadUInt32();
-            }
-
-
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
             if (HasPitch)
                 packet.ReadFloat();
 
             if (movementValues.IsAlive)
                 movementValues.Time = packet.ReadUInt32();
 
-            if (HasSplineElevation)
-                packet.ReadFloat();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveStop, "16357")]
-        public static void HandleMoveStop(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                X = packet.ReadFloat(),
-                Z = packet.ReadFloat(),
-                Y = packet.ReadFloat()
-            };
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
-            bool Unknown = BitUnpack.GetBit();
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            bool HasTime = !BitUnpack.GetBit();
-
-            guidMask[4] = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            guidMask[6] = BitUnpack.GetBit();
-            guidMask[0] = BitUnpack.GetBit();
-            guidMask[5] = BitUnpack.GetBit();
-            guidMask[1] = BitUnpack.GetBit();
-
-            movementValues.IsAlive = !BitUnpack.GetBit();
-
-            guidMask[7] = BitUnpack.GetBit();
-            guidMask[2] = BitUnpack.GetBit();
-
-            bool Unknown3 = BitUnpack.GetBit();
-
-            guidMask[3] = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-            bool Unknown4 = BitUnpack.GetBit();
-
-            /*if (IsInterpolated)
-            {
-
-            }
-            
-            if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            /*if (IsInterpolated)
-            {
-
-            }*/
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
             if (movementValues.HasRotation)
                 vector.O = packet.ReadFloat();
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveStartTurnLeft, "16357")]
-        public static void HandleMoveStartTurnLeft(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                Z = packet.ReadFloat(),
-                Y = packet.ReadFloat(),
-                X = packet.ReadFloat()
-            };
-
-            bool Unknown = BitUnpack.GetBit();
-            bool Unknown2 = BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            guidMask[2] = BitUnpack.GetBit();
-            guidMask[4] = BitUnpack.GetBit();
-            guidMask[7] = BitUnpack.GetBit();
-            guidMask[1] = BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            guidMask[0] = BitUnpack.GetBit();
-
-            movementValues.IsAlive = !BitUnpack.GetBit();
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            bool Unknown3 = BitUnpack.GetBit();
-
-            guidMask[6] = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-
-            bool Unknown4 = BitUnpack.GetBit();
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-
-            guidMask[3] = BitUnpack.GetBit();
-            guidMask[5] = BitUnpack.GetBit();
-
-            bool HasTime = !BitUnpack.GetBit();
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }
-            
-            if (IsInterpolated)
-            {
-
-            }*/
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            /*if (IsInterpolated)
-            {
-            
-            }*/
-
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
-
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveStartTurnRight, "16357")]
-        public static void HandleMoveStartTurnRight(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                Y = packet.ReadFloat(),
-                Z = packet.ReadFloat(),
-                X = packet.ReadFloat()
-            };
-
-            guidMask[5] = BitUnpack.GetBit();
-            guidMask[3] = BitUnpack.GetBit();
-
-            bool HasTime = !BitUnpack.GetBit();
-
-            guidMask[1] = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-
-            guidMask[0] = BitUnpack.GetBit();
-
-            bool Unknown4 = BitUnpack.GetBit();
-
-            bool Unknown = BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            guidMask[4] = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            guidMask[2] = BitUnpack.GetBit();
-
-            movementValues.IsAlive = !BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-
-            guidMask[7] = BitUnpack.GetBit();
-            guidMask[6] = BitUnpack.GetBit();
-
-            bool Unknown3 = BitUnpack.GetBit();
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            /*if (IsInterpolated)
-            {
-
-            }*/
-
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
-            /*if (IsInterpolated)
-            {
-
-            }*/
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
-            var guid = BitConverter.ToUInt64(guidBytes, 0);
-            HandleMoveUpdate(guid, movementValues, vector);
-        }
-
-        [Opcode(ClientMessage.MoveStopTurn, "16357")]
-        public static void HandleMoveStopTurn(ref PacketReader packet, ref WorldClass session)
-        {
-            ObjectMovementValues movementValues = new ObjectMovementValues();
-            BitUnpack BitUnpack = new BitUnpack(packet);
-
-            bool[] guidMask = new bool[8];
-            byte[] guidBytes = new byte[8];
-
-            Vector4 vector = new Vector4()
-            {
-                X = packet.ReadFloat(),
-                Z = packet.ReadFloat(),
-                Y = packet.ReadFloat()
-            };
-
-            bool HasTime = !BitUnpack.GetBit();
-
-            guidMask[5] = BitUnpack.GetBit();
-
-            bool Unknown = BitUnpack.GetBit();
-
-            movementValues.IsTransport = BitUnpack.GetBit();
-
-            bool Unknown2 = BitUnpack.GetBit();
-
-            guidMask[3] = BitUnpack.GetBit();
-
-            bool HasSplineElevation = !BitUnpack.GetBit();
-
-            guidMask[0] = BitUnpack.GetBit();
-
-            bool HasPitch = !BitUnpack.GetBit();
-
-            uint counter = BitUnpack.GetBits<uint>(24);
-
-            guidMask[1] = BitUnpack.GetBit();
-            guidMask[7] = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags = !BitUnpack.GetBit();
-            movementValues.IsAlive = !BitUnpack.GetBit();
-
-            guidMask[2] = BitUnpack.GetBit();
-            guidMask[6] = BitUnpack.GetBit();
-
-            movementValues.HasRotation = !BitUnpack.GetBit();
-
-            bool Unknown3 = BitUnpack.GetBit();
-
-            movementValues.HasMovementFlags2 = !BitUnpack.GetBit();
-
-            bool Unknown4 = BitUnpack.GetBit();
-
-            guidMask[4] = BitUnpack.GetBit();
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }
-            
-            if (IsInterpolated)
-            {
-
-            }*/
-
-            if (movementValues.HasMovementFlags)
-                movementValues.MovementFlags = (MovementFlag)BitUnpack.GetBits<uint>(30);
-
-            if (movementValues.HasMovementFlags2)
-                movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
-
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
-
-            for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
-
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-
-            /*if (movementValues.IsTransport)
-            {
-
-            }*/
-
-            if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
-
-            if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
-
-            /*if (IsInterpolated)
-            {
-
-            }*/
-
-            if (HasPitch)
-                packet.ReadFloat();
-
-            if (HasSplineElevation)
-                packet.ReadFloat();
 
             if (HasTime)
                 movementValues.Time = packet.ReadUInt32();
@@ -822,46 +147,59 @@ namespace WorldServer.Game.Packets.PacketHandler
 
         public static void HandleMoveUpdate(ulong guid, ObjectMovementValues movementValues, Vector4 vector)
         {
-            PacketWriter moveUpdate = new PacketWriter(JAMCMessage.MoveUpdate);
+            PacketWriter moveUpdate = new PacketWriter(ServerMessage.MoveUpdate);
             BitPack BitPack = new BitPack(moveUpdate, guid);
 
-            BitPack.WriteGuidMask(0);
-            BitPack.Write(!movementValues.HasMovementFlags);
-            BitPack.Write(!movementValues.HasRotation);
-            BitPack.WriteGuidMask(2, 6);
-            BitPack.Write(!movementValues.HasMovementFlags2);
-            BitPack.WriteGuidMask(7);
-            BitPack.Write<uint>(0, 24);
-            BitPack.WriteGuidMask(1);
-
-            if (movementValues.HasMovementFlags)
-                BitPack.Write((uint)movementValues.MovementFlags, 30);
-
-            BitPack.WriteGuidMask(4);
-            BitPack.Write(!movementValues.IsAlive);
+            BitPack.WriteGuidMask(2);
             BitPack.Write(0);
+            BitPack.WriteGuidMask(1);
+            BitPack.Write(!movementValues.HasMovementFlags2);
+            BitPack.Write(true);
+            BitPack.Write(true);
+            BitPack.Write<uint>(0, 22);
+            BitPack.WriteGuidMask(3);
+            BitPack.Write(!movementValues.IsAlive);
+            BitPack.Write(!movementValues.HasMovementFlags);
+            BitPack.WriteGuidMask(6);
 
             if (movementValues.HasMovementFlags2)
                 BitPack.Write((uint)movementValues.MovementFlags2, 13);
 
-            BitPack.Write(0);
-            BitPack.WriteGuidMask(5);
-            BitPack.Write(true);
-            BitPack.Write(0);
+            BitPack.WriteGuidMask(4, 7);
             BitPack.Write(movementValues.IsInterpolated);
             BitPack.Write(0);
-            BitPack.Write(true);
-            BitPack.WriteGuidMask(3);
-            BitPack.Write(true);
+
+            if (movementValues.HasMovementFlags)
+                BitPack.Write((uint)movementValues.MovementFlags, 30);
+
+            BitPack.Write(!movementValues.HasRotation);
+            BitPack.Write(movementValues.IsTransport);
+            BitPack.WriteGuidMask(5);
 
             if (movementValues.IsInterpolated)
                 BitPack.Write(movementValues.IsInterpolated2);
 
+            BitPack.Write(true);
+            BitPack.Write(0);
+            BitPack.WriteGuidMask(0);
+
             BitPack.Flush();
+
+            moveUpdate.WriteFloat(vector.Z);
+
+            BitPack.WriteGuidBytes(3);
+
+            moveUpdate.WriteFloat(vector.X);
+
+            BitPack.WriteGuidBytes(0, 7);
+
+            moveUpdate.WriteFloat(vector.Y);
+
+            BitPack.WriteGuidBytes(5);
 
             if (movementValues.IsInterpolated)
             {
-                moveUpdate.WriteUInt32(0);
+                moveUpdate.WriteFloat(0);
 
                 if (movementValues.IsInterpolated2)
                 {
@@ -870,26 +208,18 @@ namespace WorldServer.Game.Packets.PacketHandler
                     moveUpdate.WriteFloat(0);
                 }
 
-                moveUpdate.WriteFloat(0);
+                moveUpdate.WriteUInt32(0);
             }
 
-            BitPack.WriteGuidBytes(2);
+            BitPack.WriteGuidBytes(6, 2);
 
             if (movementValues.IsAlive)
                 moveUpdate.WriteUInt32(movementValues.Time);
 
-            BitPack.WriteGuidBytes(5, 7);
-
-            moveUpdate.WriteFloat(vector.Z);
-
-            BitPack.WriteGuidBytes(4, 3, 1, 6, 0);
-
-            moveUpdate.WriteFloat(vector.X);
+            BitPack.WriteGuidBytes(1, 4);
 
             if (movementValues.HasRotation)
                 moveUpdate.WriteFloat(vector.O);
-
-            moveUpdate.WriteFloat(vector.Y);
 
             var session = WorldMgr.GetSession(guid);
             if (session != null)
@@ -903,96 +233,105 @@ namespace WorldServer.Game.Packets.PacketHandler
 
         public static void HandleMoveSetWalkSpeed(ref WorldClass session, float speed = 2.5f)
         {
-            PacketWriter setWalkSpeed = new PacketWriter(JAMCMessage.MoveSetWalkSpeed);
+            PacketWriter setWalkSpeed = new PacketWriter(ServerMessage.MoveSetWalkSpeed);
             BitPack BitPack = new BitPack(setWalkSpeed, session.Character.Guid);
 
-            setWalkSpeed.WriteUInt32(0);
-            setWalkSpeed.WriteFloat(speed);
-
-            BitPack.WriteGuidMask(6, 2, 1, 4, 5, 3, 7, 0);
+            BitPack.WriteGuidMask(5, 1, 4, 2, 7, 6, 0, 3);
             BitPack.Flush();
 
-            BitPack.WriteGuidBytes(1, 6, 3, 0, 7, 4, 2, 5);
+            BitPack.WriteGuidBytes(6, 7);
+
+            setWalkSpeed.WriteFloat(speed);
+
+            BitPack.WriteGuidBytes(2, 3, 0);
+
+            setWalkSpeed.WriteUInt32(0);
+
+            BitPack.WriteGuidBytes(1, 5, 4);
 
             session.Send(ref setWalkSpeed);
         }
 
         public static void HandleMoveSetRunSpeed(ref WorldClass session, float speed = 7f)
         {
-            PacketWriter setRunSpeed = new PacketWriter(JAMCMessage.MoveSetRunSpeed);
+            PacketWriter setRunSpeed = new PacketWriter(ServerMessage.MoveSetRunSpeed);
             BitPack BitPack = new BitPack(setRunSpeed, session.Character.Guid);
 
-            BitPack.WriteGuidMask(0, 4, 1, 6, 3, 5, 7, 2);
+            setRunSpeed.WriteFloat(speed);
+            setRunSpeed.WriteUInt32(0);
+
+            BitPack.WriteGuidMask(7, 0, 6, 1, 3, 2, 4, 5);
             BitPack.Flush();
 
-            setRunSpeed.WriteFloat(speed);
-            BitPack.WriteGuidBytes(7);
-            setRunSpeed.WriteUInt32(0);
-            BitPack.WriteGuidBytes(3, 6, 0, 4, 1, 5, 2);
+            BitPack.WriteGuidBytes(2, 5, 0, 1, 4, 7, 3, 6);
 
             session.Send(ref setRunSpeed);
         }
 
         public static void HandleMoveSetSwimSpeed(ref WorldClass session, float speed = 4.72222f)
         {
-            PacketWriter setSwimSpeed = new PacketWriter(JAMCMessage.MoveSetSwimSpeed);
+            PacketWriter setSwimSpeed = new PacketWriter(ServerMessage.MoveSetSwimSpeed);
             BitPack BitPack = new BitPack(setSwimSpeed, session.Character.Guid);
 
-            BitPack.WriteGuidMask(4, 0, 7, 5, 6, 1, 2, 3);
+            BitPack.WriteGuidMask(3, 7, 2, 0, 1, 4, 5, 6);
             BitPack.Flush();
 
+
+            BitPack.WriteGuidBytes(5, 3, 4, 7, 6);
+
+            setSwimSpeed.WriteFloat(speed);
             setSwimSpeed.WriteUInt32(0);
 
-            BitPack.WriteGuidBytes(3, 7, 0, 1, 4, 5, 2);
-            setSwimSpeed.WriteFloat(speed);
-            BitPack.WriteGuidBytes(6);
+            BitPack.WriteGuidBytes(1, 0, 2);
 
             session.Send(ref setSwimSpeed);
         }
 
         public static void HandleMoveSetFlightSpeed(ref WorldClass session, float speed = 7f)
         {
-            PacketWriter setFlightSpeed = new PacketWriter(JAMCMessage.MoveSetFlightSpeed);
+            PacketWriter setFlightSpeed = new PacketWriter(ServerMessage.MoveSetFlightSpeed);
             BitPack BitPack = new BitPack(setFlightSpeed, session.Character.Guid);
 
-            BitPack.WriteGuidMask(6, 1, 7, 4, 5, 3, 0, 2);
+            BitPack.WriteGuidMask(6, 1, 0, 2, 5, 4, 7, 3);
             BitPack.Flush();
 
-            BitPack.WriteGuidBytes(0, 4, 6);
-            setFlightSpeed.WriteFloat(speed);
-            BitPack.WriteGuidBytes(7, 2);
+            BitPack.WriteGuidBytes(7, 2, 4, 6);
+
             setFlightSpeed.WriteUInt32(0);
-            BitPack.WriteGuidBytes(5, 1, 3);
+            setFlightSpeed.WriteFloat(speed);
+
+            BitPack.WriteGuidBytes(1, 0, 5, 3);
 
             session.Send(ref setFlightSpeed);
         }
 
         public static void HandleMoveSetCanFly(ref WorldClass session)
         {
-            PacketWriter setCanFly = new PacketWriter(JAMCMessage.MoveSetCanFly);
-            BitPack BitPack = new BitPack(setCanFly, session.Character.Guid);
+            PacketWriter moveSetCanFly = new PacketWriter(ServerMessage.MoveSetCanFly);
+            BitPack BitPack = new BitPack(moveSetCanFly, session.Character.Guid);
 
-            setCanFly.WriteUInt32(0);
 
-            BitPack.WriteGuidMask(4, 5, 0, 6, 2, 1, 3, 7);
+            BitPack.WriteGuidMask(5, 4, 6, 2, 3, 7, 1, 0);
             BitPack.Flush();
 
-            BitPack.WriteGuidBytes(5, 3, 1, 6, 7, 2, 4, 0);
+            BitPack.WriteGuidBytes(7, 6, 5, 2, 4, 3, 1, 0);
+            
+            moveSetCanFly.WriteUInt32(0);
 
-            session.Send(ref setCanFly);
+            session.Send(ref moveSetCanFly);
         }
 
         public static void HandleMoveUnsetCanFly(ref WorldClass session)
         {
-            PacketWriter unsetCanFly = new PacketWriter(JAMCMessage.MoveUnsetCanFly);
+            PacketWriter unsetCanFly = new PacketWriter(ServerMessage.MoveUnsetCanFly);
             BitPack BitPack = new BitPack(unsetCanFly, session.Character.Guid);
 
             unsetCanFly.WriteUInt32(0);
 
-            BitPack.WriteGuidMask(1, 4, 6, 2, 5, 7, 0, 3);
+            BitPack.WriteGuidMask(1, 5, 7, 0, 6, 2, 4, 3);
             BitPack.Flush();
 
-            BitPack.WriteGuidBytes(3, 1, 5, 7, 0, 6, 2, 4);
+            BitPack.WriteGuidBytes(4, 0, 2, 7, 6, 3, 1, 5);
 
             session.Send(ref unsetCanFly);
         }
@@ -1002,48 +341,45 @@ namespace WorldServer.Game.Packets.PacketHandler
             bool IsTransport = false;
             bool Unknown = false;
 
-            PacketWriter moveTeleport = new PacketWriter(JAMCMessage.MoveTeleport);
+            PacketWriter moveTeleport = new PacketWriter(ServerMessage.MoveTeleport);
             BitPack BitPack = new BitPack(moveTeleport, session.Character.Guid);
 
             moveTeleport.WriteUInt32(0);
-            moveTeleport.WriteFloat(vector.X);
-            moveTeleport.WriteFloat(vector.Y);
-            moveTeleport.WriteFloat(vector.Z);
             moveTeleport.WriteFloat(vector.O);
+            moveTeleport.WriteFloat(vector.X);
+            moveTeleport.WriteFloat(vector.Z);
+            moveTeleport.WriteFloat(vector.Y);
 
-            BitPack.WriteGuidMask(3, 1, 7);
+            BitPack.WriteGuidMask(2, 3);
+            BitPack.Write(IsTransport);
+
+            if (IsTransport)
+                BitPack.WriteTransportGuidMask(2, 4, 3, 1, 7, 6, 5, 0);
+
+            BitPack.WriteGuidMask(1, 7, 4, 0);
             BitPack.Write(Unknown);
-            BitPack.WriteGuidMask(6);
+            BitPack.WriteGuidMask(5);
 
             // Unknown bits
             if (Unknown)
             {
-                BitPack.Write(false);
-                BitPack.Write(false);
+                BitPack.Write(0);
+                BitPack.Write(0);
             }
 
-            BitPack.WriteGuidMask(0, 4);
-
-            BitPack.Write(IsTransport);
-            BitPack.WriteGuidMask(2);
-
-            // Transport guid
-            if (IsTransport)
-                BitPack.WriteTransportGuidMask(7, 5, 2, 1, 0, 4, 3, 6);
-
-            BitPack.WriteGuidMask(5);
+            BitPack.WriteGuidMask(6);
 
             BitPack.Flush();
 
-            if (IsTransport)
-                BitPack.WriteTransportGuidBytes(1, 5, 7, 0, 3, 4, 6, 2);
+            BitPack.WriteGuidBytes(3, 2);
 
-            BitPack.WriteGuidBytes(3);
+            if (IsTransport)
+                BitPack.WriteTransportGuidBytes(2, 7, 1, 4, 5, 0, 6, 3);
 
             if (Unknown)
                 moveTeleport.WriteUInt8(0);
 
-            BitPack.WriteGuidBytes(2, 1, 7, 5, 6, 4, 0);
+            BitPack.WriteGuidBytes(7, 4, 6, 5, 0, 1);
 
             session.Send(ref moveTeleport);
         }
@@ -1053,16 +389,16 @@ namespace WorldServer.Game.Packets.PacketHandler
             bool Unknown = false;
             bool IsTransport = false;
 
-            PacketWriter transferPending = new PacketWriter(JAMCMessage.TransferPending);
+            PacketWriter transferPending = new PacketWriter(ServerMessage.TransferPending);
             BitPack BitPack = new BitPack(transferPending);
 
-            BitPack.Write(IsTransport);
+            transferPending.WriteUInt32(mapId);
+
             BitPack.Write(Unknown);
+            BitPack.Write(IsTransport);
 
             if (Unknown)
                 transferPending.WriteUInt32(0);
-
-            transferPending.WriteUInt32(mapId);
 
             if (IsTransport)
             {
@@ -1075,12 +411,12 @@ namespace WorldServer.Game.Packets.PacketHandler
 
         public static void HandleNewWorld(ref WorldClass session, Vector4 vector, uint mapId)
         {
-            PacketWriter newWorld = new PacketWriter(JAMCMessage.NewWorld);
+            PacketWriter newWorld = new PacketWriter(ServerMessage.NewWorld);
 
             newWorld.WriteUInt32(mapId);
             newWorld.WriteFloat(vector.Y);
-            newWorld.WriteFloat(vector.O);
             newWorld.WriteFloat(vector.X);
+            newWorld.WriteFloat(vector.O);
             newWorld.WriteFloat(vector.Z);
 
             session.Send(ref newWorld);
