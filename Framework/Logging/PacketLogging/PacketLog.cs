@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Network.Packets;
 using System;
 using System.Globalization;
@@ -43,25 +43,10 @@ namespace Framework.Logging.PacketLogging
                         sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Client: {0}", clientInfo));
                         sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Time: {0}", DateTime.Now.ToString()));
 
-                        if (Enum.IsDefined(typeof(LegacyMessage), serverPacket.Opcode))
+                        if (Enum.IsDefined(typeof(ServerMessage), serverPacket.Opcode))
                         {
-                            sb.AppendLine("Type: LegacyMessage");
-                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(LegacyMessage), serverPacket.Opcode)));
-                        }
-                        else if (Enum.IsDefined(typeof(JAMCMessage), serverPacket.Opcode))
-                        {
-                            sb.AppendLine("Type: JAMCMessage");
-                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(JAMCMessage), serverPacket.Opcode)));
-                        }
-                        else if (Enum.IsDefined(typeof(Message), serverPacket.Opcode))
-                        {
-                            sb.AppendLine("Type: Message");
-                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(Message), serverPacket.Opcode)));
-                        }
-                        else
-                        {
-                            sb.AppendLine("Type: JAMCCMessage");
-                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(JAMCCMessage), serverPacket.Opcode)));
+                            sb.AppendLine("Type: ServerMessage");
+                            sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Name: {0}", Enum.GetName(typeof(ServerMessage), serverPacket.Opcode)));
                         }
 
                         sb.AppendLine(String.Format(CultureInfo.InvariantCulture, "Value: 0x{0:X} ({1})", serverPacket.Opcode, serverPacket.Opcode));

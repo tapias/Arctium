@@ -77,22 +77,7 @@ namespace Framework.Network.Packets
             return (T)Convert.ChangeType(returnValue, typeof(T), CultureInfo.InvariantCulture);
         }
 
-        public UInt64 GetGuid(byte[] mask, byte[] bytes)
-        {
-            bool[] guidMask = new bool[mask.Length];
-            byte[] guidBytes = new byte[bytes.Length];
-
-            for (int i = 0; i < guidMask.Length; i++)
-                guidMask[i] = GetBit();
-
-            for (byte i = 0; i < bytes.Length; i++)
-                if (guidMask[mask[i]])
-                    guidBytes[bytes[i]] = (byte)(reader.ReadUInt8() ^ 1);
-
-            return BitConverter.ToUInt64(guidBytes, 0);
-        }
-
-        public UInt32 GetValue(byte[] mask, byte[] bytes)
+        public UInt64 GetPackedValue(byte[] mask, byte[] bytes)
         {
             bool[] valueMask = new bool[mask.Length];
             byte[] valueBytes = new byte[bytes.Length];
@@ -104,7 +89,7 @@ namespace Framework.Network.Packets
                 if (valueMask[mask[i]])
                     valueBytes[bytes[i]] = (byte)(reader.ReadUInt8() ^ 1);
 
-            return BitConverter.ToUInt32(valueBytes, 0);
+            return BitConverter.ToUInt64(valueBytes, 0);
         }
     }
 }

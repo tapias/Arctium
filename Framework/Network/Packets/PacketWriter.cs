@@ -73,7 +73,7 @@ namespace Framework.Network.Packets
                     WriteUInt8(bigSize);
                 }
             }
-
+           
             return data;
         }
 
