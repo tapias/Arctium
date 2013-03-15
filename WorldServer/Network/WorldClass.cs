@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Cryptography;
 using Framework.Logging;
 using Framework.Logging.PacketLogging;
@@ -58,15 +58,12 @@ namespace WorldServer.Network
             string clientInfo = ((IPEndPoint)clientSocket.RemoteEndPoint).Address + ":" + ((IPEndPoint)clientSocket.RemoteEndPoint).Port;
             PacketLog.WritePacket(clientInfo, null, packet);
 
-            if (Enum.IsDefined(typeof(ClientMessage), packet.Opcode))
-                PacketManager.InvokeHandler(ref packet, this, (ClientMessage)packet.Opcode);
-            else
-                Log.Message(LogType.DUMP, "UNKNOWN OPCODE: {0} (0x{1:X}), LENGTH: {2}", packet.Opcode, (ushort)packet.Opcode, packet.Size);
+            PacketManager.InvokeHandler(ref packet, this);
         }
 
         public void OnConnect()
         {
-            PacketWriter TransferInitiate = new PacketWriter(Message.TransferInitiate);
+            PacketWriter TransferInitiate = new PacketWriter(ServerMessage.TransferInitiate);
             TransferInitiate.WriteCString("RLD OF WARCRAFT CONNECTION - SERVER TO CLIENT");
 
             Send(ref TransferInitiate);
@@ -106,7 +103,7 @@ namespace WorldServer.Network
             }
             catch (Exception ex)
             {
-            	Log.Message(LogType.ERROR, "{0}", ex.Message);
+                Log.Message(LogType.ERROR, "{0}", ex.Message);
                 Log.Message();
             }
         }
@@ -116,8 +113,8 @@ namespace WorldServer.Network
             Crypt.Decrypt(data);
 
             var header = BitConverter.ToUInt32(data, 0);
-            ushort size = (ushort)(header >> 12);
-            ushort opcode = (ushort)(header & 0xFFF);
+            ushort size = (ushort)(header >> 13);
+            ushort opcode = (ushort)(header & 0x1FFF);
 
             data[0] = (byte)(0xFF & size);
             data[1] = (byte)(0xFF & (size >> 8));
@@ -137,8 +134,8 @@ namespace WorldServer.Network
                 if (Crypt.IsInitialized)
                 {
                     uint totalLength = (uint)packet.Size - 2;
-                    totalLength <<= 12;
-                    totalLength |= ((uint)packet.Opcode & 0xFFF);
+                    totalLength <<= 13;
+                    totalLength |= ((uint)packet.Opcode & 0x1FFF);
 
                     var header = BitConverter.GetBytes(totalLength);
 
