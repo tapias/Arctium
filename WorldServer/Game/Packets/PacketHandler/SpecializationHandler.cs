@@ -28,7 +28,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class SpecializationHandler : Globals
     {
-        [Opcode(ClientMessage.SetSpecialization, "16357")]
+        //[Opcode(ClientMessage.SetSpecialization, "16357")]
         public static void HandleSetSpecialization(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
@@ -62,7 +62,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Character (Guid: {0}) choosed spectialization {1} for spec group {2}.", pChar.Guid, pChar.GetActiveSpecId(), pChar.ActiveSpecGroup);
         }
 
-        [Opcode(ClientMessage.LearnTalents, "16357")]
+        //[Opcode(ClientMessage.LearnTalents, "16357")]
         public static void HandleLearnTalents(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
@@ -98,7 +98,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             const byte glyphCount = 6;
 
-            PacketWriter writer = new PacketWriter(LegacyMessage.TalentUpdate);
+            PacketWriter writer = new PacketWriter();
 
             writer.WriteUInt8((byte)pChar.SpecGroupCount);      // Spec Count (Default 1)
             writer.WriteUInt8((byte)pChar.ActiveSpecGroup);     // Active Spec (0 or 1)

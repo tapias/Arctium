@@ -118,6 +118,7 @@
     <Compile Include="Logging\LogTypes.cs" />
     <Compile Include="Network\Packets\PacketReader.cs" />
     <Compile Include="Network\Packets\PacketWriter.cs" />
+    <Compile Include="ObjectDefines\ChatMessageValues.cs" />
     <Compile Include="ObjectDefines\Quaternion.cs" />
     <Compile Include="ObjectDefines\ObjectGuid.cs" />
     <Compile Include="ObjectDefines\ObjectMovementValues.cs" />

@@ -16,6 +16,7 @@
  */
 
 using Framework.Console;
+using Framework.ObjectDefines;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
@@ -35,6 +36,8 @@ namespace WorldServer.Game.Chat.Commands
             GameObject gObject = DataMgr.FindGameObject(objectId);
             if (gObject != null)
             {
+                ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
                 GameObjectSpawn spawn = new GameObjectSpawn()
                 {
                     Guid = GameObjectSpawn.GetLastGuid() + 1,
@@ -46,11 +49,17 @@ namespace WorldServer.Game.Chat.Commands
 
                 if (spawn.AddToDB())
                 {
+                    chatMessage.Message = "Spawn successfully added.";
+
                     spawn.AddToWorld();
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Spawn successfully added.");
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Spawn can't be added.");
+                {
+                    chatMessage.Message = "Spawn can't be added.";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
             }
         }
     }

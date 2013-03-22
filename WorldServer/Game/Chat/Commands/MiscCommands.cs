@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ObjectDefines;
 using System;
 using System.Text;
 using WorldServer.Game.Packets.PacketHandler;
@@ -41,7 +42,9 @@ namespace WorldServer.Game.Chat.Commands
                 }
             }
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, commandList.ToString());
+            ChatMessageValues chatMessage = new ChatMessageValues(0, commandList.ToString());
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("save")]
@@ -49,7 +52,9 @@ namespace WorldServer.Game.Chat.Commands
         {
             ObjectMgr.SavePositionToDB(session.Character);
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, "Your character is successfully saved to the database!");
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "Your character is successfully saved to the database!");
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
     }
 }

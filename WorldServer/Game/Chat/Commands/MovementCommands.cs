@@ -16,10 +16,10 @@
  */
 
 using Framework.Console;
-using WorldServer.Game.Packets.PacketHandler;
-using Framework.ObjectDefines;
 using Framework.Database;
+using Framework.ObjectDefines;
 using System;
+using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Chat.Commands
@@ -29,23 +29,28 @@ namespace WorldServer.Game.Chat.Commands
         [ChatCommand("fly", "Usage: !fly #state (Turns the fly mode 'on' or 'off')")]
         public static void Fly(string[] args, WorldClass session)
         {
-            string state = CommandParser.Read<string>(args, 1);
+            var state = CommandParser.Read<string>(args, 1);
+            var message = state == "on" ? "Fly mode enabled." : "Fly mode disabled.";
+
+            ChatMessageValues chatMessage = new ChatMessageValues(0, message);
 
             if (state == "on")
             {
                 MoveHandler.HandleMoveSetCanFly(ref session);
-                ChatHandler.SendMessageByType(ref session, 0, 0, "Fly mode enabled.");
+                ChatHandler.SendMessage(ref session, chatMessage);
             }
             else if (state == "off")
             {
                 MoveHandler.HandleMoveUnsetCanFly(ref session);
-                ChatHandler.SendMessageByType(ref session, 0, 0, "Fly mode disabled.");
+                ChatHandler.SendMessage(ref session, chatMessage);
             }
         }
 
         [ChatCommand("walkspeed", "Usage: !walkspeed #speed (Set the current walk speed)")]
         public static void WalkSpeed(string[] args, WorldClass session)
         {
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetWalkSpeed(ref session);
             else
@@ -54,21 +59,30 @@ namespace WorldServer.Game.Chat.Commands
 
                 if (speed <= 50 && speed > 0)
                 {
+                    chatMessage.Message = "Walk speed set to " + speed + "!";
+
                     MoveHandler.HandleMoveSetWalkSpeed(ref session, speed);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Walk speed set to " + speed + "!");
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Please enter a value between 0.0 and 50.0!");
+                {
+                    chatMessage.Message = "Please enter a value between 0.0 and 50.0!";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
 
                 return;
             }
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, "Walk speed set to default.");
+            chatMessage.Message = "Walk speed set to default.";
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("runspeed", "Usage: !runspeed #speed (Set the current run speed)")]
         public static void RunSpeed(string[] args, WorldClass session)
         {
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetRunSpeed(ref session);
             else
@@ -76,21 +90,31 @@ namespace WorldServer.Game.Chat.Commands
                 var speed = CommandParser.Read<float>(args, 1);
                 if (speed <= 50 && speed > 0)
                 {
+                    chatMessage.Message = "Run speed set to " + speed + "!";
+
                     MoveHandler.HandleMoveSetRunSpeed(ref session, speed);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Run speed set to " + speed + "!");
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Please enter a value between 0.0 and 50.0!");
+                {
+                    chatMessage.Message = "Please enter a value between 0.0 and 50.0!";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
 
                 return;
             }
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, "Run speed set to default.");
+            chatMessage.Message = "Run speed set to default.";
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("swimspeed", "Usage: !swimspeed #speed (Set the current swim speed)")]
         public static void SwimSpeed(string[] args, WorldClass session)
         {
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetSwimSpeed(ref session);
             else
@@ -98,21 +122,31 @@ namespace WorldServer.Game.Chat.Commands
                 var speed = CommandParser.Read<float>(args, 1);
                 if (speed <= 50 && speed > 0)
                 {
+                    chatMessage.Message = "Swim speed set to " + speed + "!";
+
                     MoveHandler.HandleMoveSetSwimSpeed(ref session, speed);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Swim speed set to " + speed + "!");
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Please enter a value between 0.0 and 50.0!");
+                {
+                    chatMessage.Message = "Please enter a value between 0.0 and 50.0!";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
 
                 return;
             }
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, "Swim speed set to default.");
+            chatMessage.Message = "Swim speed set to default.";
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("flightspeed", "Usage: !flightspeed #speed (Set the current flight speed)")]
         public static void FlightSpeed(string[] args, WorldClass session)
         {
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
             if (args.Length == 1)
                 MoveHandler.HandleMoveSetFlightSpeed(ref session);
             else
@@ -121,16 +155,24 @@ namespace WorldServer.Game.Chat.Commands
 
                 if (speed <= 50 && speed > 0)
                 {
+                    chatMessage.Message = "Flight speed set to " + speed + "!";
+
                     MoveHandler.HandleMoveSetFlightSpeed(ref session, speed);
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Flight speed set to " + speed + "!");
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
                 else
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Please enter a value between 0.0 and 50.0!");
+                {
+                    chatMessage.Message = "Please enter a value between 0.0 and 50.0!";
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
+                }
 
                 return;
             }
 
-            ChatHandler.SendMessageByType(ref session, 0, 0, "Flight speed set to default.");
+            chatMessage.Message = "Flight speed set to default.";
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("tele", "Usage: !tele [#x #y #z #o #map] or [#location] (Force teleport to a new location by coordinates or location)")]
@@ -159,7 +201,9 @@ namespace WorldServer.Game.Chat.Commands
 
                 if (result.Count == 0)
                 {
-                    ChatHandler.SendMessageByType(ref session, 0, 0, "Teleport location '" + location + "' does not exist.");
+                    ChatMessageValues chatMessage = new ChatMessageValues(0, "Teleport location '" + location + "' does not exist.");
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
                     return;
                 }
 
@@ -231,7 +275,9 @@ namespace WorldServer.Game.Chat.Commands
             var pChar = session.Character;
 
             var message = String.Format("Your position is X: {0}, Y: {1}, Z: {2}, W(O): {3}, Map: {4}, Zone: {5}", pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map, pChar.Zone);
-            ChatHandler.SendMessageByType(ref session, 0, 0, message);
+            ChatMessageValues chatMessage = new ChatMessageValues(0, message);
+
+            ChatHandler.SendMessage(ref session, chatMessage);
         }
 
         [ChatCommand("addtele", "Usage: !addtele #name (Adds a new teleport location to the world database with the given name)")]
@@ -242,16 +288,24 @@ namespace WorldServer.Game.Chat.Commands
             string location = CommandParser.Read<string>(args, 1);
             SQLResult result = DB.World.Select("SELECT * FROM teleport_locations WHERE location = ?", location);
 
+            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+
             if (result.Count == 0)
             {
                 if (DB.World.Execute("INSERT INTO teleport_locations (location, x, y, z, o, map) " +
                     "VALUES (?, ?, ?, ?, ?, ?)", location, pChar.Position.X, pChar.Position.Y, pChar.Position.Z, pChar.Position.O, pChar.Map))
                 {
-                    ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Teleport location '{0}' successfully added.", location));
+                    chatMessage.Message = String.Format("Teleport location '{0}' successfully added.", location);
+
+                    ChatHandler.SendMessage(ref session, chatMessage);
                 }
             }
             else
-                ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Teleport location '{0}' already exist.", location));
+            {
+                chatMessage.Message = String.Format("Teleport location '{0}' already exist.", location);
+
+                ChatHandler.SendMessage(ref session, chatMessage);
+            }
         }
 
         [ChatCommand("deltele", "Usage: !deltele #name (Delete the given teleport location from the world database)")]
@@ -260,8 +314,11 @@ namespace WorldServer.Game.Chat.Commands
             var pChar = session.Character;
 
             string location = CommandParser.Read<string>(args, 1);
+
+            ChatMessageValues chatMessage = new ChatMessageValues(0, String.Format("Teleport location '{0}' successfully deleted.", location));
+
             if (DB.World.Execute("DELETE FROM teleport_locations WHERE location = ?", location))
-                ChatHandler.SendMessageByType(ref session, 0, 0, String.Format("Teleport location '{0}' successfully deleted.", location));
+                ChatHandler.SendMessage(ref session, chatMessage);
         }
     }
 }
