@@ -71,7 +71,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 foreach (var v in stats.Flag)
                     queryCreatureResponse.WriteInt32(v);
 
-                queryCreatureResponse.WriteFloat(1);
+                queryCreatureResponse.WriteFloat(stats.PowerModifier);
                 queryCreatureResponse.WriteInt32(stats.DisplayInfoId[0]);
                 queryCreatureResponse.WriteFloat(1);
 
@@ -88,7 +88,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
                 queryCreatureResponse.WriteInt32(stats.MovementInfoId);
                 queryCreatureResponse.WriteInt32(stats.DisplayInfoId[1]);
-                queryCreatureResponse.WriteFloat(stats.PowerModifier);
+                queryCreatureResponse.WriteFloat(1);
                 queryCreatureResponse.WriteFloat(stats.HealthModifier);
                 queryCreatureResponse.WriteInt32(0);
 
