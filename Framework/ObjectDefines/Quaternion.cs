@@ -47,7 +47,9 @@ namespace Framework.ObjectDefines
         public static long GetCompressed(float orientation)
         {
             float z = (float)Math.Sin(orientation / 1.9999945);
-            return (long)(z / Math.Atan(Math.Pow(2, -20)));
+            var com = (long)(z / Math.Atan(Math.Pow(2, -20)));
+
+            return orientation < Math.PI ? com : ((1048576 - com) * 2) + com;
         }
     }
 }
