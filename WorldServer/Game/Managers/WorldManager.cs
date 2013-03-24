@@ -183,7 +183,7 @@ namespace WorldServer.Game.Managers
 
             foreach (var c in tempSessions.ToList())
                 if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
-                    if (obj.CheckUpdateDistance(c.Value.Character))
+                    if (obj.CheckDistance(c.Value.Character))
                         yield return c.Value.Character;
         }
 
@@ -194,8 +194,15 @@ namespace WorldServer.Game.Managers
 
             foreach (var c in tempSessions.ToList())
                 if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
-                    if (!obj.CheckUpdateDistance(c.Value.Character))
+                    if (!obj.CheckDistance(c.Value.Character))
                         yield return c.Value.Character;
+        }
+
+        public void SendByDist(WorldObject obj, PacketWriter packet, float dist)
+        {
+            foreach (var s in Sessions)
+                if (obj.CheckDistance(s.Value.Character, dist))
+                    s.Value.Send(ref packet);
         }
 
         public void WriteAccountDataTimes(AccountDataMasks mask, ref WorldClass session)
@@ -255,7 +262,7 @@ namespace WorldServer.Game.Managers
                 BitPack.Write(values.IsTransport);
                 BitPack.Write(0);                   // Unknown_Alive_1
                 BitPack.WriteGuidMask(0);
-                BitPack.Write(1);                   // Pitch or splineElevation, not implanted
+                BitPack.Write(1);                   // splineElevation, not implanted
                 BitPack.Write(true);                // Movementflags are not implanted
                 BitPack.Write(0);                   // HasSplineData, don't write simple basic splineData
                 BitPack.WriteGuidMask(1);
@@ -264,7 +271,7 @@ namespace WorldServer.Game.Managers
                 BitPack.WriteGuidMask(3, 5, 6);
                 BitPack.Write(0);                   // Unknown_Alive_3
                 BitPack.Write(!values.HasRotation);
-                BitPack.Write(1);                   // Pitch or splineElevation, not implanted
+                BitPack.Write(1);                   // Pitch, not implanted
                 BitPack.Write(1);                   // Unknown_Alive_2, Reversed
                 BitPack.WriteGuidMask(2);
                 BitPack.Write(!values.IsAlive);

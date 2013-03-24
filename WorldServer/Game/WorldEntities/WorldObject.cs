@@ -45,7 +45,7 @@ namespace WorldServer.Game.WorldEntities
             Mask = new BitArray(dataLength, false);
         }
 
-        public bool CheckUpdateDistance(WorldObject obj)
+        public bool CheckDistance(WorldObject obj, float dist = 10000)
         {
             if (Map == obj.Map)
             {
@@ -55,7 +55,7 @@ namespace WorldServer.Game.WorldEntities
 
                 float distance = disX + disY + disZ;
 
-                return distance <= 10000 ? true : false;
+                return distance <= dist;
             }
 
             return false;

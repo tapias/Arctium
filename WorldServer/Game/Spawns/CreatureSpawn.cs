@@ -77,7 +77,7 @@ namespace WorldServer.Game.Spawns
             {
                 Character pChar = v.Value.Character;
 
-                if (pChar.CheckUpdateDistance(this))
+                if (pChar.CheckDistance(this))
                 {
                     PacketWriter updateObject = new PacketWriter(ServerMessage.ObjectUpdate);
 

@@ -71,7 +71,7 @@ namespace WorldServer.Game.Managers
         {
             foreach (var c in CreatureSpawns)
                 if (!obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
-                    if (obj.CheckUpdateDistance(c.Value))
+                    if (obj.CheckDistance(c.Value))
                         yield return c.Value;
         }
 
@@ -79,7 +79,7 @@ namespace WorldServer.Game.Managers
         {
             foreach (var g in GameObjectSpawns)
                 if (!obj.ToCharacter().InRangeObjects.ContainsKey(g.Key))
-                    if (obj.CheckUpdateDistance(g.Value))
+                    if (obj.CheckDistance(g.Value))
                         yield return g.Value;
         }
 
@@ -87,7 +87,7 @@ namespace WorldServer.Game.Managers
         {
             foreach (var c in CreatureSpawns)
                 if (obj.ToCharacter().InRangeObjects.ContainsKey(c.Key))
-                    if (!obj.CheckUpdateDistance(c.Value))
+                    if (!obj.CheckDistance(c.Value))
                         yield return c.Value;
         }
 
@@ -95,7 +95,7 @@ namespace WorldServer.Game.Managers
         {
             foreach (var g in GameObjectSpawns)
                 if (obj.ToCharacter().InRangeObjects.ContainsKey(g.Key))
-                    if (!obj.CheckUpdateDistance(g.Value))
+                    if (!obj.CheckDistance(g.Value))
                         yield return g.Value;
         }
 

@@ -87,10 +87,10 @@ namespace WorldServer.Game.Packets.PacketHandler
             byte[] GuidBytes = { 3, 5, 1, 4, 2, 6, 0, 7 };
             byte[] GuidBytes3 = { 7, 6, 0, 3, 4, 1, 5, 2 };
 
-            ulong guid = session.Character.Guid;
+            var pChar = session.Character;
 
             PacketWriter chat = new PacketWriter(ServerMessage.Chat);
-            BitPack BitPack = new BitPack(chat, guid);
+            BitPack BitPack = new BitPack(chat, pChar.Guid);
 
             BitPack.Write(1);
             BitPack.Write(!chatMessage.HasLanguage);
@@ -130,7 +130,17 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             chat.WriteUInt8((byte)chatMessage.ChatType);
 
-            session.Send(ref chat);
+            switch (chatMessage.ChatType)
+            {
+                case MessageType.ChatMessageSay:
+                    WorldMgr.SendByDist(pChar, chat, 625);
+                    break;
+                case MessageType.ChatMessageYell:
+                    WorldMgr.SendByDist(pChar, chat, 90000);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
