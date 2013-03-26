@@ -37,7 +37,7 @@ namespace Framework.Network.Packets
         {
             if (Position == 8)
             {
-                Value = reader.ReadUInt8();
+                Value = reader.Read<byte>();
                 Position = 0;
             }
 
@@ -87,7 +87,7 @@ namespace Framework.Network.Packets
      
             for (byte i = 0; i < bytes.Length; i++)
                 if (valueMask[mask[i]])
-                    valueBytes[bytes[i]] = (byte)(reader.ReadUInt8() ^ 1);
+                    valueBytes[bytes[i]] = (byte)(reader.Read<byte>() ^ 1);
 
             return BitConverter.ToUInt64(valueBytes, 0);
         }

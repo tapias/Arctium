@@ -35,7 +35,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void HandleQueryCreature(ref PacketReader packet, ref WorldClass session)
         {
             var hasData = false;
-            var id = packet.ReadInt32();
+            var id = packet.Read<int>();
 
             PacketWriter queryCreatureResponse = new PacketWriter(ServerMessage.QueryCreatureResponse);
             BitPack BitPack = new BitPack(queryCreatureResponse);
@@ -117,7 +117,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             BitUnpack BitUnpack = new BitUnpack(packet);
 
             var hasData = false;
-            var id = packet.ReadInt32();
+            var id = packet.Read<int>();
             var guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
 
             PacketWriter queryGameObjectResponse = new PacketWriter(ServerMessage.QueryGameObjectResponse);
@@ -176,7 +176,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             byte[] guidMask = { 4, 7, 3, 6, 0, 1, 5, 2 };
             byte[] guidBytes = { 5, 6, 7, 1, 2, 3, 0, 4 };
 
-            var gossipTextId = packet.ReadInt32();
+            var gossipTextId = packet.Read<int>();
             var guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
 
             var gossipData = GossipMgr.GetGossip<Creature>(ObjectGuid.GetGuid(guid));
@@ -216,7 +216,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             byte[] guidMask = { 2, 1, 5, 7, 4, 3, 6, 0 };
             byte[] guidBytes = { 3, 2, 6, 1, 0, 4, 5, 7 };
 
-            uint realmId = packet.ReadUInt32();
+            uint realmId = packet.Read<uint>();
             ulong guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
 
             var pSession = WorldMgr.GetSession(guid);
@@ -263,7 +263,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             Character pChar = session.Character;
 
-            uint realmId = packet.ReadUInt32();
+            uint realmId = packet.Read<uint>();
 
             SQLResult result = DB.Realms.Select("SELECT name FROM realms WHERE id = ?", WorldConfig.RealmId);
             string realmName = result.Read<string>(0, "Name");
@@ -292,7 +292,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             List<int> IdList = new List<int>();
             BitUnpack BitUnpack = new BitUnpack(packet);
 
-            var type = (DBTypes)packet.ReadUInt32();
+            var type = (DBTypes)packet.Read<uint>();
 
             var count = BitUnpack.GetBits<uint>(21);
 
@@ -320,9 +320,9 @@ namespace WorldServer.Game.Packets.PacketHandler
             for (int i = 0; i < count; i++)
             {
                 if (Mask[i][5])
-                    Bytes[i][5] = (byte)(packet.ReadUInt8() ^ 1);
+                    Bytes[i][5] = (byte)(packet.Read<byte>() ^ 1);
 
-                IdList.Add(packet.ReadInt32());
+                IdList.Add(packet.Read<int>());
 
                 if (Mask[i][7])
                     Bytes[i][7] = (byte)(packet.ReadByte() ^ 1);

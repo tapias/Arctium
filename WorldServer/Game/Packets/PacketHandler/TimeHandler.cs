@@ -49,7 +49,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             PacketWriter realmSplit = new PacketWriter(ServerMessage.RealmSplit);
             BitPack BitPack = new BitPack(realmSplit);
 
-            realmSplit.WriteUInt32(packet.ReadUInt32());
+            realmSplit.WriteUInt32(packet.Read<uint>());
             realmSplit.WriteUInt32(realmSplitState);
 
             BitPack.Write(date.Length, 15);

@@ -46,9 +46,9 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             Vector4 vector = new Vector4()
             {
-                X = packet.ReadFloat(),
-                Y = packet.ReadFloat(),
-                Z = packet.ReadFloat()
+                X = packet.Read<float>(),
+                Y = packet.Read<float>(),
+                Z = packet.Read<float>()
             };
 
             guidMask[0] = BitUnpack.GetBit();
@@ -95,21 +95,21 @@ namespace WorldServer.Game.Packets.PacketHandler
             if (movementValues.HasMovementFlags2)
                 movementValues.MovementFlags2 = (MovementFlag2)BitUnpack.GetBits<uint>(13);
 
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.Read<byte>() ^ 1);
 
             for (int i = 0; i < counter; i++)
-                packet.ReadUInt32();
+                packet.Read<uint>();
 
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.Read<byte>() ^ 1);
 
             if (HasSplineElevation)
-                packet.ReadFloat();
+                packet.Read<float>();
 
             /*if (movementValues.IsTransport)
             {
@@ -120,26 +120,26 @@ namespace WorldServer.Game.Packets.PacketHandler
             {
                 if (movementValues.IsInterpolated2)
                 {
-                    packet.ReadFloat();
-                    packet.ReadFloat();
-                    packet.ReadFloat();
+                    packet.Read<float>();
+                    packet.Read<float>();
+                    packet.Read<float>();
                 }
 
-                packet.ReadUInt32();
-                packet.ReadFloat();
+                packet.Read<uint>();
+                packet.Read<float>();
             }
 
             if (HasPitch)
-                packet.ReadFloat();
+                packet.Read<float>();
 
             if (movementValues.IsAlive)
-                movementValues.Time = packet.ReadUInt32();
+                movementValues.Time = packet.Read<uint>();
 
             if (movementValues.HasRotation)
-                vector.O = packet.ReadFloat();
+                vector.O = packet.Read<float>();
 
             if (HasTime)
-                movementValues.Time = packet.ReadUInt32();
+                movementValues.Time = packet.Read<uint>();
 
             var guid = BitConverter.ToUInt64(guidBytes, 0);
             HandleMoveUpdate(guid, movementValues, vector);

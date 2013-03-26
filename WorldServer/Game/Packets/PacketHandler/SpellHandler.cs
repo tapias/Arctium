@@ -48,7 +48,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 writer.WriteUInt32(spell.SpellId));
 
             if (specializationSpells != null)
-                specializationSpells.ForEach(spell => writer.WriteUInt32(spell.SpellId));
+                specializationSpells.ForEach(spell => writer.WriteUInt32(spell.Spell));
 
             if (talentSpells != null)
                 talentSpells.ForEach(spell => writer.WriteUInt32(spell));

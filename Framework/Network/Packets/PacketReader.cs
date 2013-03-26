@@ -16,6 +16,7 @@
  */
 
 using Framework.Constants.NetMessage;
+using Framework.Helper;
 using System;
 using System.Globalization;
 using System.IO;
@@ -29,11 +30,12 @@ namespace Framework.Network.Packets
         public ushort Size { get; set; }
         public byte[] Storage { get; set; }
 
-        public PacketReader(byte[] data, bool worldPacket = true) : base(new MemoryStream(data))
+        public PacketReader(byte[] data, bool worldPacket = true)
+            : base(new MemoryStream(data))
         {
             if (worldPacket)
             {
-                ushort size = this.ReadUInt16();
+                ushort size = this.Read<ushort>();
                 Opcode = (ClientMessage)this.ReadUInt16();
 
                 if (Opcode == ClientMessage.TransferInitiate)
@@ -46,54 +48,9 @@ namespace Framework.Network.Packets
             }
         }
 
-        public sbyte ReadInt8()
+        public T Read<T>()
         {
-            return base.ReadSByte();
-        }
-
-        public new short ReadInt16()
-        {
-            return base.ReadInt16();
-        }
-
-        public new int ReadInt32()
-        {
-            return base.ReadInt32();
-        }
-
-        public new long ReadInt64()
-        {
-            return base.ReadInt64();
-        }
-
-        public byte ReadUInt8()
-        {
-            return base.ReadByte();
-        }
-
-        public new ushort ReadUInt16()
-        {
-            return base.ReadUInt16();
-        }
-
-        public new uint ReadUInt32()
-        {
-            return base.ReadUInt32();
-        }
-
-        public new ulong ReadUInt64()
-        {
-            return base.ReadUInt64();
-        }
-
-        public float ReadFloat()
-        {
-            return base.ReadSingle();
-        }
-
-        public new double ReadDouble()
-        {
-            return base.ReadDouble();
+            return BinaryReaderExtensions.Read<T>(this);
         }
 
         public string ReadCString()
@@ -135,7 +92,7 @@ namespace Framework.Network.Packets
             byte[] ip = new byte[4];
 
             for (int i = 0; i < 4; ++i)
-                ip[i] = ReadUInt8();
+                ip[i] = this.Read<byte>();
 
             return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
         }
@@ -144,7 +101,7 @@ namespace Framework.Network.Packets
         {
             StringBuilder nameBuilder = new StringBuilder();
 
-            byte nameLength = ReadUInt8();
+            byte nameLength = this.Read<byte>();
             char[] name = new char[nameLength];
 
             for (int i = 0; i < nameLength; i++)

@@ -15,13 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
+using Framework.Constants;
+using Framework.Logging;
+using Framework.Network.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Framework.Constants;
-using Framework.DBC;
-using Framework.Logging;
-using Framework.Network.Packets;
 using WorldServer.Network;
 
 namespace WorldServer.Game.Packets.PacketHandler
@@ -33,7 +33,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             var pChar = session.Character;
 
-            uint specGroupId = packet.ReadUInt32();
+            uint specGroupId = packet.Read<uint>();
 
             uint specId = SpecializationMgr.GetSpecIdByGroup(pChar, (byte)specGroupId);
 
@@ -74,10 +74,11 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             for (int i = 0; i < talentCount; i++)
             {
-                var talentId = packet.ReadUInt16();
+                var talentId = packet.Read<ushort>();
+
                 SpecializationMgr.AddTalent(pChar, pChar.ActiveSpecGroup, talentId, true);
 
-                talentSpells.Add(DBCStorage.TalentStorage.LookupByKey(talentId).SpellId);
+                talentSpells.Add(CliDB.Talent.Single(talent => talent.Id == talentId).SpellId);
             }
 
             HandleTalentUpdate(ref session);
@@ -85,7 +86,6 @@ namespace WorldServer.Game.Packets.PacketHandler
             pChar.SetUpdateField<Int32>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
             ObjectHandler.HandleUpdateObjectValues(ref session);
 
-            // we need to send a single packet for every talent spell - stupid blizz
             foreach (var talentSpell in talentSpells)
                 SpellHandler.HandleLearnedSpells(ref session, new List<uint>(1) { talentSpell });
 
@@ -125,7 +125,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         public static void SendSpecializationSpells(ref WorldClass session)
         {
             var specSpells = SpecializationMgr.GetSpecializationSpells(session.Character);
-            var newSpells = specSpells.Select(specializationSpell => specializationSpell.SpellId).ToList();
+            var newSpells = specSpells.Select(specializationSpell => specializationSpell.Spell).ToList();
 
             if (newSpells.Count > 0)
                 SpellHandler.HandleLearnedSpells(ref session, newSpells);

@@ -59,6 +59,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientDB\Structures\Dbc\ChrClasses.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\ChrSpecialization.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\NameGen.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\SpecializationSpells.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\Spell.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\SpellLevels.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\Talent.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\RealmConfig.cs" />
     <Compile Include="Configuration\WorldConfig.cs" />
@@ -70,6 +77,7 @@
     <Compile Include="Constants\Authentication\AuthResults.cs" />
     <Compile Include="Constants\CharacterFlags.cs" />
     <Compile Include="Constants\Class.cs" />
+    <Compile Include="Constants\Creature\NpcFlags.cs" />
     <Compile Include="Constants\DBTypes.cs" />
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
     <Compile Include="Constants\Guids\HighGuidType.cs" />
@@ -92,17 +100,12 @@
     <Compile Include="Database\SQLResult.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="DBC\DB2Fmt.cs" />
-    <Compile Include="DBC\DB2Loader.cs" />
-    <Compile Include="DBC\DB2Reader.cs" />
-    <Compile Include="DBC\DB2Storage.cs" />
-    <Compile Include="DBC\DB2Structure.cs" />
-    <Compile Include="DBC\DBCExtensions.cs" />
-    <Compile Include="DBC\DBCFmt.cs" />
-    <Compile Include="DBC\DBCLoader.cs" />
-    <Compile Include="DBC\DBCReader.cs" />
-    <Compile Include="DBC\DBCStorage.cs" />
-    <Compile Include="DBC\DBCStructure.cs" />
+    <Compile Include="ClientDB\CliDB.cs" />
+    <Compile Include="ClientDB\Reader\DBHeader.cs" />
+    <Compile Include="ClientDB\Reader\DBReader.cs" />
+    <Compile Include="ClientDB\Reader\DBReaderExtensions.cs" />
+    <Compile Include="ClientDB\Structures\Dbc\ChrRaces.cs" />
+    <Compile Include="Helper\BinaryReaderExtensions.cs" />
     <Compile Include="Logging\PacketLogging\PacketLog.cs" />
     <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Network\Packets\BitPack.cs" />
@@ -137,6 +140,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Framework.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ClientDB\Structures\Db2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

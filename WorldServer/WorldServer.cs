@@ -19,7 +19,6 @@
 using Framework.Console;
 using Framework.Console.Commands;
 using Framework.Database;
-using Framework.DBC;
 using Framework.Logging;
 ﻿using System;
 ﻿using WorldServer.Game;
@@ -51,10 +50,7 @@ namespace WorldServer
             DB.World.Init(WorldConfig.WorldDBHost, WorldConfig.WorldDBUser, WorldConfig.WorldDBPassword, WorldConfig.WorldDBDataBase, WorldConfig.WorldDBPort);
             Log.Message();
 
-            DBCLoader.Init();
-            DB2Loader.Init();
-
-            Globals.InitializeManager();
+            Globals.Initialize();
 
             // Set all accounts offline
             DB.Realms.Execute("UPDATE accounts SET online = 0");

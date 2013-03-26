@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
+using Framework.ClientDB.Structures.Dbc;
 using Framework.Constants;
 using Framework.Database;
-using Framework.DBC;
 using Framework.Singleton;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,20 +41,21 @@ namespace WorldServer.Game.Managers
             }
         }
 
-        public List<SpecializationSpell> GetSpecializationSpells(Character pChar)
+        public List<SpecializationSpells> GetSpecializationSpells(Character pChar)
         {
             if (pChar.GetActiveSpecId() == 0)
                 return null;
 
-            var knownSpecSpells = new List<SpecializationSpell>();
-            var specSpells = DBCStorage.SpecializationSpellStorage.Where(specSpell => specSpell.Value.SpecId == pChar.GetActiveSpecId()).ToList();
+            var knownSpecSpells = new List<SpecializationSpells>();
+            var specSpells = CliDB.SpecializationSpells.Where(specSpell => specSpell.Group == pChar.GetActiveSpecId()).ToList();
 
             foreach (var specSpell in specSpells)
             {
-                var spellLevelId = DBCStorage.SpellStorage.LookupByKey(specSpell.Value.SpellId).SpellLevelsId;
-                var spellBaseLevel = DBCStorage.SpellLevelStorage.LookupByKey(spellLevelId).BaseLevel;
+                var spellLevelId = CliDB.Spell.Single(spell => spell.Id == specSpell.Spell).SpellLevelsId;
+                var spellBaseLevel = CliDB.SpellLevels.Single(spellLevel => spellLevel.Id == spellLevelId).BaseLevel;
+
                 if (pChar.Level >= spellBaseLevel)
-                    knownSpecSpells.Add(specSpell.Value);
+                    knownSpecSpells.Add(specSpell);
             }
 
             return knownSpecSpells;
@@ -66,7 +68,7 @@ namespace WorldServer.Game.Managers
 
             var talents = GetTalentsBySpecGroup(pChar, specGroup);
 
-            return talents.Select(t => DBCStorage.TalentStorage.LookupByKey(t.Id).SpellId).ToList();
+            return talents.Select(t => CliDB.Talent.Single(talent => talent.Id == t.Id).SpellId).ToList();
         }
 
         public void AddTalent(Character pChar, byte specGroup, ushort talentId, bool addToDb = false)
@@ -104,7 +106,7 @@ namespace WorldServer.Game.Managers
 
         public uint GetSpecIdByGroup(Character pChar, byte specGroup)
         {
-            return DBCStorage.SpecializationStorage.Where(spec => spec.Value.ClassId == pChar.Class && spec.Value.TabId == specGroup).Select(spec => spec.Value.Id).FirstOrDefault();
+            return CliDB.ChrSpecialization.Where(spec => spec.ClassId == pChar.Class && spec.TabId == specGroup).Select(spec => spec.Id).FirstOrDefault();
         }
 
         public byte GetSpentTalentRowCount(Character pChar, uint specGroup)

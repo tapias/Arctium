@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
 using Framework.Constants.NetMessage;
 using Framework.Database;
-using Framework.DBC;
 using Framework.Network.Packets;
+using System.Linq;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
 
@@ -32,7 +33,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             PacketWriter startCinematic = new PacketWriter(ServerMessage.StartCinematic);
 
-            startCinematic.WriteUInt32(DBCStorage.RaceStorage[pChar.Race].CinematicSequence);
+            startCinematic.WriteUInt32(CliDB.ChrRaces.Single(race => race.Id == pChar.Race).CinematicSequence);
 
             session.Send(ref startCinematic);
 

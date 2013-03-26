@@ -17,7 +17,6 @@
  
 using Framework.Database;
 using Framework.Logging;
-using System.Globalization;
 
 namespace Framework.Console.Commands
 {

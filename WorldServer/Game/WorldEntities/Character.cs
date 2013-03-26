@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
 using Framework.Constants;
 using Framework.Database;
-using Framework.DBC;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WorldServer.Game.ObjectDefines;
 using Talent = WorldServer.Game.ObjectDefines.Talent;
 
@@ -110,16 +111,18 @@ namespace WorldServer.Game.WorldEntities
             SetUpdateField<Int32>((int)UnitFields.MaxHealth, 123);
 
             SetUpdateField<Int32>((int)UnitFields.Level, Level);
-            SetUpdateField<Int32>((int)UnitFields.FactionTemplate, (int)DBCStorage.RaceStorage[Race].FactionID);
+            SetUpdateField<UInt32>((int)UnitFields.FactionTemplate, CliDB.ChrRaces.Single(r => r.Id == Race).Faction);
 
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, Race, 0);
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, Class, 1);
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, Gender, 2);
             SetUpdateField<Byte>((int)UnitFields.DisplayPower, 0, 3);
 
-            uint displayId = Gender == 0 ? DBCStorage.RaceStorage[Race].model_m : DBCStorage.RaceStorage[Race].model_f;
-            SetUpdateField<Int32>((int)UnitFields.DisplayID, (int)displayId);
-            SetUpdateField<Int32>((int)UnitFields.NativeDisplayID, (int)displayId);
+            var race = CliDB.ChrRaces.Single(r => r.Id == Race);
+            var displayId = Gender == 0 ? race.MaleDisplayId : race.FemaleDisplayId;
+
+            SetUpdateField<UInt32>((int)UnitFields.DisplayID, displayId);
+            SetUpdateField<UInt32>((int)UnitFields.NativeDisplayID, displayId);
 
             SetUpdateField<Single>((int)UnitFields.BoundingRadius, 0.389F);
             SetUpdateField<Single>((int)UnitFields.CombatReach, 1.5F);

@@ -31,7 +31,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
-            var language = packet.ReadInt32();
+            var language = packet.Read<int>();
 
             var messageLength = packet.ReadByte();
             var message = packet.ReadString(messageLength);
@@ -50,7 +50,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
-            var language = packet.ReadInt32();
+            var language = packet.Read<int>();
 
             var messageLength = packet.ReadByte();
             var message = packet.ReadString(messageLength);
@@ -66,7 +66,7 @@ namespace WorldServer.Game.Packets.PacketHandler
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
 
-            var language = packet.ReadInt32();
+            var language = packet.Read<int>();
 
             var messageLength = BitUnpack.GetBits<byte>(9);
             var nameLength = BitUnpack.GetNameLength<byte>(9);

@@ -50,7 +50,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             packet.Skip(54);
 
-            int addonSize = packet.ReadInt32();
+            int addonSize = packet.Read<int>();
             packet.Skip(addonSize);
 
             uint nameLength = BitUnpack.GetBits<uint>(12);

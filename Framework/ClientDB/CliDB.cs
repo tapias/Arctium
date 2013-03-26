@@ -1,0 +1,47 @@
+﻿/*
+ * Copyright (C) 2012-2013 Arctium <http://arctium.org>
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+using Framework.ClientDB.Reader;
+using Framework.ClientDB.Structures.Dbc;
+using System.Collections.Generic;
+
+namespace Framework.ClientDB
+{
+    public class CliDB
+    {
+        public static List<ChrClasses> ChrClasses;
+        public static List<ChrRaces> ChrRaces;
+        public static List<ChrSpecialization> ChrSpecialization;
+        public static List<NameGen> NameGen;
+        public static List<SpecializationSpells> SpecializationSpells;
+        public static List<Spell> Spell;
+        public static List<SpellLevels> SpellLevels;
+        public static List<Talent> Talent;
+        
+        public static void Initialize()
+        {
+            ChrClasses           = DBReader.Read<ChrClasses>("ChrClasses.dbc");
+            ChrRaces             = DBReader.Read<ChrRaces>("ChrRaces.dbc");
+            ChrSpecialization    = DBReader.Read<ChrSpecialization>("ChrSpecialization.dbc");
+            NameGen              = DBReader.Read<NameGen>("NameGen.dbc");
+            SpecializationSpells = DBReader.Read<SpecializationSpells>("SpecializationSpells.dbc");
+            Spell                = DBReader.Read<Spell>("Spell.dbc");
+            SpellLevels          = DBReader.Read<SpellLevels>("SpellLevels.dbc");
+            Talent               = DBReader.Read<Talent>("Talent.dbc");
+        }
+    }
+}

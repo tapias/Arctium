@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Database;
-using Framework.DBC;
 using Framework.Logging;
 using Framework.Network.Packets;
 using System;
@@ -228,14 +228,14 @@ namespace WorldServer.Game.PacketHandler
             guidMask[0] = BitUnpack.GetBit();
             guidMask[1] = BitUnpack.GetBit();
 
-            if (guidMask[2]) guidBytes[2] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[6]) guidBytes[6] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[1]) guidBytes[1] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[4]) guidBytes[4] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[3]) guidBytes[3] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[0]) guidBytes[0] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[7]) guidBytes[7] = (byte)(packet.ReadUInt8() ^ 1);
-            if (guidMask[5]) guidBytes[5] = (byte)(packet.ReadUInt8() ^ 1);
+            if (guidMask[2]) guidBytes[2] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[6]) guidBytes[6] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[1]) guidBytes[1] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[4]) guidBytes[4] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[3]) guidBytes[3] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[0]) guidBytes[0] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[7]) guidBytes[7] = (byte)(packet.Read<byte>() ^ 1);
+            if (guidMask[5]) guidBytes[5] = (byte)(packet.Read<byte>() ^ 1);
 
             var guid = BitConverter.ToUInt64(guidBytes, 0);
 
@@ -254,7 +254,7 @@ namespace WorldServer.Game.PacketHandler
             byte race = packet.ReadByte();
             byte gender = packet.ReadByte();
 
-            List<string> names = DBCStorage.NameGenStorage.Where(n => n.Value.Race == race && n.Value.Gender == gender).Select(n => n.Value.Name).ToList();
+            List<string> names = CliDB.NameGen.Where(n => n.Race == race && n.Gender == gender).Select(n => n.Name).ToList();
             Random rand = new Random(Environment.TickCount);
 
             string NewName;
@@ -285,7 +285,7 @@ namespace WorldServer.Game.PacketHandler
 
             BitUnpack GuidUnpacker = new BitUnpack(packet);
 
-            var unknown = packet.ReadFloat();
+            var unknown = packet.Read<float>();
             var guid = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
             Log.Message(LogType.DEBUG, "Character with Guid: {0}, AccountId: {1} tried to enter the world.", guid, session.Account.Id);
 

@@ -50,7 +50,7 @@ namespace Framework.Network.Realm
         {
             using (var reader = new PacketReader(data, false))
             {
-                ClientLink cmd = (ClientLink)reader.ReadUInt8();
+                ClientLink cmd = (ClientLink)reader.Read<byte>();
 
                 switch (cmd)
                 {
@@ -77,7 +77,7 @@ namespace Framework.Network.Realm
             Log.Message(LogType.NORMAL, "AuthLogonChallenge");
 
             data.Skip(10);
-            ushort ClientBuild = data.ReadUInt16();
+            ushort ClientBuild = data.Read<ushort>();
             data.Skip(8);
             account.Language = data.ReadStringFromBytes(4);
             data.Skip(4);

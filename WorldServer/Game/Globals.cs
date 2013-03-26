@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB;
 using WorldServer.Game.Managers;
 
 namespace WorldServer.Game
@@ -32,8 +33,11 @@ namespace WorldServer.Game
         public static SpellManager SpellMgr;
         public static WorldManager WorldMgr;
 
-        public static void InitializeManager()
+        public static void Initialize()
         {
+            // Load dbc files.
+            CliDB.Initialize();
+
             ActionMgr         = ActionManager.GetInstance();
             AddonMgr          = AddonManager.GetInstance();
             SkillMgr          = SkillManager.GetInstance();
