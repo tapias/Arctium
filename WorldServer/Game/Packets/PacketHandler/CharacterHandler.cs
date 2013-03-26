@@ -33,7 +33,7 @@ namespace WorldServer.Game.PacketHandler
 {
     public class CharacterHandler : Globals
     {
-        [Opcode(ClientMessage.EnumCharacters, "16733")]
+        [Opcode(ClientMessage.EnumCharacters, "16769")]
         public static void HandleEnumCharactersResult(ref PacketReader packet, ref WorldClass session)
         {
             // Set existing character from last world session to null
@@ -153,7 +153,7 @@ namespace WorldServer.Game.PacketHandler
             session.Send(ref enumCharacters);
         }
 
-        [Opcode(ClientMessage.CreateCharacter, "16733")]
+        [Opcode(ClientMessage.CreateCharacter, "16769")]
         public static void HandleCreateCharacter(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -209,7 +209,7 @@ namespace WorldServer.Game.PacketHandler
             session.Send(ref createChar);
         }
 
-        [Opcode(ClientMessage.CharDelete, "16733")]
+        [Opcode(ClientMessage.CharDelete, "16769")]
         public static void HandleCharDelete(ref PacketReader packet, ref WorldClass session)
         {
             bool[] guidMask = new bool[8];
@@ -248,7 +248,7 @@ namespace WorldServer.Game.PacketHandler
             DB.Characters.Execute("DELETE FROM character_skills WHERE guid = ?", guid);
         }
 
-        [Opcode(ClientMessage.GenerateRandomCharacterName, "16733")]
+        [Opcode(ClientMessage.GenerateRandomCharacterName, "16769")]
         public static void HandleGenerateRandomCharacterName(ref PacketReader packet, ref WorldClass session)
         {
             byte race = packet.ReadByte();
@@ -277,7 +277,7 @@ namespace WorldServer.Game.PacketHandler
             session.Send(ref generateRandomCharacterNameResult);
         }
 
-        [Opcode(ClientMessage.PlayerLogin, "16733")]
+        [Opcode(ClientMessage.PlayerLogin, "16769")]
         public static void HandlePlayerLogin(ref PacketReader packet, ref WorldClass session)
         {
             byte[] guidMask = { 5, 0, 6, 2, 1, 3, 7, 4 };

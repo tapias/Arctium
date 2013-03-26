@@ -26,7 +26,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class ChatHandler : Globals
     {
-        [Opcode(ClientMessage.ChatMessageSay, "16733")]
+        [Opcode(ClientMessage.ChatMessageSay, "16769")]
         public static void HandleChatMessageSay(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -45,7 +45,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 SendMessage(ref session, chatMessage);
         }
 
-        [Opcode(ClientMessage.ChatMessageYell, "16733")]
+        [Opcode(ClientMessage.ChatMessageYell, "16769")]
         public static void HandleChatMessageYell(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -61,7 +61,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             SendMessage(ref session, chatMessage);
         }
 
-        [Opcode(ClientMessage.ChatMessageWhisper, "16733")]
+        [Opcode(ClientMessage.ChatMessageWhisper, "16769")]
         public static void HandleChatMessageWhisper(ref PacketReader packet, ref WorldClass session)
         {
             BitUnpack BitUnpack = new BitUnpack(packet);
@@ -139,6 +139,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                     WorldMgr.SendByDist(pChar, chat, 90000);
                     break;
                 default:
+                    session.Send(ref chat);
                     break;
             }
         }

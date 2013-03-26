@@ -16,6 +16,7 @@
  */
 
 using Framework.Console;
+using Framework.Constants;
 using Framework.ObjectDefines;
 using WorldServer.Game.Packets.PacketHandler;
 using WorldServer.Game.Spawns;
@@ -65,7 +66,7 @@ namespace WorldServer.Game.Chat.Commands
         [ChatCommand("delnpc")]
         public static void DeleteNpc(string[] args, WorldClass session)
         {
-            ChatMessageValues chatMessage = new ChatMessageValues(0, "");
+            ChatMessageValues chatMessage = new ChatMessageValues(MessageType.ChatMessageSystem, "");
 
             var pChar = session.Character;
             var spawn = SpawnMgr.FindSpawn(pChar.TargetGuid);
