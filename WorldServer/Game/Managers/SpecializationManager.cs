@@ -51,10 +51,14 @@ namespace WorldServer.Game.Managers
 
             foreach (var specSpell in specSpells)
             {
-                var spellLevelId = CliDB.Spell.Single(spell => spell.Id == specSpell.Spell).SpellLevelsId;
-                var spellBaseLevel = CliDB.SpellLevels.Single(spellLevel => spellLevel.Id == spellLevelId).BaseLevel;
+                var spellLevelId = CliDB.Spell.SingleOrDefault(spell => spell.Id == specSpell.Spell).SpellLevelsId;
+                var spellLevel = CliDB.SpellLevels.SingleOrDefault(spellLvl => spellLvl.Id == spellLevelId);
+                var baseLevel = 0u;
 
-                if (pChar.Level >= spellBaseLevel)
+                if (spellLevel != null)
+                    baseLevel = spellLevel.BaseLevel;
+
+                if (pChar.Level >= baseLevel)
                     knownSpecSpells.Add(specSpell);
             }
 
@@ -116,8 +120,9 @@ namespace WorldServer.Game.Managers
 
         public byte GetUnspentTalentRowCount(Character pChar)
         {
-            byte maxTalentRows = GetMaxTalentRowCount(pChar);
-            byte spentTalentRows = GetSpentTalentRowCount(pChar, pChar.ActiveSpecGroup);
+            var maxTalentRows = GetMaxTalentRowCount(pChar);
+            var spentTalentRows = GetSpentTalentRowCount(pChar, pChar.ActiveSpecGroup);
+
             return (byte)(maxTalentRows - spentTalentRows);
         }
 

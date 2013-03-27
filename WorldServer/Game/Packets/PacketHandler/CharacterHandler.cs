@@ -301,7 +301,7 @@ namespace WorldServer.Game.PacketHandler
 
             MiscHandler.HandleMessageOfTheDay(ref session);
             TimeHandler.HandleLoginSetTimeSpeed(ref session);
-            //SpecializationHandler.HandleTalentUpdate(ref session);
+            SpecializationHandler.HandleUpdateTalentData(ref session);
             SpellHandler.HandleSendKnownSpells(ref session);
             MiscHandler.HandleUpdateActionButtons(ref session);
 

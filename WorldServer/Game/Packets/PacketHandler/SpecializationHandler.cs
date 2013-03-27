@@ -17,6 +17,7 @@
 
 using Framework.ClientDB;
 using Framework.Constants;
+using Framework.Constants.NetMessage;
 using Framework.Logging;
 using Framework.Network.Packets;
 using System;
@@ -28,8 +29,8 @@ namespace WorldServer.Game.Packets.PacketHandler
 {
     public class SpecializationHandler : Globals
     {
-        //[Opcode(ClientMessage.SetSpecialization, "16357")]
-        public static void HandleSetSpecialization(ref PacketReader packet, ref WorldClass session)
+        [Opcode(ClientMessage.CliSetSpecialization, "16769")]
+        public static void HandleCliSetSpecialization(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
 
@@ -54,7 +55,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             SendSpecializationSpells(ref session);
 
-            HandleTalentUpdate(ref session);
+            HandleUpdateTalentData(ref session);
 
             pChar.SetUpdateField<Int32>((int)PlayerFields.CurrentSpecID, (int)pChar.GetActiveSpecId());
             ObjectHandler.HandleUpdateObjectValues(ref session);
@@ -62,7 +63,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Character (Guid: {0}) choosed spectialization {1} for spec group {2}.", pChar.Guid, pChar.GetActiveSpecId(), pChar.ActiveSpecGroup);
         }
 
-        //[Opcode(ClientMessage.LearnTalents, "16357")]
+        [Opcode(ClientMessage.CliLearnTalents, "16769")]
         public static void HandleLearnTalents(ref PacketReader packet, ref WorldClass session)
         {
             var pChar = session.Character;
@@ -70,7 +71,7 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             BitUnpack BitUnpack = new BitUnpack(packet);
 
-            uint talentCount = BitUnpack.GetBits<uint>(25);
+            uint talentCount = BitUnpack.GetBits<uint>(23);
 
             for (int i = 0; i < talentCount; i++)
             {
@@ -81,7 +82,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 talentSpells.Add(CliDB.Talent.Single(talent => talent.Id == talentId).SpellId);
             }
 
-            HandleTalentUpdate(ref session);
+            HandleUpdateTalentData(ref session);
 
             pChar.SetUpdateField<Int32>((int)PlayerFields.SpellCritPercentage + 0, SpecializationMgr.GetUnspentTalentRowCount(pChar), 0);
             ObjectHandler.HandleUpdateObjectValues(ref session);
@@ -92,34 +93,44 @@ namespace WorldServer.Game.Packets.PacketHandler
             Log.Message(LogType.DEBUG, "Character (Guid: {0}) learned {1} talents.", pChar.Guid, talentCount);
         }
 
-        public static void HandleTalentUpdate(ref WorldClass session)
+        public static void HandleUpdateTalentData(ref WorldClass session)
         {
             var pChar = session.Character;
 
             const byte glyphCount = 6;
 
-            PacketWriter writer = new PacketWriter();
+            PacketWriter updateTalentData = new PacketWriter(ServerMessage.UpdateTalentData);
+            BitPack BitPack = new BitPack(updateTalentData);
 
-            writer.WriteUInt8((byte)pChar.SpecGroupCount);      // Spec Count (Default 1)
-            writer.WriteUInt8((byte)pChar.ActiveSpecGroup);     // Active Spec (0 or 1)
+            updateTalentData.WriteUInt8((byte)pChar.ActiveSpecGroup);     // Active Spec (0 or 1)
+
+            BitPack.Write(pChar.SpecGroupCount, 19);
 
             for (int i = 0; i < pChar.SpecGroupCount; i++)
             {
-                var specId = (i == 0) ? pChar.PrimarySpec : pChar.SecondarySpec;
-                writer.WriteUInt32(specId);                     // Spec Id
-
                 var talents = SpecializationMgr.GetTalentsBySpecGroup(pChar, (byte)i);
 
-                writer.WriteUInt8((byte)talents.Count);         // Spent Talent Row Count
-                for (int j = 0; j < talents.Count; j++)
-                    writer.WriteUInt16(talents[j].Id);          // Talent Id
-
-                writer.WriteUInt8(glyphCount);                  // Glyph Count - NYI
-                for (int j = 0; j < glyphCount; j++)
-                    writer.WriteInt16(0);                       // Glyph Id - NYI
+                BitPack.Write(talents.Count, 23);
             }
 
-            session.Send(ref writer);
+            BitPack.Flush();
+
+            for (int i = 0; i < pChar.SpecGroupCount; i++)
+            {
+                var talents = SpecializationMgr.GetTalentsBySpecGroup(pChar, (byte)i);
+                var specId = (i == 0) ? pChar.PrimarySpec : pChar.SecondarySpec;
+
+                for (int j = 0; j < talents.Count; j++)
+                    updateTalentData.WriteUInt16(talents[j].Id);          // Talent Id
+
+                updateTalentData.WriteUInt32(specId);                     // Spec Id
+
+                updateTalentData.WriteUInt8(glyphCount);                  // Glyph Count - NYI
+                for (int j = 0; j < glyphCount; j++)
+                    updateTalentData.WriteInt16(0);                       // Glyph Id - NYI
+            }
+
+            session.Send(ref updateTalentData);
         }
 
         public static void SendSpecializationSpells(ref WorldClass session)
