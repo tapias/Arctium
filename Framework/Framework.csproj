@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -77,7 +78,6 @@
     <Compile Include="Constants\Authentication\AuthResults.cs" />
     <Compile Include="Constants\CharacterFlags.cs" />
     <Compile Include="Constants\Class.cs" />
-    <Compile Include="Constants\Creature\NpcFlags.cs" />
     <Compile Include="Constants\DBTypes.cs" />
     <Compile Include="Constants\Guids\HighGuidMask.cs" />
     <Compile Include="Constants\Guids\HighGuidType.cs" />
@@ -95,6 +95,7 @@
     <Compile Include="Constants\UpdateFlags.cs" />
     <Compile Include="Constants\UpdateType.cs" />
     <Compile Include="Constants\ViolenceLevels.cs" />
+    <Compile Include="Cryptography\SRP6.cs" />
     <Compile Include="Database\DB.cs" />
     <Compile Include="Database\MySqlBase.cs" />
     <Compile Include="Database\SQLResult.cs">
@@ -107,7 +108,6 @@
     <Compile Include="ClientDB\Structures\Dbc\ChrRaces.cs" />
     <Compile Include="Helper\BinaryReaderExtensions.cs" />
     <Compile Include="Logging\PacketLogging\PacketLog.cs" />
-    <Compile Include="Native\NativeMethods.cs" />
     <Compile Include="Network\Packets\BitPack.cs" />
     <Compile Include="Network\Packets\BitUnpack.cs" />
     <Compile Include="Network\Packets\OpcodeAttribute.cs" />
@@ -116,14 +116,13 @@
     <Compile Include="Constants\Authentication\AuthLinks.cs" />
     <Compile Include="Cryptography\PacketCrypt.cs" />
     <Compile Include="Cryptography\SARC4.cs" />
-    <Compile Include="Cryptography\SRP6.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\LogTypes.cs" />
     <Compile Include="Network\Packets\PacketReader.cs" />
     <Compile Include="Network\Packets\PacketWriter.cs" />
     <Compile Include="ObjectDefines\ChatMessageValues.cs" />
     <Compile Include="ObjectDefines\Quaternion.cs" />
-    <Compile Include="ObjectDefines\ObjectGuid.cs" />
+    <Compile Include="ObjectDefines\SmartGuid.cs" />
     <Compile Include="ObjectDefines\ObjectMovementValues.cs" />
     <Compile Include="ObjectDefines\Realm.cs" />
     <Compile Include="ObjectDefines\Vector4.cs" />
@@ -132,7 +131,6 @@
     <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="Configs\RealmServer.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -143,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ClientDB\Structures\Db2\" />
+    <Folder Include="Constants\Creature\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

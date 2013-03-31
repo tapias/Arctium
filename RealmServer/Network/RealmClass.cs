@@ -19,14 +19,13 @@ using Framework.Constants.Authentication;
 using Framework.Cryptography;
 using Framework.Database;
 using Framework.Logging;
-using Framework.Native;
 using Framework.Network.Packets;
 using Framework.ObjectDefines;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Sockets;
-using System.Text;
+using System.Security.Cryptography;
 using System.Threading;
 
 namespace Framework.Network.Realm
@@ -107,24 +106,27 @@ namespace Framework.Network.Realm
 
                     DB.Realms.Execute("UPDATE accounts SET ip = ?, language = ? WHERE id = ?", account.IP, account.Language, account.Id);
 
-                    byte[] username = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "name").ToUpperInvariant());
-                    byte[] password = UTF8Encoding.UTF8.GetBytes(result.Read<String>(0, "password").ToUpperInvariant());
+                    var username = result.Read<String>(0, "name").ToUpperInvariant();
+                    var password = result.Read<String>(0, "password").ToUpperInvariant();
 
                     // WoW 5.2.0.16769
                     if (ClientBuild == 16769)
                     {
                         SecureRemotePassword.CalculateX(username, password);
-                        byte[] buf = new byte[0x10];
-                        NativeMethods.RAND_bytes(buf, 0x10);
+
+                        var randBytes = new byte[0x10];
+
+                        var random = RNGCryptoServiceProvider.Create();
+                        random.GetBytes(randBytes);
 
                         logonChallenge.WriteUInt8((byte)AuthResults.WOW_SUCCESS);
                         logonChallenge.WriteBytes(SecureRemotePassword.B);
                         logonChallenge.WriteUInt8(1);
-                        logonChallenge.WriteUInt8(SecureRemotePassword.g[0]);
+                        logonChallenge.WriteUInt8(SecureRemotePassword.g.ToByteArray()[0]);
                         logonChallenge.WriteUInt8(0x20);
                         logonChallenge.WriteBytes(SecureRemotePassword.N);
-                        logonChallenge.WriteBytes(SecureRemotePassword.salt);
-                        logonChallenge.WriteBytes(buf);
+                        logonChallenge.WriteBytes(SecureRemotePassword.Salt);
+                        logonChallenge.WriteBytes(randBytes);
 
                         // Security flags
                         logonChallenge.WriteUInt8(account.SecurityFlags);
@@ -152,12 +154,8 @@ namespace Framework.Network.Realm
 
             using (var logonProof = new PacketWriter())
             {
-
-                byte[] a = new byte[32];
-                byte[] m1 = new byte[20];
-
-                Array.Copy(DataBuffer, 1, a, 0, 32);
-                Array.Copy(DataBuffer, 33, m1, 0, 20);
+                var a = data.ReadBytes(32);
+                var m1 = data.ReadBytes(20);
 
                 SecureRemotePassword.CalculateU(a);
                 SecureRemotePassword.CalculateM2(m1);
@@ -175,6 +173,8 @@ namespace Framework.Network.Realm
                 logonProof.WriteUInt32(0x800000);
                 logonProof.WriteUInt32(0);
                 logonProof.WriteUInt16(0);
+
+                SecureRemotePassword.Dispose();
 
                 DB.Realms.Execute("UPDATE accounts SET sessionkey = ? WHERE id = ?", account.SessionKey, account.Id);
 

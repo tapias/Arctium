@@ -1,228 +1,144 @@
-﻿/*
- * Copyright (C) 2012-2013 Arctium <http://arctium.org>
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-using System;
-using System.Collections;
-using System.Runtime.InteropServices;
+﻿using System;
+using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
-using Framework.Native;
+using System.Text;
 
 namespace Framework.Cryptography
 {
-    public sealed class SRP6 : IDisposable
+    public class SRP6 : IDisposable
     {
-        static HashAlgorithm hashAlgorithm = new SHA1Managed();
-        IntPtr BNA, BNb, BNB, BNg, BNk, BNn, BNS, BNU, BNv, BNx;
-        public byte[] A, K, M2, N, S, salt, U;
-        public byte[] b = new byte[0x14];
-        public byte[] B = new byte[0x20];
-        public byte[] g = new byte[] { 0x07 };
-        public byte[] k = new byte[] { 0x03 };
-        public string Username, Password;
+        public byte[] B { get; private set; }
+        public byte[] K { get; private set; }
+        public byte[] M2 { get; private set; }
+
+        public readonly BigInteger g;
+        public readonly BigInteger k;
+
+        public readonly byte[] N;
+        public readonly byte[] Salt;
+
+        protected readonly SHA1 Sha1;
+        protected BigInteger A;
+        protected BigInteger BN;
+        protected BigInteger v;
+        protected BigInteger b;
+        protected BigInteger s;
 
         public SRP6()
         {
-            N = new byte[] { 0x89, 0x4B, 0x64, 0x5E, 0x89, 0xE1, 0x53, 0x5B, 0xBD, 0xAD, 0x5B, 0x8B, 0x29, 0x06, 0x50, 0x53,
-                              0x08, 0x01, 0xB1, 0x8E, 0xBF, 0xBF, 0x5E, 0x8F, 0xAB, 0x3C, 0x82, 0x87, 0x2A, 0x3E, 0x9B, 0xB7 };
+            Sha1 = new SHA1Managed();
 
-            salt = new byte[] { 0xAD, 0xD0, 0x3A, 0x31, 0xD2, 0x71, 0x14, 0x46, 0x75, 0xF2, 0x70, 0x7E, 0x50, 0x26, 0xB6, 0xD2,
-                                0xF1, 0x86, 0x59, 0x99, 0x76, 0x02, 0x50, 0xAA, 0xB9, 0x45, 0xE0, 0x9E, 0xDD, 0x2A, 0xA3, 0x45 };            
+            N = new byte[]
+            {
+                0x89, 0x4B, 0x64, 0x5E, 0x89, 0xE1, 0x53, 0x5B, 0xBD, 0xAD, 0x5B, 0x8B, 0x29, 0x06, 0x50, 0x53,
+                0x08, 0x01, 0xB1, 0x8E, 0xBF, 0xBF, 0x5E, 0x8F, 0xAB, 0x3C, 0x82, 0x87, 0x2A, 0x3E, 0x9B, 0xB7,
+            };
+
+            Salt = new byte[]
+            {
+                0xAD, 0xD0, 0x3A, 0x31, 0xD2, 0x71, 0x14, 0x46, 0x75, 0xF2, 0x70, 0x7E, 0x50, 0x26, 0xB6, 0xD2,
+                0xF1, 0x86, 0x59, 0x99, 0x76, 0x02, 0x50, 0xAA, 0xB9, 0x45, 0xE0, 0x9E, 0xDD, 0x2A, 0xA3, 0x45
+            };
+
+            BN = MakeBigInteger(N);
+            g = MakeBigInteger(new byte[] { 7 });
+            k = MakeBigInteger(new byte[] { 3 });
         }
 
-        ~SRP6()
+        public void CalculateX(string userName, string password)
         {
-            NativeMethods.BN_Free(this.BNA);
-            NativeMethods.BN_Free(this.BNb);
-            NativeMethods.BN_Free(this.BNB);
-            NativeMethods.BN_Free(this.BNg);
-            NativeMethods.BN_Free(this.BNk);
-            NativeMethods.BN_Free(this.BNn);
-            NativeMethods.BN_Free(this.BNS);
-            NativeMethods.BN_Free(this.BNU);
-            NativeMethods.BN_Free(this.BNv);
-            NativeMethods.BN_Free(this.BNx);
+            var p = Encoding.UTF8.GetBytes(userName + ":" + password);
+            var x = MakeBigInteger(Sha1.ComputeHash(CombineData(Salt, Sha1.ComputeHash(p))));
+
+            CalculateV(x);
         }
 
-        public void CalculateB()
+        void CalculateV(BigInteger x)
         {
-            NativeMethods.RAND_bytes(this.b, 20);
-            IntPtr res = NativeMethods.BN_New();
-            IntPtr r = NativeMethods.BN_New();
-            IntPtr ptr3 = NativeMethods.BN_New();
-            this.BNB = NativeMethods.BN_New();
-            IntPtr ctx = NativeMethods.BN_ctx_new();
-            Array.Reverse(this.b);
-            this.BNb = NativeMethods.BN_Bin2BN(this.b, this.b.Length, IntPtr.Zero);
-            Array.Reverse(this.b);
-            NativeMethods.BN_mod_exp(res, this.BNg, this.BNb, this.BNn, ctx);
-            NativeMethods.BN_mul(r, this.BNk, this.BNv, ctx);
-            NativeMethods.BN_add(ptr3, res, r);
-            NativeMethods.BN_div(IntPtr.Zero, this.BNB, ptr3, this.BNn, ctx);
-            NativeMethods.BN_bn2bin(this.BNB, this.B);
-            Array.Reverse(this.B);
-            NativeMethods.BN_ctx_free(ctx);
-            NativeMethods.BN_Free(ptr3);
-            NativeMethods.BN_Free(r);
-            NativeMethods.BN_Free(res);
+            v = BigInteger.ModPow(g, x, BN);
+
+            CalculateB(); 
         }
 
-        public void CalculateK()
+        void CalculateB()
         {
-            ArrayList list = Split(this.S);
-            list[0] = hashAlgorithm.ComputeHash((byte[])list[0]);
-            list[1] = hashAlgorithm.ComputeHash((byte[])list[1]);
-            this.K = Combine((byte[])list[0], (byte[])list[1]);
-        }
+            var randBytes = new byte[20];
 
-        public void CalculateM2(byte[] m1)
-        {
-            byte[] dst = new byte[(this.A.Length + m1.Length) + this.K.Length];
-            Buffer.BlockCopy(this.A, 0, dst, 0, this.A.Length);
-            Buffer.BlockCopy(m1, 0, dst, this.A.Length, m1.Length);
-            Buffer.BlockCopy(this.K, 0, dst, this.A.Length + m1.Length, this.K.Length);
-            this.M2 = hashAlgorithm.ComputeHash(dst);
-        }
+            var random = RNGCryptoServiceProvider.Create();
+            random.GetBytes(randBytes);
 
-        public void CalculateS()
-        {
-            IntPtr res = NativeMethods.BN_New();
-            IntPtr r = NativeMethods.BN_New();
-            this.BNS = NativeMethods.BN_New();
-            IntPtr ctx = NativeMethods.BN_ctx_new();
-            this.S = new byte[0x20];
-            NativeMethods.BN_mod_exp(res, this.BNv, this.BNU, this.BNn, ctx);
-            NativeMethods.BN_mul(r, this.BNA, res, ctx);
-            NativeMethods.BN_mod_exp(this.BNS, r, this.BNb, this.BNn, ctx);
-            NativeMethods.BN_bn2bin(this.BNS, this.S);
-            Array.Reverse(this.S);
-            this.CalculateK();
-            NativeMethods.BN_ctx_free(ctx);
-            NativeMethods.BN_Free(r);
-            NativeMethods.BN_Free(res);
+            b = MakeBigInteger(randBytes);
+            B = ((k * v + BigInteger.ModPow(g, b, BN)) % BN).ToByteArray();
         }
 
         public void CalculateU(byte[] a)
         {
-            this.A = a;
-            byte[] dst = new byte[a.Length + this.B.Length];
-            Buffer.BlockCopy(a, 0, dst, 0, a.Length);
-            Buffer.BlockCopy(this.B, 0, dst, a.Length, this.B.Length);
-            this.U = hashAlgorithm.ComputeHash(dst);
-            Array.Reverse(this.U);
-            this.BNU = NativeMethods.BN_Bin2BN(this.U, this.U.Length, IntPtr.Zero);
-            Array.Reverse(this.U);
-            Array.Reverse(this.A);
-            this.BNA = NativeMethods.BN_Bin2BN(this.A, this.A.Length, IntPtr.Zero);
-            Array.Reverse(this.A);
-            this.CalculateS();
+            A = MakeBigInteger(a);
+
+            CalculateS(MakeBigInteger(Sha1.ComputeHash(CombineData(a, B))));
         }
 
-        public void CalculateV()
+        void CalculateS(BigInteger u)
         {
-            this.BNv = NativeMethods.BN_New();
-            IntPtr ctx = NativeMethods.BN_ctx_new();
-            NativeMethods.BN_mod_exp(this.BNv, this.BNg, this.BNx, this.BNn, ctx);
-            this.CalculateB();
-            NativeMethods.BN_ctx_free(ctx);
+            s = BigInteger.ModPow(A * BigInteger.ModPow(v, u, BN), b, BN);
+
+            CalculateK();
         }
 
-        public void CalculateX(byte[] username, byte[] password)
+        public void CalculateK()
         {
-            byte[] src = username;
-            byte[] buffer2 = password;
-            byte[] dst = new byte[(src.Length + buffer2.Length) + 1];
-            byte[] buffer5 = new byte[this.salt.Length + 20];
-            Buffer.BlockCopy(src, 0, dst, 0, src.Length);
-            dst[src.Length] = 0x3a;
-            Buffer.BlockCopy(buffer2, 0, dst, src.Length + 1, buffer2.Length);
-            Buffer.BlockCopy(hashAlgorithm.ComputeHash(dst, 0, dst.Length), 0, buffer5, this.salt.Length, 20);
-            Buffer.BlockCopy(this.salt, 0, buffer5, 0, this.salt.Length);
-            byte[] array = hashAlgorithm.ComputeHash(buffer5);
-            Array.Reverse(array);
-            this.BNx = NativeMethods.BN_Bin2BN(array, array.Length, IntPtr.Zero);
-            Array.Reverse(this.g);
-            this.BNg = NativeMethods.BN_Bin2BN(this.g, this.g.Length, IntPtr.Zero);
-            Array.Reverse(this.g);
-            Array.Reverse(this.k);
-            this.BNk = NativeMethods.BN_Bin2BN(this.k, this.k.Length, IntPtr.Zero);
-            Array.Reverse(this.k);
-            Array.Reverse(this.N);
-            this.BNn = NativeMethods.BN_Bin2BN(this.N, this.N.Length, IntPtr.Zero);
-            Array.Reverse(this.N);
-            this.CalculateV();
+            var sBytes = GetBytes(s.ToByteArray());
+
+            var part1 = new byte[sBytes.Length / 2];
+            var part2 = new byte[sBytes.Length / 2];
+
+            for (int i = 0; i < part1.Length; i++)
+            {
+                part1[i] = sBytes[i * 2];
+                part2[i] = sBytes[i * 2 + 1];
+            }
+
+            part1 = Sha1.ComputeHash(part1);
+            part2 = Sha1.ComputeHash(part2);
+
+            K = new byte[part1.Length + part2.Length];
+
+            for (int i = 0; i < part1.Length; i++)
+            {
+                K[i * 2] = part1[i];
+                K[i * 2 + 1] = part2[i];
+            }
         }
 
-        private static byte[] Combine(byte[] b1, byte[] b2)
+        public void CalculateM2(byte[] m1)
         {
-            if (b1.Length != b2.Length)
-            {
-                return null;
-            }
-            byte[] buffer = new byte[b1.Length + b2.Length];
-            int index = 0;
-            int num2 = 1;
-            for (int i = 0; i < b1.Length; i++)
-            {
-                buffer[index] = b1[i];
-                index++;
-                index++;
-            }
-            for (int j = 0; j < b2.Length; j++)
-            {
-                buffer[num2] = b2[j];
-                num2++;
-                num2++;
-            }
-            return buffer;
+            M2 = Sha1.ComputeHash(CombineData(CombineData(GetBytes(A.ToByteArray()), m1), K));
         }
 
-        private static ArrayList Split(byte[] bo)
+        public byte[] GetBytes(byte[] data, int count = 32)
         {
-            byte[] dst = new byte[bo.Length - 1];
-            if (((bo.Length % 2) != 0) && (bo.Length > 2))
-            {
-                Buffer.BlockCopy(bo, 1, dst, 0, bo.Length);
-            }
-            byte[] buffer2 = new byte[bo.Length / 2];
-            byte[] buffer3 = new byte[bo.Length / 2];
-            int index = 0;
-            int num2 = 1;
-            for (int i = 0; i < buffer2.Length; i++)
-            {
-                buffer2[i] = bo[index];
-                index++;
-                index++;
-            }
-            for (int j = 0; j < buffer3.Length; j++)
-            {
-                buffer3[j] = bo[num2];
-                num2++;
-                num2++;
-            }
+            var bytes = new byte[count];
 
-            ArrayList list = new ArrayList();
-            list.Add(buffer2);
-            list.Add(buffer3);
-            return list;
+            Buffer.BlockCopy(data, 0, bytes, 0, 32);
+
+            return bytes;
+        }
+
+        public BigInteger MakeBigInteger(byte[] data)
+        {
+            return new BigInteger(CombineData(data, new byte[] { 0 }));
+        }
+
+        public byte[] CombineData(byte[] data, byte[] data2)
+        {
+            return new byte[0].Concat(data).Concat(data2).ToArray();
         }
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
+            K = null;
+            M2 = null;
         }
     }
 }
