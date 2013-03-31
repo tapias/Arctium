@@ -134,7 +134,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             BitUnpack GuidUnpacker = new BitUnpack(packet);
 
             ulong fullGuid = GuidUnpacker.GetPackedValue(guidMask, guidBytes);
-            ulong guid = ObjectGuid.GetGuid(fullGuid);
+            ulong guid = SmartGuid.GetGuid(fullGuid);
 
             if (session.Character != null)
             {
@@ -146,7 +146,7 @@ namespace WorldServer.Game.Packets.PacketHandler
                 if (guid == 0)
                     Log.Message(LogType.DEBUG, "Character (Guid: {0}) removed current selection.", session.Character.Guid);
                 else
-                    Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, ObjectGuid.GetGuidType(fullGuid), guid, ObjectGuid.GetId(fullGuid));
+                    Log.Message(LogType.DEBUG, "Character (Guid: {0}) selected a {1} (Guid: {2}, Id: {3}).", session.Character.Guid, SmartGuid.GetGuidType(fullGuid), guid, SmartGuid.GetId(fullGuid));
             }
         }
 

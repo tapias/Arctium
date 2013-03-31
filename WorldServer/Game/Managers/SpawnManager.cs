@@ -56,7 +56,7 @@ namespace WorldServer.Game.Managers
             CreatureSpawn removedSpawn;
             CreatureSpawns.TryRemove(spawn.Guid, out removedSpawn);
 
-            DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
+            DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", SmartGuid.GetGuid(spawn.Guid));
         }
 
         public CreatureSpawn FindSpawn(ulong guid)
@@ -149,7 +149,7 @@ namespace WorldServer.Game.Managers
             GameObjectSpawn removedGameObject;
             GameObjectSpawns.TryRemove(spawn.Guid, out removedGameObject);
 
-            DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", ObjectGuid.GetGuid(spawn.Guid));
+            DB.World.Execute("DELETE FROM creature_spawns WHERE Guid = ?", SmartGuid.GetGuid(spawn.Guid));
         }
 
         public void LoadGameObjectSpawns()

@@ -117,9 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="arctium_world.ico" />
-    <None Include="libeay32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="WorldServer.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

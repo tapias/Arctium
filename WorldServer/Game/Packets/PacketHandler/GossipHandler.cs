@@ -35,7 +35,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             byte[] guidBytes = { 5, 3, 6, 2, 7, 0, 4, 1 };
 
             var guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
-            var gossipData = GossipMgr.GetGossip<Creature>(ObjectGuid.GetGuid(guid));
+            var gossipData = GossipMgr.GetGossip<Creature>(SmartGuid.GetGuid(guid));
 
             if (gossipData != null)
             {

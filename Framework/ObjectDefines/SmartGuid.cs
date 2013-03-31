@@ -20,11 +20,11 @@ using System;
 
 namespace Framework.ObjectDefines
 {
-    public class ObjectGuid
+    public class SmartGuid
     {
         public UInt64 Guid { get; set; }
 
-        public ObjectGuid(ulong low, int id, HighGuidType highType)
+        public SmartGuid(ulong low, int id, HighGuidType highType)
         {
             Guid = (ulong)(low | ((ulong)id << 32) | (ulong)highType << 52);
         }

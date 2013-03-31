@@ -44,7 +44,7 @@ namespace WorldServer.Game.Spawns
 
         public void CreateFullGuid()
         {
-            Guid = new ObjectGuid(Guid, Id, HighGuidType.Unit).Guid;
+            Guid = new SmartGuid(Guid, Id, HighGuidType.Unit).Guid;
         }
 
         public void CreateData(Creature creature)

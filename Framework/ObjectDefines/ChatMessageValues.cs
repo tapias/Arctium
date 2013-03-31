@@ -26,7 +26,7 @@ namespace Framework.ObjectDefines
         public bool HasRealmId  = false;
 
         // Data
-        public List<ObjectGuid> Guids = new List<ObjectGuid>(4);
+        public List<SmartGuid> Guids = new List<SmartGuid>(4);
         public MessageType ChatType = MessageType.ChatMessageSay;
         public byte Language        = 0;
         public int RealmId          = 1;

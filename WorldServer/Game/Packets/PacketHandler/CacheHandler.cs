@@ -179,7 +179,7 @@ namespace WorldServer.Game.Packets.PacketHandler
             var gossipTextId = packet.Read<int>();
             var guid = BitUnpack.GetPackedValue(guidMask, guidBytes);
 
-            var gossipData = GossipMgr.GetGossip<Creature>(ObjectGuid.GetGuid(guid));
+            var gossipData = GossipMgr.GetGossip<Creature>(SmartGuid.GetGuid(guid));
 
             if (gossipData != null)
             {
