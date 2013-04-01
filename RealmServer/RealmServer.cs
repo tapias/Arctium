@@ -71,9 +71,9 @@ namespace RealmServer
 
                                 RealmClass.Realms[Name] = new Realm
                                 {
-                                    Id = result.Read<uint>(i, "Id"),
+                                    Id   = result.Read<uint>(i, "Id"),
                                     Name = Name,
-                                    IP = result.Read<string>(i, "IP"),
+                                    IP   = result.Read<string>(i, "IP"),
                                     Port = result.Read<uint>(i, "Port"),
                                 };
 
