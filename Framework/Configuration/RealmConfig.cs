@@ -32,6 +32,8 @@ namespace Framework.Configuration
         public static string BindIP = config.Read("Bind.IP", "0.0.0.0");
         public static uint BindPort = config.Read<uint>("Bind.Port", 3724);
 
+        public static float RealmListUpdateTime = config.Read<float>("RealmList.UpdateTime", 5) * 60000;
+
         public static LogType LogLevel = (LogType)config.Read<uint>("LogLevel", 0, true);
     }
 }

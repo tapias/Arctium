@@ -21,6 +21,7 @@ using Framework.Logging;
 using Framework.Network.Realm;
 using Framework.ObjectDefines;
 using System;
+using System.Threading;
 
 namespace RealmServer
 {
@@ -42,26 +43,9 @@ namespace RealmServer
             Log.Message(LogType.NORMAL, "Starting Arctium RealmServer...");
 
             DB.Realms.Init(RealmConfig.RealmDBHost, RealmConfig.RealmDBUser, RealmConfig.RealmDBPassword, RealmConfig.RealmDBDataBase, RealmConfig.RealmDBPort);
+            DB.Characters.Init(WorldConfig.CharDBHost, WorldConfig.CharDBUser, WorldConfig.CharDBPassword, WorldConfig.CharDBDataBase, WorldConfig.CharDBPort);
 
             RealmClass.realm = new RealmNetwork();
-
-            // Add realms from database.
-            Log.Message(LogType.NORMAL, "Updating Realm List..."); 
-
-            SQLResult result = DB.Realms.Select("SELECT * FROM realms");
-
-            for (int i = 0; i < result.Count; i++)
-            {
-                RealmClass.Realms.Add(new Realm()
-                {
-                    Id   = result.Read<uint>(i, "id"),
-                    Name = result.Read<string>(i, "name"),
-                    IP   = result.Read<string>(i, "ip"),
-                    Port = result.Read<uint>(i, "port"),
-                });
-
-                Log.Message(LogType.NORMAL, "Added Realm \"{0}\"", RealmClass.Realms[i].Name);
-            }
 
             if (RealmClass.realm.Start(RealmConfig.BindIP, (int)RealmConfig.BindPort))
             {
@@ -69,6 +53,41 @@ namespace RealmServer
 
                 Log.Message(LogType.NORMAL, "RealmServer listening on {0} port {1}.", RealmConfig.BindIP, RealmConfig.BindPort);
                 Log.Message(LogType.NORMAL, "RealmServer successfully started!");
+
+                // Add realms from database.
+                new Thread(() =>
+                {
+                    var start = true;
+
+                    while (true)
+                    {
+                        Log.Message(LogType.NORMAL, "Updating Realm List...");
+
+                        using (var result = DB.Realms.Select("SELECT * FROM Realms"))
+                        {
+                            for (int i = 0; i < result.Count; i++)
+                            {
+                                var Name = result.Read<string>(i, "Name");
+
+                                RealmClass.Realms[Name] = new Realm
+                                {
+                                    Id = result.Read<uint>(i, "Id"),
+                                    Name = Name,
+                                    IP = result.Read<string>(i, "IP"),
+                                    Port = result.Read<uint>(i, "Port"),
+                                };
+
+                                if (start)
+                                {
+                                    Log.Message(LogType.NORMAL, "Added Realm \"{0}\"", Name);
+                                    start = false;
+                                }
+                            }
+                        }
+
+                        Thread.Sleep((int)RealmConfig.RealmListUpdateTime);
+                    }
+                }).Start();
             }
             else
                 Log.Message(LogType.ERROR, "RealmServer couldn't be started: ");

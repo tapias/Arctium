@@ -24,6 +24,7 @@ using Framework.ObjectDefines;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace Framework.Network.Realm
     public class RealmClass
     {
         public static Account account { get; set; }
-        public static List<ObjectDefines.Realm> Realms = new List<ObjectDefines.Realm>();
+        public static Dictionary<string, ObjectDefines.Realm> Realms = new Dictionary<string, ObjectDefines.Realm>();
         public static RealmNetwork realm;
         public SRP6 SecureRemotePassword { get; set; }
         public Socket clientSocket;
@@ -188,13 +189,13 @@ namespace Framework.Network.Realm
 
             using (var realmData = new PacketWriter())
             {
-                Realms.ForEach(r =>
+                Realms.ToList().ForEach(r =>
                 {
                     realmData.WriteUInt8(1);
                     realmData.WriteUInt8(0);
                     realmData.WriteUInt8(0);
-                    realmData.WriteCString(r.Name);
-                    realmData.WriteCString(r.IP + ":" + r.Port);
+                    realmData.WriteCString(r.Key);
+                    realmData.WriteCString(r.Value.IP + ":" + r.Value.Port);
                     realmData.WriteFloat(0);
                     realmData.WriteUInt8(0);  // CharCount
                     realmData.WriteUInt8(1);
