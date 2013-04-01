@@ -16,6 +16,7 @@
  */
 
 using Framework.ClientDB;
+using Framework.Configuration;
 using Framework.Constants;
 using Framework.Database;
 using System;
@@ -155,7 +156,7 @@ namespace WorldServer.Game.WorldEntities
                 if (i < Skills.Count)
                     SetUpdateField<UInt32>((int)PlayerFields.Skill + i, Skills[i].Id);
 
-            SetUpdateField<UInt32>((int)PlayerFields.HomePlayerRealm, 1);
+            SetUpdateField<UInt32>((int)PlayerFields.HomePlayerRealm, WorldConfig.RealmId);
         }
 
         public static string NormalizeName(string name)
