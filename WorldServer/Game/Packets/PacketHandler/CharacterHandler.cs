@@ -16,6 +16,7 @@
  */
 
 using Framework.ClientDB;
+using Framework.Configuration;
 using Framework.Constants;
 using Framework.Constants.NetMessage;
 using Framework.Database;
@@ -200,9 +201,9 @@ namespace WorldServer.Game.PacketHandler
             // Allow declined names for now
             var characterFlags = CharacterFlag.Decline;
 
-            DB.Characters.Execute("INSERT INTO characters (name, accountid, race, class, gender, skin, zone, map, x, y, z, o, face, hairstyle, haircolor, facialhair, characterFlags) VALUES (" +
-                                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                  name, session.Account.Id, race, pClass, gender, skin, zone, map, posX, posY, posZ, posO, face, hairStyle, hairColor, facialHair, characterFlags);
+            DB.Characters.Execute("INSERT INTO characters (name, accountid, realmId, race, class, gender, skin, zone, map, x, y, z, o, face, hairstyle, haircolor, facialhair, characterFlags) VALUES (" +
+                                  "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                  name, session.Account.Id, WorldConfig.RealmId, race, pClass, gender, skin, zone, map, posX, posY, posZ, posO, face, hairStyle, hairColor, facialHair, characterFlags);
 
             // Success
             createChar.WriteUInt8(0x2F);

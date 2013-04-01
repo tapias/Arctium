@@ -191,15 +191,17 @@ namespace Framework.Network.Realm
             {
                 Realms.ToList().ForEach(r =>
                 {
-                    using (var result = DB.Characters.Select("SELECT COUNT(*) FROM characters WHERE AccountId = ? AND RealmId = ?", account.Id, r.Value.Id))
+                    using (var result = DB.Characters.Select("SELECT COUNT(*) as Count FROM characters WHERE AccountId = ? AND RealmId = ?", account.Id, r.Value.Id))
                     {
+                        var charCount = result.Read<byte>(0, "Count");
+
                         realmData.WriteUInt8(1);
                         realmData.WriteUInt8(0);
                         realmData.WriteUInt8(0);
                         realmData.WriteCString(r.Key);
                         realmData.WriteCString(r.Value.IP + ":" + r.Value.Port);
                         realmData.WriteFloat(0);
-                        realmData.WriteUInt8((byte)(result.Count));
+                        realmData.WriteUInt8(charCount);
                         realmData.WriteUInt8(1);
                         realmData.WriteUInt8(0x2C);
                     }

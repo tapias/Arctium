@@ -30,8 +30,7 @@ namespace Framework.Network.Packets
         public ushort Size { get; set; }
         public byte[] Storage { get; set; }
 
-        public PacketReader(byte[] data, bool worldPacket = true)
-            : base(new MemoryStream(data))
+        public PacketReader(byte[] data, bool worldPacket = true) : base(new MemoryStream(data))
         {
             if (worldPacket)
             {
