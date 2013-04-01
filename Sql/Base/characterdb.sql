@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50519
 File Encoding         : 65001
 
-Date: 2013-02-20 18:48:39
+Date: 2013-04-01 18:20:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
   `guid` bigint(20) NOT NULL AUTO_INCREMENT,
   `accountid` int(5) NOT NULL DEFAULT '0',
+  `RealmId` int(11) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `race` tinyint(4) NOT NULL DEFAULT '0',
   `class` tinyint(4) NOT NULL DEFAULT '0',
