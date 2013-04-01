@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `characters`;
 CREATE TABLE `characters` (
   `guid` bigint(20) NOT NULL AUTO_INCREMENT,
   `accountid` int(5) NOT NULL DEFAULT '0',
-  `RealmId` int(11) NOT NULL,
+  `RealmId` int(11) NOT NULL DEFAULT '1',
   `name` varchar(255) DEFAULT NULL,
   `race` tinyint(4) NOT NULL DEFAULT '0',
   `class` tinyint(4) NOT NULL DEFAULT '0',
