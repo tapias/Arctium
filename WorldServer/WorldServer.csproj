@@ -30,7 +30,7 @@
     <OutputPath>..\Build\Debug_x86\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>

@@ -135,7 +135,7 @@ namespace WorldServer.Game.Managers
                 updateObject.WriteUInt16((ushort)pChar.Map);
                 updateObject.WriteUInt32((uint)count);
 
-                Parallel.ForEach(objects, o =>
+                foreach (var o in objects)
                 {
                     WorldObject obj = o;
 
@@ -146,7 +146,7 @@ namespace WorldServer.Game.Managers
                         if (pChar.Guid != o.Guid)
                             pChar.InRangeObjects.Add(obj.Guid, obj);
                     }
-                });
+                }
 
                 session.Send(ref updateObject);
             }
@@ -166,12 +166,12 @@ namespace WorldServer.Game.Managers
                 updateObject.WriteUInt8((byte)UpdateType.OutOfRange);
                 updateObject.WriteUInt32((uint)count);
 
-                Parallel.ForEach(objects, o =>
+                foreach (var o in objects)
                 {
                     updateObject.WriteGuid(o.Guid);
 
                     pChar.InRangeObjects.Remove(o.Guid);
-                });
+                }
 
                 session.Send(ref updateObject);
             }
