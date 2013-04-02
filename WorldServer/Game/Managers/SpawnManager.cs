@@ -22,6 +22,7 @@ using Framework.Singleton;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
 
@@ -101,9 +102,11 @@ namespace WorldServer.Game.Managers
 
         public void LoadCreatureSpawns()
         {
+            Log.Message(LogType.DB, "Loading creature spawns...");
+
             SQLResult result = DB.World.Select("SELECT * FROM creature_spawns");
 
-            for (int i = 0; i < result.Count; i++)
+            Parallel.For(0, result.Count, (i, loop) =>
             {
                 var guid = result.Read<UInt64>(i, "Guid");
                 var id   = result.Read<Int32>(i, "Id");
@@ -112,7 +115,7 @@ namespace WorldServer.Game.Managers
                 if (data == null)
                 {
                     Log.Message(LogType.ERROR, "Loading a creature spawn (Guid: {0}) with non-existing stats (Id: {1}) skipped.", guid, id);
-                    continue;
+                    return;
                 }
 
                 CreatureSpawn spawn = new CreatureSpawn
@@ -134,9 +137,10 @@ namespace WorldServer.Game.Managers
                 spawn.CreateData(data);
 
                 AddSpawn(spawn);
-            }
-
+            });
+            
             Log.Message(LogType.DB, "Loaded {0} creature spawns.", CreatureSpawns.Count);
+            Log.Message();
         }
 
         public bool AddSpawn(GameObjectSpawn spawn, ref GameObject data)
@@ -154,9 +158,11 @@ namespace WorldServer.Game.Managers
 
         public void LoadGameObjectSpawns()
         {
+            Log.Message(LogType.DB, "Loading gameobject spawns...");
+
             SQLResult result = DB.World.Select("SELECT * FROM gameobject_spawns");
 
-            for (int i = 0; i < result.Count; i++)
+            Parallel.For(0, result.Count, (i, loop) =>
             {
                 var guid = result.Read<UInt64>(i, "Guid");
                 var id = result.Read<Int32>(i, "Id");
@@ -165,7 +171,7 @@ namespace WorldServer.Game.Managers
                 if (data == null)
                 {
                     Log.Message(LogType.ERROR, "Loading a gameobject spawn (Guid: {0}) with non-existing stats (Id: {1}) skipped.", guid, id);
-                    continue;
+                    return;
                 }
 
                 GameObjectSpawn spawn = new GameObjectSpawn()
@@ -191,9 +197,10 @@ namespace WorldServer.Game.Managers
                 spawn.CreateData(data);
 
                 AddSpawn(spawn, ref data);
-            }
+            });
 
             Log.Message(LogType.DB, "Loaded {0} gameobject spawns.", GameObjectSpawns.Count);
+            Log.Message();
         }
     }
 }

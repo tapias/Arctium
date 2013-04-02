@@ -52,6 +52,8 @@ namespace WorldServer.Game.Managers
 
         public void LoadGossips()
         {
+            Log.Message(LogType.DB, "Loading creature gossips...");
+
             SQLResult result = DB.World.Select("SELECT * FROM creature_gossips cg RIGHT JOIN gossip_data gd ON cg.GossipDataId = gd.Id RIGHT JOIN broadcast_texts bt " +
                                                "ON cg.BroadcastTextId = bt.Id WHERE cg.GossipDataId IS NOT NULL AND cg.BroadcastTextId IS NOT NULL");
 
@@ -83,6 +85,9 @@ namespace WorldServer.Game.Managers
             }
 
             Log.Message(LogType.DB, "Loaded {0} creature gossips.", CreatureGossips.Count);
+            Log.Message();
+
+            Log.Message(LogType.DB, "Loading gameobject gossips...");
 
             result = DB.World.Select("SELECT * FROM gameobject_gossips gg RIGHT JOIN gossip_data gd ON gg.GossipDataId = gd.Id RIGHT JOIN broadcast_texts bt " +
                                      "ON gg.BroadcastTextId = bt.Id WHERE gg.GossipDataId IS NOT NULL AND gg.BroadcastTextId IS NOT NULL");
@@ -115,6 +120,7 @@ namespace WorldServer.Game.Managers
             }
 
             Log.Message(LogType.DB, "Loaded {0} gameobject gossips.", GameObjectGossips.Count);
+            Log.Message();
         }
     }
 }

@@ -28,6 +28,7 @@ using System.Threading;
 using WorldServer.Game.Spawns;
 using WorldServer.Game.WorldEntities;
 using WorldServer.Network;
+using System.Threading.Tasks;
 
 namespace WorldServer.Game.Managers
 {
@@ -60,7 +61,7 @@ namespace WorldServer.Game.Managers
                 {
                     Thread.Sleep(50);
 
-                    foreach (var s in Sessions.ToList())
+                    Parallel.ForEach(Sessions.ToList(), s =>
                     {
                         var session = s.Value;
                         var pChar = session.Character;
@@ -72,7 +73,7 @@ namespace WorldServer.Game.Managers
                         WriteOutOfRangeObjects(Globals.SpawnMgr.GetOutOfRangeCreatures(pChar), session);
                         WriteOutOfRangeObjects(Globals.SpawnMgr.GetOutOfRangeGameObjects(pChar), session);
                         WriteOutOfRangeObjects(GetOutOfRangeCharacter(pChar), session);
-                    }
+                    });
                 }
             }
         }
@@ -134,7 +135,7 @@ namespace WorldServer.Game.Managers
                 updateObject.WriteUInt16((ushort)pChar.Map);
                 updateObject.WriteUInt32((uint)count);
 
-                foreach (var o in objects)
+                Parallel.ForEach(objects, o =>
                 {
                     WorldObject obj = o;
 
@@ -145,7 +146,7 @@ namespace WorldServer.Game.Managers
                         if (pChar.Guid != o.Guid)
                             pChar.InRangeObjects.Add(obj.Guid, obj);
                     }
-                }
+                });
 
                 session.Send(ref updateObject);
             }
@@ -165,12 +166,12 @@ namespace WorldServer.Game.Managers
                 updateObject.WriteUInt8((byte)UpdateType.OutOfRange);
                 updateObject.WriteUInt32((uint)count);
 
-                foreach (var o in objects)
+                Parallel.ForEach(objects, o =>
                 {
                     updateObject.WriteGuid(o.Guid);
 
                     pChar.InRangeObjects.Remove(o.Guid);
-                }
+                });
 
                 session.Send(ref updateObject);
             }

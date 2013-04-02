@@ -19,9 +19,10 @@ using Framework.Database;
 using Framework.Logging;
 using Framework.Singleton;
 using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using WorldServer.Game.ObjectDefines;
 using WorldServer.Game.WorldEntities;
-using System.Collections.Concurrent;
 
 namespace WorldServer.Game.Managers
 {
@@ -66,6 +67,8 @@ namespace WorldServer.Game.Managers
 
         public void LoadCreatureData()
         {
+            Log.Message(LogType.DB, "Loading creatures...");
+
             SQLResult result = DB.World.Select("SELECT cs.Id FROM creature_stats cs LEFT JOIN creature_data cd ON cs.Id = cd.Id WHERE cd.Id IS NULL");
 
             if (result.Count != 0)
@@ -78,7 +81,7 @@ namespace WorldServer.Game.Managers
 
             result = DB.World.Select("SELECT * FROM creature_stats cs RIGHT JOIN creature_data cd ON cs.Id = cd.Id WHERE cs.id IS NOT NULL");
 
-            for (int r = 0; r < result.Count; r++)
+            Parallel.For(0, result.Count, r =>
             {
                 CreatureStats Stats = new CreatureStats
                 {
@@ -129,9 +132,10 @@ namespace WorldServer.Game.Managers
 
                     Stats = Stats,
                 });
-            }
+            });
 
             Log.Message(LogType.DB, "Loaded {0} creatures.", Creatures.Count);
+            Log.Message();
         }
 
         public bool Add(GameObject gameobject)
@@ -162,9 +166,11 @@ namespace WorldServer.Game.Managers
 
         public void LoadGameObject()
         {
+            Log.Message(LogType.DB, "Loading gameobjects...");
+
             SQLResult result = DB.World.Select("SELECT * FROM gameobject_stats");
 
-            for (int r = 0; r < result.Count; r++)
+            Parallel.For(0, result.Count, r =>
             {
                 GameObjectStats Stats = new GameObjectStats
                 {
@@ -193,9 +199,10 @@ namespace WorldServer.Game.Managers
                 {
                     Stats = Stats
                 });
-            }
+            });
 
             Log.Message(LogType.DB, "Loaded {0} gameobjects.", GameObjects.Count);
+            Log.Message();
         }
 
         public void Initialize()
