@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB.CustomTypes;
+
 namespace Framework.ClientDB.Structures.Dbc
 {
     public class ChrClasses
@@ -22,10 +24,10 @@ namespace Framework.ClientDB.Structures.Dbc
         public uint Id;
         public uint DisplayPower;
         public uint PetNameToken;
-        public string Name;
+        public Unused Name;
         public uint Unknown;
         public uint Unknown2;
-        public string ClientFileName;
+        public Unused ClientFileName;
         public uint SpellClassSet;
         public uint Unknown3;
         public uint CinematicSequence;

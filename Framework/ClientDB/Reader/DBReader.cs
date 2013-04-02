@@ -142,6 +142,7 @@ namespace Framework.ClientDB.Reader
                                         break;
                                     }
                                     default:
+                                        dbReader.BaseStream.Position += 4;
                                         break;
                                 }
                             }

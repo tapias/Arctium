@@ -1,4 +1,5 @@
-﻿/*
+﻿using Framework.ClientDB.CustomTypes;
+/*
  * Copyright (C) 2012-2013 Arctium <http://arctium.org>
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -20,10 +21,10 @@ namespace Framework.ClientDB.Structures.Dbc
     public class Spell
     {
         public uint Id;
-        public string Name;
-        public string SubText;
-        public string Description;
-        public string AuraDescription;
+        public Unused Name;
+        public Unused SubText;
+        public Unused Description;
+        public Unused AuraDescription;
         public uint RuneCostId;
         public uint SpellMissileId;
         public uint SpellDescriptionVariableId;

@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientDB\CustomTypes\Unused.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrClasses.cs" />
     <Compile Include="ClientDB\Structures\Dbc\ChrSpecialization.cs" />
     <Compile Include="ClientDB\Structures\Dbc\NameGen.cs" />

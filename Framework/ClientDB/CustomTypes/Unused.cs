@@ -15,25 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.ClientDB.CustomTypes;
-
-namespace Framework.ClientDB.Structures.Dbc
+namespace Framework.ClientDB.CustomTypes
 {
-    public class ChrSpecialization
+    public class Unused
     {
-        public uint Id;
-        public Unused Icon;
-        public uint ClassId;
-        public uint MasterySpellId;
-        public uint Unknown;
-        public uint TabId;
-        public uint Unknown2;
-        public uint RoleTypeId;
-        public uint Unknown3;
-        public uint Unknown4;
-        public uint Unknown5;
-        public Unused Name;
-        public Unused Description;
-        public uint Unknown6;
     }
 }

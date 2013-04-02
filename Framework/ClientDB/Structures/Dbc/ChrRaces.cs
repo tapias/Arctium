@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using Framework.ClientDB.CustomTypes;
+
 namespace Framework.ClientDB.Structures.Dbc
 {
     public class ChrRaces
@@ -33,12 +35,12 @@ namespace Framework.ClientDB.Structures.Dbc
         public uint ClientFileName; 
         public uint CinematicSequence;
         public uint BaseFaction;
-        public string Name;
+        public Unused Name;
         public uint Unknown;
         public uint Unknown2;
-        public string MaleFacialHairs;
-        public string FemaleFacialHairs;
-        public string Hairs;
+        public Unused MaleFacialHairs;
+        public Unused FemaleFacialHairs;
+        public Unused Hairs;
         public uint OtherFactionRace;
         public uint Unknown3;
         public uint Unknown4;
