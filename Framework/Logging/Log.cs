@@ -58,7 +58,7 @@ namespace Framework.Logging
                     DefaultConsole.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 case LogType.DB:
-                    DefaultConsole.ForegroundColor = ConsoleColor.DarkBlue;
+                    DefaultConsole.ForegroundColor = ConsoleColor.DarkMagenta;
                     break;
                 case LogType.CMD:
                     DefaultConsole.ForegroundColor = ConsoleColor.Green;

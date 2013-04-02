@@ -71,6 +71,7 @@ namespace WorldServer
                 Log.Message(LogType.ERROR, "Server couldn't be started: ");
             }
 
+            GC.Collect();
             Log.Message(LogType.NORMAL, "Total Memory: {0} Kilobytes", GC.GetTotalMemory(false) / 1024);
 
             // Init Command handlers...
