@@ -68,19 +68,25 @@ namespace WorldServer.Game.Packets.PacketHandler
 
             var language = packet.Read<int>();
 
-            var messageLength = BitUnpack.GetBits<byte>(9);
-            var nameLength = BitUnpack.GetNameLength<byte>(9);
+            var nameLength = BitUnpack.GetBits<byte>(9);
+            var messageLength = BitUnpack.GetBits<byte>(8);
 
-            string chatMessage = packet.ReadString(messageLength);
+            string message = packet.ReadString(messageLength);
             string receiverName = packet.ReadString(nameLength);
 
             WorldClass rSession = WorldMgr.GetSession(receiverName);
 
-            //SendMessageByType(ref rSession, MessageType.ChatMessageWhisper, language, chatMessage);
-            //SendMessageByType(ref session, MessageType.ChatMessageWhisperInform, language, chatMessage);
+            if (rSession == null)
+                return;
+
+            ChatMessageValues chatMessage = new ChatMessageValues(MessageType.ChatMessageWhisperInform, message, false, true);
+            SendMessage(ref session, chatMessage, rSession);
+
+            chatMessage = new ChatMessageValues(MessageType.ChatMessageWhisper, message, false, true);
+            SendMessage(ref rSession, chatMessage, session);
         }
 
-        public static void SendMessage(ref WorldClass session, ChatMessageValues chatMessage)
+        public static void SendMessage(ref WorldClass session, ChatMessageValues chatMessage, WorldClass pSession = null)
         {
             byte[] GuidMask = { 4, 7, 6, 3, 0, 5, 1, 2 };
             byte[] GuidMask3 = { 4, 0, 7, 2, 1, 5, 3, 6 };
@@ -88,9 +94,13 @@ namespace WorldServer.Game.Packets.PacketHandler
             byte[] GuidBytes3 = { 7, 6, 0, 3, 4, 1, 5, 2 };
 
             var pChar = session.Character;
+            var guid = pChar.Guid;
+
+            if (pSession != null)
+                guid = pSession.Character.Guid;
 
             PacketWriter chat = new PacketWriter(ServerMessage.Chat);
-            BitPack BitPack = new BitPack(chat, pChar.Guid);
+            BitPack BitPack = new BitPack(chat, guid);
 
             BitPack.Write(1);
             BitPack.Write(!chatMessage.HasLanguage);
