@@ -17,12 +17,15 @@
 
 using Framework.ClientDB.Reader;
 using Framework.ClientDB.Structures.Dbc;
+using Framework.Logging;
 using System.Collections.Generic;
 
 namespace Framework.ClientDB
 {
     public class CliDB
     {
+        public static int Count { get; set; }
+
         public static List<ChrClasses> ChrClasses;
         public static List<ChrRaces> ChrRaces;
         public static List<ChrSpecialization> ChrSpecialization;
@@ -34,6 +37,8 @@ namespace Framework.ClientDB
         
         public static void Initialize()
         {
+            Log.Message(LogType.NORMAL, "Loading CliDBs...");
+
             ChrClasses           = DBReader.Read<ChrClasses>("ChrClasses.dbc");
             ChrRaces             = DBReader.Read<ChrRaces>("ChrRaces.dbc");
             ChrSpecialization    = DBReader.Read<ChrSpecialization>("ChrSpecialization.dbc");
@@ -42,6 +47,9 @@ namespace Framework.ClientDB
             Spell                = DBReader.Read<Spell>("Spell.dbc");
             SpellLevels          = DBReader.Read<SpellLevels>("SpellLevels.dbc");
             Talent               = DBReader.Read<Talent>("Talent.dbc");
+
+            Log.Message(LogType.NORMAL, "Loaded {0} CliDBs.", Count);
+            Log.Message();
         }
     }
 }

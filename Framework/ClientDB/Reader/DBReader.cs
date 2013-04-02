@@ -151,6 +151,8 @@ namespace Framework.ClientDB.Reader
                         }
                     }
                 }
+
+                ++CliDB.Count;
             }
             catch (Exception ex)
             {
